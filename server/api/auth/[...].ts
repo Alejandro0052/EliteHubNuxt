@@ -17,21 +17,21 @@ export default NuxtAuthHandler({
 			async authorize(credentials: any) {
 				if (!credentials.email || !credentials.password) return null;
 
-				const user = await prisma.usuario.findUnique({
+				const usuario = await prisma.usuario.findUnique({
 					where: { correo: credentials.email },
 				});
 
-				if (!user || !(await compare(credentials.password, user.password))) {
+				if (!usuario || !(await compare(credentials.password, usuario.password))) {
 					return null;
 				}
 
 				return {
-					id: user.id.toString(),
-					email: user.correo,
-					name: user.nombre,
-					firstName: user.nombre,
-					lastName: user.apellido,
-					isAdmin: user.isAdmin,
+					id: usuario.id.toString(),
+					email: usuario.correo,
+					name: usuario.nombre,
+					firstName: usuario.nombre,
+					lastName: usuario.apellido,
+					isAdmin: usuario.isAdmin,
 				};
 			},
 		}),
@@ -40,8 +40,8 @@ export default NuxtAuthHandler({
 		async jwt({ token, user }) {
 			if (user) {
 				token.id = user.id;
-				token.firstName = user.firstName;
-				token.lastName = user.lastName;
+				token.firstName = user.nombre;
+				token.lastName = user.apellido;
 				token.isAdmin = user.isAdmin;
 			}
 			return token;
