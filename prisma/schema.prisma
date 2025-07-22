@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// npx prisma migrate dev --name ""
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id             Int              @id @default(autoincrement())
+  correo         String           @unique
+  nombre         String
+  apellido       String
+  avatar         String?
+  password       String
+  isAdmin        Boolean          @default(false)
+  rolId          Int?
+  rol            Rol?             @relation(fields: [rolId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  informacionId  Int?
+  informacion    Informacion?     @relation(fields: [informacionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  pqrs           PQRS[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  UsuarioDeporte UsuarioDeporte[]
+}
+
+model Rol {
+  id        Int          @id @default(autoincrement())
+  nombre    String
+  usuarios  Usuario[]
+  permisos  PermisoRol[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Permiso {
+  id        Int          @id @default(autoincrement())
+  nombre    String
+  roles     PermisoRol[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model PermisoRol {
+  id        Int      @id @default(autoincrement())
+  rolId     Int
+  permisoId Int
+  rol       Rol      @relation(fields: [rolId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  permiso   Permiso  @relation(fields: [permisoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([rolId, permisoId])
+}
+
+model Informacion {
+  id                 Int          @id @default(autoincrement())
+  bio                String?
+  telefono           String?
+  genero             String?
+  fechaNacimiento    DateTime?
+  profesion          String?
+  especialidad       String?
+  experiencia        String?
+  nombreComercial    String?
+  razonSocial        String?
+  nit                String?
+  sitioWeb           String?
+  presupuestoMaximo  Int?
+  anosFuncionamiento Int?
+  consultorios       String[]
+  tipoUsuarioId      Int?
+  tipoUsuario        TipoUsuario? @relation(fields: [tipoUsuarioId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  direcciones        Direccion[]
+  redesSociales      RedSocial[]
+  usuarios           Usuario[]
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+}
+
+model TipoUsuario {
+  id          Int           @id @default(autoincrement())
+  tipo        String        @unique
+  descripcion String?
+  informacion Informacion[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Direccion {
+  id            Int          @id @default(autoincrement())
+  direccion     String
+  ciudadId      Int
+  paisId        Int
+  barrioId      Int
+  referencia    String?
+  informacionId Int?
+  ciudad        Ciudad       @relation(fields: [ciudadId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  pais          Pais         @relation(fields: [paisId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  barrio        Barrio       @relation(fields: [barrioId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  informacion   Informacion? @relation(fields: [informacionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Pais {
+  id          Int         @id @default(autoincrement())
+  pais        String      @unique
+  ciudades    Ciudad[]
+  direcciones Direccion[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Ciudad {
+  id          Int         @id @default(autoincrement())
+  ciudad      String
+  paisId      Int
+  pais        Pais        @relation(fields: [paisId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  barrios     Barrio[]
+  direcciones Direccion[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Barrio {
+  id          Int         @id @default(autoincrement())
+  barrio      String
+  ciudadId    Int
+  ciudad      Ciudad      @relation(fields: [ciudadId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  direcciones Direccion[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([barrio, ciudadId])
+}
+
+model RedSocial {
+  id            Int         @id @default(autoincrement())
+  nombre        String
+  url           String
+  informacionId Int
+  informacion   Informacion @relation(fields: [informacionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model PQRS {
+  id              Int      @id @default(autoincrement())
+  asunto          String
+  mensaje         String
+  imagenEvidencia String[]
+  usuarioId       Int
+  tipoId          Int
+  usuario         Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tipo            TipoPQRS @relation(fields: [tipoId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model TipoPQRS {
+  id        Int      @id @default(autoincrement())
+  tipo      String
+  pqrs      PQRS[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Deporte {
+  id          Int              @id @default(autoincrement())
+  nombre      String           @unique
+  descripcion String?
+  usuarios    UsuarioDeporte[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model UsuarioDeporte {
+  id                Int      @id @default(autoincrement())
+  usuarioId         Int
+  deporteId         Int
+  experiencia       Int
+  nivel             Nivel    @default(PRINCIPIANTE)
+  frecuenciaSemanal Int
+  usuario           Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  deporte           Deporte  @relation(fields: [deporteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([usuarioId, deporteId])
+}
+
+enum Nivel {
+  PRINCIPIANTE
+  INTERMEDIO
+  AVANZADO
+  PROFESIONAL
+}
+
+model Content {
+  id        Int      @id @default(autoincrement())
+  page      String   @unique
+  title     String?
+  subtitle  String?
+  content   String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
