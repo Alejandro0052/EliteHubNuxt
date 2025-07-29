@@ -55,6 +55,8 @@
 <script setup lang="ts">
 	const authStore = useAuthStore();
 	const { user } = storeToRefs(authStore);
+	const formUser = ref(structuredClone(user.value)); // editable
+
 
 	// Función para formatear fechas
 	const formatDate = (dateString: string) => {

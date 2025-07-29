@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+	<div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
 		<!-- Content Editor for Admins -->
 		<ContentEditor
 			page="nutricionistas"
@@ -34,7 +34,7 @@
 				<!-- Services Grid -->
 				<div class="mb-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
 					<div
-						class="rounded-xl bg-white p-8 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+						class="rounded-xl bg-white p-8 shadow-lg transition-transform duration-300 transform hover:scale-105">
 						<div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
 							<svg
 								class="h-8 w-8 text-green-600"
@@ -56,7 +56,7 @@
 					</div>
 
 					<div
-						class="rounded-xl bg-white p-8 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+						class="rounded-xl bg-white p-8 shadow-lg transition-transform duration-300 transform hover:scale-105">
 						<div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
 							<svg
 								class="h-8 w-8 text-blue-600"
@@ -77,7 +77,7 @@
 					</div>
 
 					<div
-						class="rounded-xl bg-white p-8 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+						class="rounded-xl bg-white p-8 shadow-lg transition-transform duration-300 transform hover:scale-105">
 						<div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
 							<svg
 								class="h-8 w-8 text-purple-600"
@@ -106,7 +106,7 @@
 						<div
 							v-for="nutritionist in nutritionists"
 							:key="nutritionist.id"
-							class="overflow-hidden rounded-xl bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl">
+							class="overflow-hidden rounded-xl bg-white shadow-lg transition-transform duration-300 transform hover:scale-105">
 							<div
 								class="flex h-48 items-center justify-center bg-gradient-to-br from-green-400 to-teal-500">
 								<div class="flex h-24 w-24 items-center justify-center rounded-full bg-white">
@@ -163,7 +163,7 @@
 				<div class="mb-16">
 					<h2 class="mb-12 text-center text-3xl font-bold text-gray-900">Nuestro Proceso</h2>
 					<div class="grid grid-cols-1 gap-8 md:grid-cols-4">
-						<div class="text-center">
+						<div class="text-center transition-transform duration-300 transform hover:scale-105">
 							<div
 								class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
 								<span class="text-2xl font-bold text-green-600">1</span>
@@ -174,7 +174,7 @@
 							</p>
 						</div>
 
-						<div class="text-center">
+						<div class="text-center transition-transform duration-300 transform hover:scale-105">
 							<div
 								class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
 								<span class="text-2xl font-bold text-blue-600">2</span>
@@ -185,7 +185,7 @@
 							</p>
 						</div>
 
-						<div class="text-center">
+						<div class="text-center transition-transform duration-300 transform hover:scale-105">
 							<div
 								class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
 								<span class="text-2xl font-bold text-purple-600">3</span>
@@ -196,7 +196,7 @@
 							</p>
 						</div>
 
-						<div class="text-center">
+						<div class="text-center transition-transform duration-300 transform hover:scale-105">
 							<div
 								class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
 								<span class="text-2xl font-bold text-orange-600">4</span>

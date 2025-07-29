@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+  <div class="w-full min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
     <!-- Content Editor for Admins -->
     <ContentEditor 
       page="marcas" 
@@ -48,7 +48,7 @@
         <div class="mb-16">
           <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Categorías de Productos</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
               <div class="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
                 <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -61,20 +61,20 @@
               </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
               <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
                 <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
               <div class="p-6">
-                <h3 class="text-xl font-bold text-gray-900 mb-3">Calzado Deportivo</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-3 ">Calzado Deportivo</h3>
                 <p class="text-gray-600 mb-4">Calzado especializado para cada deporte con la mejor tecnología y comodidad.</p>
                 <button class="text-green-600 font-semibold hover:text-green-800 transition-colors duration-300">Ver Productos →</button>
               </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
               <div class="h-48 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
                 <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
@@ -87,7 +87,7 @@
               </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
               <div class="h-48 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
                 <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
@@ -100,7 +100,7 @@
               </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
               <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                 <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
@@ -113,7 +113,7 @@
               </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 transform hover:scale-105">
               <div class="h-48 bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
                 <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -132,7 +132,7 @@
         <div class="mb-16">
           <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">¿Por qué elegir nuestras marcas?</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="text-center">
+            <div class="text-center transition-transform duration-300 transform hover:scale-105">
               <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -142,7 +142,7 @@
               <p class="text-gray-600 text-sm">Productos de las mejores marcas con garantía de calidad y durabilidad.</p>
             </div>
 
-            <div class="text-center">
+            <div class="text-center transition-transform duration-300 transform hover:scale-105">
               <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -152,7 +152,7 @@
               <p class="text-gray-600 text-sm">Entrega express en 24-48 horas para que no pares tu entrenamiento.</p>
             </div>
 
-            <div class="text-center">
+            <div class="text-center transition-transform duration-300 transform hover:scale-105">
               <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
@@ -162,7 +162,7 @@
               <p class="text-gray-600 text-sm">Precios competitivos y ofertas exclusivas para la comunidad EliteHub.</p>
             </div>
 
-            <div class="text-center">
+            <div class="text-center transition-transform duration-300 transform hover:scale-105">
               <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>

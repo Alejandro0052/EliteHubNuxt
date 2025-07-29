@@ -52,15 +52,15 @@ export default defineEventHandler(async (event) => {
 			}
 		}
 
-		const currentUser = await prisma.user.findUnique({
+		const currentUser = await prisma.usuario.findUnique({
 			where: { id: userId },
 		});
 
-		const updatedUser = await prisma.user.update({
+		const updatedUser = await prisma.usuario.update({
 			where: { id: userId },
 			data: {
-				firstName: nombre,
-				lastName: apellido,
+				nombre: nombre,
+				apellido: apellido,
 			},
 		});
 
