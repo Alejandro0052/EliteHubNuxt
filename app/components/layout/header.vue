@@ -30,14 +30,14 @@
 			<!-- Controles de autenticación -->
 			<div class="flex items-center">
 				<!-- Mostrar spinner mientras se inicializa -->
-				<div v-if="!authStore.isInitialized" class="px-4">
+				<div v-if="!isInitialized" class="px-4">
 					<div class="h-6 w-6 animate-spin rounded-full border-2 border-t-white"></div>
 				</div>
 
 				<!-- Contenido una vez inicializado -->
 				<template v-else>
 					<!-- Usuario autenticado -->
-					<div v-if="authStore.isAuthenticated" class="relative">
+					<div v-if="isAuthenticated" class="relative">
 						<UserDropdown>
 							<template #trigger>
 								<button
@@ -45,15 +45,15 @@
 									class="hover:bg-secondary flex items-center gap-2 rounded-full px-4 py-2 text-white transition duration-300">
 									<!-- imagen de perfil -->
 									<img
-										v-if="authStore.user?.avatar"
-										:src="authStore.user.avatar"
+										v-if="user?.avatar"
+										:src="user.avatar"
 										class="h-10 w-10 rounded-full" />
 									<div
 										v-else
 										class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white">
-										{{ authStore.initials }}
+										{{ initials }}
 									</div>
-									<span class="hidden md:inline">{{ authStore.fullName }}</span>
+									<span class="hidden md:inline">{{ fullName }}</span>
 									<Icon name="fa6-solid:angle-down" />
 								</button>
 							</template>
@@ -108,9 +108,11 @@
 </template>
 
 <script lang="ts" setup>
-	const authStore = useAuthStore();
-	const route = useRoute();
-	const isMobileMenuOpen = ref(false);
+import { storeToRefs } from 'pinia';
+const authStore = useAuthStore();
+const { user, fullName, initials, isAuthenticated, isInitialized } = storeToRefs(authStore);
+const route = useRoute();
+const isMobileMenuOpen = ref(false);
 
 	// Cerrar menú móvil al cambiar de ruta
 	watch(

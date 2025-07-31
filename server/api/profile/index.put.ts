@@ -52,22 +52,59 @@ export default defineEventHandler(async (event) => {
 			}
 		}
 
+		// Actualizar datos básicos del usuario
+		const updateData: Record<string, any> = {
+			nombre,
+			apellido,
+		};
+		if (avatar) {
+			updateData.avatar = "/" + avatar;
+		}
+
+		// Actualizar información adicional en el modelo Informacion
+		let updatedInfo = null;
 		const currentUser = await prisma.usuario.findUnique({
 			where: { id: userId },
+			include: { informacion: true },
 		});
+
+		if (currentUser?.informacionId && Object.keys(informacion).length > 0) {
+			// Corregir formato de fechaNacimiento si existe
+			if (informacion.fechaNacimiento) {
+				// Si viene en formato ISO, convertir a Date
+				const dateStr = informacion.fechaNacimiento;
+				// Si ya está en formato yyyy-MM-dd, lo dejamos igual
+				if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+					informacion.fechaNacimiento = new Date(dateStr);
+				} else {
+					// Si viene en formato ISO, extraer solo la fecha
+					const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
+					if (match) {
+						informacion.fechaNacimiento = new Date(match[1]);
+					} else {
+						informacion.fechaNacimiento = null;
+					}
+				}
+			}
+			updatedInfo = await prisma.informacion.update({
+				where: { id: currentUser.informacionId },
+				data: {
+					...informacion,
+				},
+			});
+		}
 
 		const updatedUser = await prisma.usuario.update({
 			where: { id: userId },
-			data: {
-				nombre: nombre,
-				apellido: apellido,
-			},
+			data: updateData,
+			include: { informacion: true },
 		});
 
 		return {
 			statusCode: 200,
 			message: "Perfil actualizado correctamente",
 			user: updatedUser,
+			informacion: updatedInfo,
 		};
 	} catch (error: any) {
 		console.error("Error al actualizar el perfil:", error);

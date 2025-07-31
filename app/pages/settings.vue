@@ -304,20 +304,23 @@
 				body: formData,
 			});
 
-			// Actualizar el store con los nuevos datos
-			if (response.user) {
-				authStore.user = {
-					...authStore.user,
-					...response.user,
-					informacion: {
-						...(authStore.user?.informacion || {}),
-						...(response.user.informacion || {}),
-					},
-				};
-
+			// Actualizar el store con los nuevos datos evitando asignación directa
+			if (response.user && authStore.user) {
+				// Actualiza propiedades básicas
+				authStore.user.nombre = response.user.nombre;
+				authStore.user.apellido = response.user.apellido;
+				if (response.user.avatar) {
+					authStore.user.avatar = response.user.avatar;
+				}
+				// Actualiza información adicional
+				if (response.user.informacion) {
+					Object.entries(response.user.informacion).forEach(([key, value]) => {
+						authStore.user.informacion[key] = value;
+					});
+				}
+				// Forzar recarga de datos para header y otros componentes
+				await authStore.checkAuth();
 				successMessage.value = "¡Perfil actualizado correctamente!";
-
-				// Ocultar el mensaje después de 5 segundos
 				setTimeout(() => {
 					successMessage.value = "";
 				}, 5000);
