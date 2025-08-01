@@ -44,10 +44,7 @@
 									type="button"
 									class="hover:bg-secondary flex items-center gap-2 rounded-full px-4 py-2 text-white transition duration-300">
 									<!-- imagen de perfil -->
-									<img
-										v-if="user?.avatar"
-										:src="user.avatar"
-										class="h-10 w-10 rounded-full" />
+									<img v-if="user?.avatar" :src="user.avatar" class="h-10 w-10 rounded-full" />
 									<div
 										v-else
 										class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white">
@@ -108,11 +105,11 @@
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
-const authStore = useAuthStore();
-const { user, fullName, initials, isAuthenticated, isInitialized } = storeToRefs(authStore);
-const route = useRoute();
-const isMobileMenuOpen = ref(false);
+	import { storeToRefs } from "pinia";
+	const authStore = useAuthStore();
+	const { user, fullName, initials, isAuthenticated, isInitialized } = storeToRefs(authStore);
+	const route = useRoute();
+	const isMobileMenuOpen = ref(false);
 
 	// Cerrar menú móvil al cambiar de ruta
 	watch(
