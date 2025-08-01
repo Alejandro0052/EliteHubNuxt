@@ -17,22 +17,22 @@ export default NuxtAuthHandler({
 			async authorize(credentials: any) {
 				if (!credentials.email || !credentials.password) return null;
 
-				const usuario = await prisma.usuario.findUnique({
-					where: { correo: credentials.email },
-				});
+				const usuario = await prisma.user.findUnique({
+				where: { email: credentials.email },
+			});
 
 				if (!usuario || !(await compare(credentials.password, usuario.password))) {
-					return null;
-				}
+				return null;
+			}
 
-				return {
-					id: usuario.id.toString(),
-					email: usuario.correo,
-					name: usuario.nombre,
-					firstName: usuario.nombre,
-					lastName: usuario.apellido,
-					isAdmin: usuario.isAdmin,
-				};
+			return {
+				id: usuario.id.toString(),
+				email: usuario.email,
+				name: usuario.firstName,
+				firstName: usuario.firstName,
+				lastName: usuario.lastName,
+				isAdmin: usuario.isAdmin,
+			};
 			},
 		}),
 	],
@@ -40,18 +40,18 @@ export default NuxtAuthHandler({
 		async jwt({ token, user }) {
 			if (user) {
 				token.id = user.id;
-				token.firstName = user.nombre;
-				token.lastName = user.apellido;
-				token.isAdmin = user.isAdmin;
+				token.firstName = (user as any).firstName;
+				token.lastName = (user as any).lastName;
+				token.isAdmin = (user as any).isAdmin;
 			}
 			return token;
 		},
 		async session({ session, token }) {
 			if (token && session.user) {
-				session.user.id = token.id as string;
-				session.user.firstName = token.firstName as string;
-				session.user.lastName = token.lastName as string;
-				session.user.isAdmin = token.isAdmin as boolean;
+				(session.user as any).id = token.id as string;
+				(session.user as any).firstName = token.firstName as string;
+				(session.user as any).lastName = token.lastName as string;
+				(session.user as any).isAdmin = token.isAdmin as boolean;
 			}
 			return session;
 		},

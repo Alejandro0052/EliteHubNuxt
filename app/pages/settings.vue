@@ -10,20 +10,20 @@
 
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
-							<label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+							<label for="firstName" class="block text-sm font-medium text-gray-700">Nombre</label>
 							<input
-								id="nombre"
-								v-model="form.nombre"
+								id="firstName"
+								v-model="form.firstName"
 								type="text"
 								required
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
 						</div>
 
 						<div>
-							<label for="apellido" class="block text-sm font-medium text-gray-700">Apellido</label>
+							<label for="lastName" class="block text-sm font-medium text-gray-700">Apellido</label>
 							<input
-								id="apellido"
-								v-model="form.apellido"
+								id="lastName"
+								v-model="form.lastName"
 								type="text"
 								required
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
@@ -68,41 +68,41 @@
 
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
-							<label for="profesion" class="block text-sm font-medium text-gray-700"
+							<label for="profession" class="block text-sm font-medium text-gray-700"
 								>Profesión</label
 							>
 							<input
-								id="profesion"
-								v-model="form.informacion.profesion"
+								id="profession"
+								v-model="form.information.profession"
 								type="text"
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
 						</div>
 
 						<div>
-							<label for="especialidad" class="block text-sm font-medium text-gray-700"
+							<label for="specialty" class="block text-sm font-medium text-gray-700"
 								>Especialidad</label
 							>
 							<input
-								id="especialidad"
-								v-model="form.informacion.especialidad"
+								id="specialty"
+								v-model="form.information.specialty"
 								type="text"
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
 						</div>
 
 						<div>
-							<label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
+							<label for="phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
 							<input
-								id="telefono"
-								v-model="form.informacion.telefono"
+								id="phone"
+								v-model="form.information.phone"
 								type="tel"
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
 						</div>
 
 						<div>
-							<label for="genero" class="block text-sm font-medium text-gray-700">Género</label>
+							<label for="gender" class="block text-sm font-medium text-gray-700">Género</label>
 							<select
-								id="genero"
-								v-model="form.informacion.genero"
+								id="gender"
+								v-model="form.information.gender"
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
 								<option value="">Selecciona una opción</option>
 								<option value="masculino">Masculino</option>
@@ -113,24 +113,24 @@
 						</div>
 
 						<div>
-							<label for="fechaNacimiento" class="block text-sm font-medium text-gray-700"
+							<label for="birthDate" class="block text-sm font-medium text-gray-700"
 								>Fecha de Nacimiento</label
 							>
 							<input
-								id="fechaNacimiento"
-								v-model="form.informacion.fechaNacimiento"
+								id="birthDate"
+								v-model="form.information.birthDate"
 								type="date"
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
 						</div>
 					</div>
 
 					<div class="mt-4">
-						<label for="experiencia" class="block text-sm font-medium text-gray-700"
+						<label for="experience" class="block text-sm font-medium text-gray-700"
 							>Experiencia</label
 						>
 						<textarea
-							id="experiencia"
-							v-model="form.informacion.experiencia"
+							id="experience"
+							v-model="form.information.experience"
 							rows="4"
 							class="mt-1 block min-h-[100px] w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none"
 							placeholder="Cuéntanos sobre tu experiencia..."></textarea>
@@ -167,9 +167,6 @@
 </template>
 
 <script lang="ts" setup>
-	// Importar el tipo de información de usuario del store de autenticación
-	import type { UserInformacion } from "~/stores/auth";
-
 	const authStore = useAuthStore();
 	const isLoading = ref(false);
 	const successMessage = ref("");
@@ -177,28 +174,20 @@
 	const avatarPreview = ref<string | null>(null);
 	const avatarError = ref<string | null>(null);
 
-	interface ProfileForm {
-		nombre: string;
-		apellido: string;
-		avatar: string;
-		avatarFile: File | null;
-		informacion: UserInformacion;
-	}
-
 	// Inicializar el formulario con valores por defecto
-	const form = ref<ProfileForm>({
-		nombre: "",
-		apellido: "",
+	const form = ref<any>({
+		firstName: "",
+		lastName: "",
 		avatar: "",
 		avatarFile: null,
-		informacion: {
-			profesion: null,
-			especialidad: null,
-			telefono: null,
-			genero: null,
-			fechaNacimiento: null,
-			experiencia: null,
-		} as UserInformacion,
+		information: {
+			profession: null,
+			specialty: null,
+			phone: null,
+			gender: null,
+			birthDate: null,
+			experience: null,
+		},
 	});
 
 	const handleAvatarUpload = (event: Event) => {
@@ -216,6 +205,7 @@
 				avatarError.value = "La imagen no debe superar los 2MB.";
 				return;
 			}
+			form.value.avatarFile = file;
 			avatarFile.value = file;
 			avatarPreview.value = URL.createObjectURL(file);
 		}
@@ -241,19 +231,17 @@
 			}
 
 			form.value = {
-				nombre: user.nombre || "",
-				apellido: user.apellido || "",
-				avatar: window.location.origin + user.avatar || "",
+				firstName: user.firstName || "",
+				lastName: user.lastName || "",
+				avatar: user.avatar || "",
 				avatarFile: null,
-				informacion: {
-					profesion: user.informacion?.profesion || null,
-					especialidad: user.informacion?.especialidad || null,
-					telefono: user.informacion?.telefono || null,
-					genero: user.informacion?.genero || null,
-					fechaNacimiento: user.informacion?.fechaNacimiento
-						? new Date(user.informacion.fechaNacimiento).toISOString().split("T")[0]
-						: null,
-					experiencia: user.informacion?.experiencia || null,
+				information: {
+					profession: user.information?.profession || null,
+					specialty: user.information?.specialty || null,
+					phone: user.information?.phone || null,
+					gender: user.information?.gender || null,
+					birthDate: user.information?.birthDate,
+					experience: user.information?.experience || null,
 				},
 			};
 
@@ -268,9 +256,6 @@
 	// Cargar los datos del usuario al montar el componente
 	onMounted(() => {
 		loadUserData();
-		if (form.value.avatar) {
-			avatarPreview.value = form.value.avatar;
-		}
 	});
 
 	// Función para actualizar el perfil
@@ -280,17 +265,17 @@
 			successMessage.value = "";
 
 			const formData = new FormData();
-			formData.append("nombre", form.value.nombre);
-			formData.append("apellido", form.value.apellido);
+			formData.append("firstName", form.value.firstName);
+			formData.append("lastName", form.value.lastName);
 
-			form.value.informacion.fechaNacimiento = form.value.informacion.fechaNacimiento
-				? new Date(form.value.informacion.fechaNacimiento).toISOString()
+			form.value.information.birthDate = form.value.information.birthDate
+				? new Date(form.value.information.birthDate).toISOString()
 				: null;
 
-			// Agrega campos anidados como informacion
-			Object.entries(form.value.informacion).forEach(([key, value]) => {
+			// Agrega campos anidados como information
+			Object.entries(form.value.information).forEach(([key, value]) => {
 				if (value !== null) {
-					formData.append(`informacion.${key}`, value as string);
+					formData.append(`information.${key}`, value as string);
 				}
 			});
 
@@ -304,22 +289,26 @@
 				body: formData,
 			});
 
-			// Actualizar el store con los nuevos datos evitando asignación directa
-			if (response.user && authStore.user) {
-				// Actualiza propiedades básicas
-				authStore.user.nombre = response.user.nombre;
-				authStore.user.apellido = response.user.apellido;
+			// Actualizar el store con los nuevos datos
+			if (response.user) {
+				// Actualizar el usuario en el store
+				authStore.updateUser({
+					firstName: response.user.firstName,
+					lastName: response.user.lastName,
+					avatar: response.user.avatar,
+					information: response.user.information,
+				});
+
+				// Actualizar el formulario con los nuevos datos
+				form.value.avatar = response.user.avatar || "";
 				if (response.user.avatar) {
-					authStore.user.avatar = response.user.avatar;
+					avatarPreview.value = response.user.avatar;
 				}
-				// Actualiza información adicional
-				if (response.user.informacion) {
-					Object.entries(response.user.informacion).forEach(([key, value]) => {
-						authStore.user.informacion[key] = value;
-					});
-				}
-				// Forzar recarga de datos para header y otros componentes
-				await authStore.checkAuth();
+
+				// Limpiar el archivo temporal
+				form.value.avatarFile = null;
+				avatarFile.value = null;
+
 				successMessage.value = "¡Perfil actualizado correctamente!";
 				setTimeout(() => {
 					successMessage.value = "";
@@ -335,27 +324,43 @@
 	// Función para reiniciar el formulario a los valores actuales del usuario
 	const resetForm = () => {
 		if (authStore.user) {
-			form.value.nombre = authStore.user.nombre || "";
-			form.value.apellido = authStore.user.apellido || "";
+			form.value.firstName = authStore.user.firstName || "";
+			form.value.lastName = authStore.user.lastName || "";
 			form.value.avatar = authStore.user.avatar || "";
+			form.value.avatarFile = null;
+			avatarFile.value = null;
 
-			if (authStore.user.informacion) {
-				form.value.informacion = {
-					...form.value.informacion,
-					...authStore.user.informacion,
+			// Restaurar preview del avatar
+			if (authStore.user.avatar) {
+				avatarPreview.value = authStore.user.avatar;
+			} else {
+				avatarPreview.value = null;
+			}
+
+			if (authStore.user.information) {
+				form.value.information = {
+					profession: authStore.user.information.profession || null,
+					specialty: authStore.user.information.specialty || null,
+					phone: authStore.user.information.phone || null,
+					gender: authStore.user.information.gender || null,
+					birthDate: authStore.user.information.birthDate
+						? new Date(authStore.user.information.birthDate).toISOString().split("T")[0]
+						: null,
+					experience: authStore.user.information.experience || null,
 				};
 			} else {
-				form.value.informacion = {
-					profesion: null,
-					especialidad: null,
-					telefono: null,
-					genero: null,
-					fechaNacimiento: null,
-					experiencia: null,
+				form.value.information = {
+					profession: null,
+					specialty: null,
+					phone: null,
+					gender: null,
+					birthDate: null,
+					experience: null,
 				};
 			}
 		}
 		successMessage.value = "";
+		avatarError.value = null;
 	};
 </script>
 

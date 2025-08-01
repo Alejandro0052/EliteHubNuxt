@@ -1,78 +1,78 @@
 import prisma from "../server/utils/prisma";
 
 async function main() {
-	const paisColombia = await prisma.pais.upsert({
-		where: { pais: "Colombia" },
+	const paisColombia = await prisma.country.upsert({
+		where: { name: "Colombia" },
 		update: {},
 		create: {
-			pais: "Colombia",
-			ciudades: {
+			name: "Colombia",
+			cities: {
 				create: [
 					{
-						ciudad: "Bogotá",
-						barrios: {
+						name: "Bogotá",
+						neighborhoods: {
 							create: [
-								{ barrio: "Chapinero" },
-								{ barrio: "Usaquén" },
-								{ barrio: "Teusaquillo" },
-								{ barrio: "Suba" },
-								{ barrio: "La Candelaria" },
-								{ barrio: "Barrios Unidos" },
-								{ barrio: "Fontibón" },
-								{ barrio: "Kennedy" },
-								{ barrio: "Engativá" },
-								{ barrio: "Santa Fe" },
-								{ barrio: "Ciudad Bolívar" },
-								{ barrio: "San Cristóbal" },
-								{ barrio: "Tunjuelito" },
-								{ barrio: "Usme" },
-								{ barrio: "Bosa" },
-								{ barrio: "Rafael Uribe Uribe" },
-								{ barrio: "Los Mártires" },
-								{ barrio: "Antonio Nariño" },
-								{ barrio: "Puente Aranda" },
+								{ name: "Chapinero" },
+								{ name: "Usaquén" },
+								{ name: "Teusaquillo" },
+								{ name: "Suba" },
+								{ name: "La Candelaria" },
+								{ name: "Barrios Unidos" },
+								{ name: "Fontibón" },
+								{ name: "Kennedy" },
+								{ name: "Engativá" },
+								{ name: "Santa Fe" },
+								{ name: "Ciudad Bolívar" },
+								{ name: "San Cristóbal" },
+								{ name: "Tunjuelito" },
+								{ name: "Usme" },
+								{ name: "Bosa" },
+								{ name: "Rafael Uribe Uribe" },
+								{ name: "Los Mártires" },
+								{ name: "Antonio Nariño" },
+								{ name: "Puente Aranda" },
 							],
 						},
 					},
 					{
-						ciudad: "Medellín",
-						barrios: {
+						name: "Medellín",
+						neighborhoods: {
 							create: [
-								{ barrio: "El Poblado" },
-								{ barrio: "Laureles" },
-								{ barrio: "Belén" },
-								{ barrio: "Castilla" },
-								{ barrio: "Robledo" },
-								{ barrio: "Envigado" },
-								{ barrio: "Sabaneta" },
-								{ barrio: "La América" },
-								{ barrio: "Aranjuez" },
-								{ barrio: "Guayabal" },
-								{ barrio: "Santa Cruz" },
-								{ barrio: "Manrique" },
-								{ barrio: "Doce de Octubre" },
+								{ name: "El Poblado" },
+								{ name: "Laureles" },
+								{ name: "Belén" },
+								{ name: "Castilla" },
+								{ name: "Robledo" },
+								{ name: "Envigado" },
+								{ name: "Sabaneta" },
+								{ name: "La América" },
+								{ name: "Aranjuez" },
+								{ name: "Guayabal" },
+								{ name: "Santa Cruz" },
+								{ name: "Manrique" },
+								{ name: "Doce de Octubre" },
 							],
 						},
 					},
 					{
-						ciudad: "Cali",
-						barrios: {
+						name: "Cali",
+						neighborhoods: {
 							create: [
-								{ barrio: "San Antonio" },
-								{ barrio: "Granada" },
-								{ barrio: "El Peñón" },
-								{ barrio: "Ciudad Jardín" },
-								{ barrio: "Calima" },
-								{ barrio: "Vipasa" },
-								{ barrio: "Menga" },
-								{ barrio: "Unidad Deportiva" },
-								{ barrio: "Calipso" },
-								{ barrio: "Cañaveralejo" },
-								{ barrio: "Pance" },
-								{ barrio: "Siloé" },
-								{ barrio: "Brisas de Mayo" },
-								{ barrio: "Jorge Isaacs" },
-								{ barrio: "El Vallado" },
+								{ name: "San Antonio" },
+								{ name: "Granada" },
+								{ name: "El Peñón" },
+								{ name: "Ciudad Jardín" },
+								{ name: "Calima" },
+								{ name: "Vipasa" },
+								{ name: "Menga" },
+								{ name: "Unidad Deportiva" },
+								{ name: "Calipso" },
+								{ name: "Cañaveralejo" },
+								{ name: "Pance" },
+								{ name: "Siloé" },
+								{ name: "Brisas de Mayo" },
+								{ name: "Jorge Isaacs" },
+								{ name: "El Vallado" },
 							],
 						},
 					},
@@ -80,28 +80,28 @@ async function main() {
 			},
 		},
 		include: {
-			ciudades: {
+			cities: {
 				include: {
-					barrios: true,
+					neighborhoods: true,
 				},
 			},
 		},
 	});
 
-	await prisma.tipoUsuario.upsert({
-		where: { tipo: "Patrocinador" },
+	await prisma.userType.upsert({
+		where: { type: "Patrocinador" },
 		update: {},
-		create: { tipo: "Patrocinador" },
+		create: { type: "Patrocinador" },
 	});
-	await prisma.tipoUsuario.upsert({
-		where: { tipo: "Marca" },
+	await prisma.userType.upsert({
+		where: { type: "Marca" },
 		update: {},
-		create: { tipo: "Marca" },
+		create: { type: "Marca" },
 	});
-	await prisma.tipoUsuario.upsert({
-		where: { tipo: "Nutricionista" },
+	await prisma.userType.upsert({
+		where: { type: "Nutricionista" },
 		update: {},
-		create: { tipo: "Nutricionista" },
+		create: { type: "Nutricionista" },
 	});
 
 	console.log("✅ Seed completado");

@@ -3,18 +3,15 @@ import { getServerSession } from "#auth";
 export default defineEventHandler(async (event) => {
 	const session = await getServerSession(event);
 
-	if (!session?.user?.id) {
+	if (!(session as any)?.user?.id) {
 		throw createError({ statusCode: 401, message: "No autenticado" });
 	}
 
 	try {
 		const user = await prisma.user.findUnique({
-			where: { id: parseInt(session.user.id) },
-			select: {
-				firstName: true,
-				lastName: true,
-				email: true,
-				id: true,
+			where: { id: (session as any).user.id },
+			include: {
+				information: true,
 			},
 		});
 
@@ -24,10 +21,12 @@ export default defineEventHandler(async (event) => {
 
 		return {
 			id: user.id,
-			nombre: user.firstName,
-			apellido: user.lastName,
+			firstName: user.firstName,
+			lastName: user.lastName,
 			email: user.email,
-			avatar: null,
+			avatar: user.avatar,
+			isAdmin: user.isAdmin,
+			information: user.information,
 		};
 	} catch (error: any) {
 		if (error.statusCode) {

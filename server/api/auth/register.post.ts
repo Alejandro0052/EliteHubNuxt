@@ -13,8 +13,8 @@ export default defineEventHandler(async (event) => {
 
 	try {
 		// Verificar si el usuario ya existe
-		const existingUser = await prisma.usuario.findUnique({
-			where: { correo: correo },
+		const existingUser = await prisma.user.findUnique({
+			where: { email: correo },
 		});
 
 		if (existingUser) {
@@ -28,11 +28,11 @@ export default defineEventHandler(async (event) => {
 		const hashedPassword = await hash(password, 12);
 
 		// Crear el usuario
-		const user = await prisma.usuario.create({
+		const user = await prisma.user.create({
 			data: {
-				nombre: nombre,
-				apellido: apellido,
-				correo: correo,
+				firstName: nombre,
+				lastName: apellido,
+				email: correo,
 				password: hashedPassword,
 			},
 		});
@@ -41,9 +41,9 @@ export default defineEventHandler(async (event) => {
 			message: "Usuario registrado exitosamente",
 			user: {
 				id: user.id,
-				firstName: user.nombre,
-				lastName: user.apellido,
-				email: user.correo,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
 			},
 		};
 	} catch (error: any) {

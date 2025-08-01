@@ -1,27 +1,10 @@
 import { defineStore } from "pinia";
 
-export interface UserInformacion {
-	profesion?: string | null;
-	especialidad?: string | null;
-	telefono?: string | null;
-	genero?: string | null;
-	fechaNacimiento?: string | null;
-	experiencia?: string | null;
-}
-
-interface User {
-	id: number;
-	nombre: string;
-	apellido: string;
-	avatar: string | null;
-	informacion?: UserInformacion;
-}
-
 export const useAuthStore = defineStore("auth", () => {
 	const { signIn, signOut, getSession } = useAuth();
 	const isInitialized = ref(false);
 	const isAuthenticated = ref(false);
-	const user = ref<User | null>(null);
+	const user = ref<any | null>(null);
 	const isLoading = ref(false);
 	const error = ref<string | null>(null);
 
@@ -35,12 +18,30 @@ export const useAuthStore = defineStore("auth", () => {
 			const session = await getSession();
 
 			if (session?.user) {
-				user.value = {
-					id: parseInt(session.user.id || "0"),
-					nombre: session.user.firstName || session.user.name || "",
-					apellido: session.user.lastName || "",
-					avatar: null,
-				};
+				// Obtener datos completos del usuario desde la API
+				try {
+					const userData = await $fetch("/api/profile", {
+						headers: useRequestHeaders(["cookie"]),
+					});
+
+					user.value = {
+						id: userData.id,
+						firstName: userData.firstName,
+						lastName: userData.lastName,
+						avatar: userData.avatar,
+						isAdmin: userData.isAdmin || false,
+						information: userData.information || undefined,
+					};
+				} catch (apiError) {
+					// Fallback a datos de sesión si falla la API
+					user.value = {
+						id: parseInt((session as any).user.id || "0"),
+						firstName: (session as any).user.firstName || session.user.name || "",
+						lastName: (session as any).user.lastName || "",
+						avatar: null,
+						isAdmin: (session as any).user.isAdmin || false,
+					};
+				}
 				isAuthenticated.value = true;
 				return true;
 			}
@@ -149,18 +150,25 @@ export const useAuthStore = defineStore("auth", () => {
 	// Computed para el nombre completo
 	const fullName = computed(() => {
 		if (!user.value) return "";
-		return `${user.value.nombre} ${user.value.apellido}`.trim();
+		return `${user.value.firstName} ${user.value.lastName}`.trim();
 	});
 
 	const initials = computed(() => {
 		if (!user.value) return "";
-		return `${user.value.nombre.charAt(0)}${user.value.apellido.charAt(0)}`;
+		return `${user.value.firstName.charAt(0)}${user.value.lastName.charAt(0)}`;
 	});
+
+	// Función para actualizar el usuario (útil para actualizaciones de perfil)
+	function updateUser(userData: Partial<any>) {
+		if (user.value) {
+			user.value = { ...user.value, ...userData };
+		}
+	}
 
 	return {
 		// State
 		isAuthenticated: readonly(isAuthenticated),
-		user: readonly(user),
+		user,
 		isLoading: readonly(isLoading),
 		error: readonly(error),
 		isInitialized: readonly(isInitialized),
@@ -172,5 +180,6 @@ export const useAuthStore = defineStore("auth", () => {
 		login,
 		register,
 		logout,
+		updateUser,
 	};
 });

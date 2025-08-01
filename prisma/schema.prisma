@@ -15,197 +15,197 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id             Int              @id @default(autoincrement())
-  correo         String           @unique
-  nombre         String
-  apellido       String
-  avatar         String?
-  password       String
-  isAdmin        Boolean          @default(false)
-  rolId          Int?
-  rol            Rol?             @relation(fields: [rolId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  informacionId  Int?
-  informacion    Informacion?     @relation(fields: [informacionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  pqrs           PQRS[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  UsuarioDeporte UsuarioDeporte[]
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  firstName     String
+  lastName      String
+  avatar        String?
+  password      String
+  isAdmin       Boolean      @default(false)
+  roleId        String?
+  role          Role?        @relation(fields: [roleId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  informationId String?
+  information   Information? @relation(fields: [informationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  pqrs          PQRS[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  UserSport     UserSport[]
 }
 
-model Rol {
-  id        Int          @id @default(autoincrement())
-  nombre    String
-  usuarios  Usuario[]
-  permisos  PermisoRol[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+model Role {
+  id          String           @id @default(cuid())
+  name        String
+  users       User[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
-model Permiso {
-  id        Int          @id @default(autoincrement())
-  nombre    String
-  roles     PermisoRol[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+model Permission {
+  id        String           @id @default(cuid())
+  name      String
+  roles     RolePermission[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
-model PermisoRol {
-  id        Int      @id @default(autoincrement())
-  rolId     Int
-  permisoId Int
-  rol       Rol      @relation(fields: [rolId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  permiso   Permiso  @relation(fields: [permisoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
-  @@unique([rolId, permisoId])
+  @@unique([roleId, permissionId])
 }
 
-model Informacion {
-  id                 Int          @id @default(autoincrement())
-  bio                String?
-  telefono           String?
-  genero             String?
-  fechaNacimiento    DateTime?
-  profesion          String?
-  especialidad       String?
-  experiencia        String?
-  nombreComercial    String?
-  razonSocial        String?
-  nit                String?
-  sitioWeb           String?
-  presupuestoMaximo  Int?
-  anosFuncionamiento Int?
-  consultorios       String[]
-  tipoUsuarioId      Int?
-  tipoUsuario        TipoUsuario? @relation(fields: [tipoUsuarioId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  direcciones        Direccion[]
-  redesSociales      RedSocial[]
-  usuarios           Usuario[]
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+model Information {
+  id               String          @id @default(cuid())
+  bio              String?
+  phone            String?
+  gender           String?
+  birthDate        DateTime?
+  profession       String?
+  specialty        String?
+  experience       String?
+  commercialName   String?
+  businessName     String?
+  nit              String?
+  website          String?
+  maxBudget        Int?
+  yearsInOperation Int?
+  offices          String[]
+  userTypeId       String?
+  userType         UserType?       @relation(fields: [userTypeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  addresses        Address[]
+  socialNetworks   SocialNetwork[]
+  users            User[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
 }
 
-model TipoUsuario {
-  id          Int           @id @default(autoincrement())
-  tipo        String        @unique
-  descripcion String?
-  informacion Informacion[]
+model UserType {
+  id          String        @id @default(cuid())
+  type        String        @unique
+  description String?
+  information Information[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
 
-model Direccion {
-  id            Int          @id @default(autoincrement())
-  direccion     String
-  ciudadId      Int
-  paisId        Int
-  barrioId      Int
-  referencia    String?
-  informacionId Int?
-  ciudad        Ciudad       @relation(fields: [ciudadId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  pais          Pais         @relation(fields: [paisId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  barrio        Barrio       @relation(fields: [barrioId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  informacion   Informacion? @relation(fields: [informacionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+model Address {
+  id             String       @id @default(cuid())
+  address        String
+  cityId         String
+  countryId      String
+  neighborhoodId String
+  reference      String?
+  informationId  String?
+  city           City         @relation(fields: [cityId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  country        Country      @relation(fields: [countryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  neighborhood   Neighborhood @relation(fields: [neighborhoodId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  information    Information? @relation(fields: [informationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
-model Pais {
-  id          Int         @id @default(autoincrement())
-  pais        String      @unique
-  ciudades    Ciudad[]
-  direcciones Direccion[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+model Country {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  cities    City[]
+  addresses Address[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
-model Ciudad {
-  id          Int         @id @default(autoincrement())
-  ciudad      String
-  paisId      Int
-  pais        Pais        @relation(fields: [paisId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  barrios     Barrio[]
-  direcciones Direccion[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+model City {
+  id            String         @id @default(cuid())
+  name          String
+  countryId     String
+  country       Country        @relation(fields: [countryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  neighborhoods Neighborhood[]
+  addresses     Address[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
-model Barrio {
-  id          Int         @id @default(autoincrement())
-  barrio      String
-  ciudadId    Int
-  ciudad      Ciudad      @relation(fields: [ciudadId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  direcciones Direccion[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+model Neighborhood {
+  id        String    @id @default(cuid())
+  name      String
+  cityId    String
+  city      City      @relation(fields: [cityId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  addresses Address[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  @@unique([barrio, ciudadId])
+  @@unique([name, cityId])
 }
 
-model RedSocial {
-  id            Int         @id @default(autoincrement())
-  nombre        String
+model SocialNetwork {
+  id            String      @id @default(cuid())
+  name          String
   url           String
-  informacionId Int
-  informacion   Informacion @relation(fields: [informacionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  informationId String
+  information   Information @relation(fields: [informationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model PQRS {
-  id              Int      @id @default(autoincrement())
-  asunto          String
-  mensaje         String
-  imagenEvidencia String[]
-  usuarioId       Int
-  tipoId          Int
-  usuario         Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  tipo            TipoPQRS @relation(fields: [tipoId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id            String   @id @default(cuid())
+  subject       String
+  message       String
+  evidenceImage String[]
+  userId        String
+  typeId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type          PQRSType @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
-model TipoPQRS {
-  id        Int      @id @default(autoincrement())
-  tipo      String
+model PQRSType {
+  id        String   @id @default(cuid())
+  type      String   @unique
   pqrs      PQRS[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Deporte {
-  id          Int              @id @default(autoincrement())
-  nombre      String           @unique
-  descripcion String?
-  usuarios    UsuarioDeporte[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-}
-
-model UsuarioDeporte {
-  id                Int      @id @default(autoincrement())
-  usuarioId         Int
-  deporteId         Int
-  experiencia       Int
-  nivel             Nivel    @default(PRINCIPIANTE)
-  frecuenciaSemanal Int
-  usuario           Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  deporte           Deporte  @relation(fields: [deporteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  @@unique([usuarioId, deporteId])
-}
-
-enum Nivel {
+enum Level {
   PRINCIPIANTE
   INTERMEDIO
   AVANZADO
-  PROFESIONAL
+  EXPERTO
+}
+
+model Sport {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String?
+  userSports  UserSport[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model UserSport {
+  id              String   @id @default(cuid())
+  userId          String
+  sportId         String
+  experience      Int
+  level           Level    @default(PRINCIPIANTE)
+  weeklyFrequency Int
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sport           Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, sportId])
 }
 
 model Content {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   page      String   @unique
   title     String?
   subtitle  String?
