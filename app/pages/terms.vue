@@ -75,7 +75,7 @@
 
 					<h2>6. Privacidad y Protección de Datos</h2>
 					<p>
-						Su privacidad es importante para nosotros. El uso de sus datos personales se rige por
+					 	Su privacidad es importante para nosotros. El uso de sus datos personales se rige por
 						nuestra Política de Privacidad, que forma parte integral de estos términos.
 					</p>
 					<br />

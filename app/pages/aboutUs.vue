@@ -2,7 +2,7 @@
 	<div class="mx-auto w-full max-w-[120rem] space-y-6 py-10 text-black">
 		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
 			<h1 class="text-3xl font-semibold">¿Quienes Somos?</h1>
-			<p class="text-pretty">
+			<p class="text-pretty"> 
 				EliteHub es mucho más que una plataforma digital. Somos un ecosistema de conexión,
 				crecimiento y apoyo mutuo entre deportistas, profesionales de la salud, marcas y
 				patrocinadores. Nacemos con la convicción de que el rendimiento deportivo y el bienestar

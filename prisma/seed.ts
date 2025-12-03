@@ -103,6 +103,11 @@ async function main() {
 		update: {},
 		create: { tipo: "Nutricionista" },
 	});
+	await prisma.tipoUsuario.upsert({
+		where: { tipo: "Deportista" },
+		update: {},
+		create: { tipo: "Deportista" },
+	});
 
 	console.log("✅ Seed completado");
 }

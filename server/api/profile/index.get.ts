@@ -8,13 +8,12 @@ export default defineEventHandler(async (event) => {
 	}
 
 	try {
-		const user = await prisma.user.findUnique({
+		const user = await prisma.usuario.findUnique({
 			where: { id: parseInt(session.user.id) },
-			select: {
-				firstName: true,
-				lastName: true,
-				email: true,
-				id: true,
+			include: {
+				informacion: {
+					include: { tipoUsuario: true },
+				},
 			},
 		});
 
@@ -24,10 +23,11 @@ export default defineEventHandler(async (event) => {
 
 		return {
 			id: user.id,
-			nombre: user.firstName,
-			apellido: user.lastName,
-			email: user.email,
-			avatar: null,
+			nombre: user.nombre,
+			apellido: user.apellido,
+			correo: user.correo,
+			avatar: user.avatar || null,
+			informacion: user.informacion || null,
 		};
 	} catch (error: any) {
 		if (error.statusCode) {

@@ -9,6 +9,7 @@
 					<h2 class="mb-4 text-lg font-semibold text-gray-700">Información Básica</h2>
 
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
 						<div>
 							<label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
 							<input
@@ -27,6 +28,27 @@
 								type="text"
 								required
 								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
+						</div>
+
+						<div>
+							<label for="correo" class="block text-sm font-medium text-gray-700">Correo</label>
+							<input
+								id="correo"
+								v-model="form.correo"
+								type="email"
+								required
+								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
+						</div>
+
+						<div>
+							<label for="tipoUsuario" class="block text-sm font-medium text-gray-700">Tipo de usuario</label>
+							<select
+								id="tipoUsuario"
+								v-model.number="form.informacion.tipoUsuarioId"
+								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
+								<option value="">Selecciona un tipo</option>
+								<option v-for="t in tiposUsuario" :key="t.id" :value="t.id">{{ t.tipo }}</option>
+							</select>
 						</div>
 
 						<div class="flex flex-col items-start gap-2 md:col-span-2">
@@ -171,6 +193,7 @@
 	import type { UserInformacion } from "~/stores/auth";
 
 	const authStore = useAuthStore();
+	const tiposUsuario = ref<Array<{ id: number; tipo: string }>>([]);
 	const isLoading = ref(false);
 	const successMessage = ref("");
 	const avatarFile = ref<File | null>(null);
@@ -180,6 +203,7 @@
 	interface ProfileForm {
 		nombre: string;
 		apellido: string;
+		correo: string;
 		avatar: string;
 		avatarFile: File | null;
 		informacion: UserInformacion;
@@ -189,6 +213,7 @@
 	const form = ref<ProfileForm>({
 		nombre: "",
 		apellido: "",
+		correo: "",
 		avatar: "",
 		avatarFile: null,
 		informacion: {
@@ -240,9 +265,17 @@
 				return;
 			}
 
+			// Cargar tipos de usuario para el selector
+			try {
+				tiposUsuario.value = await $fetch('/api/tipousuario');
+			} catch (e) {
+				console.error('No se pudieron cargar los tipos de usuario:', e);
+			}
+
 			form.value = {
 				nombre: user.nombre || "",
 				apellido: user.apellido || "",
+				correo: user.correo || user.email || "",
 				avatar: window.location.origin + user.avatar || "",
 				avatarFile: null,
 				informacion: {
@@ -254,6 +287,7 @@
 						? new Date(user.informacion.fechaNacimiento).toISOString().split("T")[0]
 						: null,
 					experiencia: user.informacion?.experiencia || null,
+					tipoUsuarioId: user.informacion?.tipoUsuario?.id || user.informacion?.tipoUsuarioId || null,
 				},
 			};
 
@@ -273,6 +307,16 @@
 		}
 	});
 
+	watch(
+		() => authStore.isAuthenticated,
+		async (val) => {
+			if (val) {
+				// Recargar tipos y datos si el usuario inicia sesión después
+				await loadUserData();
+			}
+		}
+	);
+
 	// Función para actualizar el perfil
 	const updateProfile = async () => {
 		try {
@@ -282,6 +326,7 @@
 			const formData = new FormData();
 			formData.append("nombre", form.value.nombre);
 			formData.append("apellido", form.value.apellido);
+			formData.append("correo", form.value.correo);
 
 			form.value.informacion.fechaNacimiento = form.value.informacion.fechaNacimiento
 				? new Date(form.value.informacion.fechaNacimiento).toISOString()
@@ -290,7 +335,8 @@
 			// Agrega campos anidados como informacion
 			Object.entries(form.value.informacion).forEach(([key, value]) => {
 				if (value !== null) {
-					formData.append(`informacion.${key}`, value as string);
+					// Si es un número (tipoUsuarioId), convertir a string antes de append
+					formData.append(`informacion.${key}`, (value as any).toString());
 				}
 			});
 
@@ -304,7 +350,15 @@
 				body: formData,
 			});
 
-			// Actualizar el store con los nuevos datos evitando asignación directa
+			// Mostrar mensaje de éxito si el servidor respondió correctamente
+			if (response && (response.statusCode === 200 || response.message)) {
+				successMessage.value = response.message || "¡Perfil actualizado correctamente!";
+				setTimeout(() => {
+					successMessage.value = "";
+				}, 5000);
+			}
+
+			// Intentar actualizar el store con los nuevos datos evitando asignación directa
 			if (response.user && authStore.user) {
 				// Actualiza propiedades básicas
 				authStore.user.nombre = response.user.nombre;
@@ -320,10 +374,6 @@
 				}
 				// Forzar recarga de datos para header y otros componentes
 				await authStore.checkAuth();
-				successMessage.value = "¡Perfil actualizado correctamente!";
-				setTimeout(() => {
-					successMessage.value = "";
-				}, 5000);
 			}
 		} catch (error) {
 			console.error("Error al actualizar el perfil:", error);
@@ -337,6 +387,7 @@
 		if (authStore.user) {
 			form.value.nombre = authStore.user.nombre || "";
 			form.value.apellido = authStore.user.apellido || "";
+			form.value.correo = (authStore.user as any).correo || (authStore.user as any).email || form.value.correo || "";
 			form.value.avatar = authStore.user.avatar || "";
 
 			if (authStore.user.informacion) {

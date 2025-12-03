@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
 
 		let nombre = "";
 		let apellido = "";
+		let correo = "";
 		let avatar = "";
 		const informacion: Record<string, any> = {};
 
@@ -44,6 +45,7 @@ export default defineEventHandler(async (event) => {
 
 				if (key === "nombre") nombre = value;
 				else if (key === "apellido") apellido = value;
+				else if (key === "correo" || key === "email") correo = value;
 				else if (key === "avatar") avatar = avatar || value;
 				else if (key?.startsWith("informacion.")) {
 					const infoKey = key.split(".")[1];
@@ -57,6 +59,9 @@ export default defineEventHandler(async (event) => {
 			nombre,
 			apellido,
 		};
+		if (correo) {
+			updateData.correo = correo;
+		}
 		if (avatar) {
 			updateData.avatar = "/" + avatar;
 		}
@@ -68,16 +73,22 @@ export default defineEventHandler(async (event) => {
 			include: { informacion: true },
 		});
 
-		if (currentUser?.informacionId && Object.keys(informacion).length > 0) {
-			// Corregir formato de fechaNacimiento si existe
+		if (Object.keys(informacion).length > 0) {
+		
+			if (informacion.tipoUsuarioId) {
+				const parsed = parseInt(informacion.tipoUsuarioId as string);
+				if (!Number.isNaN(parsed)) {
+					informacion.tipoUsuarioId = parsed;
+				} else {
+					delete informacion.tipoUsuarioId;
+				}
+			}
+
 			if (informacion.fechaNacimiento) {
-				// Si viene en formato ISO, convertir a Date
 				const dateStr = informacion.fechaNacimiento;
-				// Si ya está en formato yyyy-MM-dd, lo dejamos igual
 				if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
 					informacion.fechaNacimiento = new Date(dateStr);
 				} else {
-					// Si viene en formato ISO, extraer solo la fecha
 					const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
 					if (match) {
 						informacion.fechaNacimiento = new Date(match[1]);
@@ -86,12 +97,30 @@ export default defineEventHandler(async (event) => {
 					}
 				}
 			}
-			updatedInfo = await prisma.informacion.update({
-				where: { id: currentUser.informacionId },
-				data: {
-					...informacion,
-				},
-			});
+
+			if (currentUser?.informacionId) {
+				updatedInfo = await prisma.informacion.update({
+					where: { id: currentUser.informacionId },
+					data: {
+						...informacion,
+					},
+					});
+			} else {
+				// No existe Informacion para este usuario: crear y asociar
+				const createdInfo = await prisma.informacion.create({
+					data: {
+						...informacion,
+					},
+					});
+
+				// Asociar la nueva informacion al usuario
+				await prisma.usuario.update({
+					where: { id: userId },
+					data: { informacionId: createdInfo.id },
+				});
+
+				updatedInfo = createdInfo;
+			}
 		}
 
 		const updatedUser = await prisma.usuario.update({
