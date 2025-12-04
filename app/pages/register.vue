@@ -87,6 +87,9 @@
 		},
 	});
 
+import { ref, reactive } from 'vue'
+import { useAuthStore } from '~/stores/auth'
+
 	const isLoading = ref(false);
 	const form = reactive({
 		nombre: "",

@@ -9,6 +9,9 @@
 		<div
 			v-if="visible"
 			class="absolute right-0 z-50 mt-2 w-44 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white font-normal shadow-xl">
+			<div v-if="(authStore.user as any)?.isAdmin" class="px-3 py-2 border-b bg-gray-50 text-xs text-gray-600">
+				<strong class="text-sm text-gray-800">Administrador</strong>
+			</div>
 			<ul class="px-2 py-2 text-sm text-gray-700" aria-labelledby="dropdownLargeButton">
 				<li>
 					<NuxtLink
@@ -42,9 +45,12 @@
 </template>
 
 <script lang="ts" setup>
+	import { ref, onMounted, onBeforeUnmount } from 'vue'
+	import { useAuthStore } from '~/stores/auth'
+
 	const authStore = useAuthStore();
 
-	const visible = defineModel<boolean>("visible", { default: false });
+	const visible = ref(false)
 
 	const dropdownRef = ref<HTMLElement | null>(null);
 

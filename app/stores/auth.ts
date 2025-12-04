@@ -15,6 +15,9 @@ interface User {
   apellido: string;
   avatar: string | null;
   informacion?: UserInformacion;
+  correo?: string | null;
+  isAdmin?: boolean;
+  rol?: { id: number; nombre: string } | null;
 }
 
 export const useAuthStore = defineStore("auth", () => {
@@ -55,8 +58,10 @@ export const useAuthStore = defineStore("auth", () => {
             if (profile.informacion) {
               (user.value as any).informacion = profile.informacion;
             }
-            // agregar correo si viene
+            // agregar correo, isAdmin y rol si vienen
             (user.value as any).correo = profile.correo || (session.user.email as string | undefined) || null;
+            (user.value as any).isAdmin = profile.isAdmin || false;
+            (user.value as any).rol = profile.rol || null;
           }
         } catch (e) {
           // no bloquear el inicio de sesión si profile falla

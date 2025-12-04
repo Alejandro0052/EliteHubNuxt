@@ -109,6 +109,8 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
+import { ref, watch } from 'vue'
+import { useAuthStore } from '~/stores/auth'
 const authStore = useAuthStore();
 const { user, fullName, initials, isAuthenticated, isInitialized } = storeToRefs(authStore);
 const route = useRoute();

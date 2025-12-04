@@ -191,6 +191,7 @@
 <script lang="ts" setup>
 	// Importar el tipo de información de usuario del store de autenticación
 	import type { UserInformacion } from "~/stores/auth";
+	import { useAuthStore } from '~/stores/auth'
 
 	const authStore = useAuthStore();
 	const tiposUsuario = ref<Array<{ id: number; tipo: string }>>([]);

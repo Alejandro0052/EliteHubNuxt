@@ -1,4 +1,5 @@
 import prisma from "../server/utils/prisma";
+import { hash } from "bcrypt";
 
 async function main() {
 	const paisColombia = await prisma.pais.upsert({
@@ -85,6 +86,29 @@ async function main() {
 					barrios: true,
 				},
 			},
+		},
+	});
+
+	// Crear rol Administrador y un usuario admin por defecto
+	let adminRole = await prisma.rol.findFirst({ where: { nombre: "Administrador" } });
+	if (!adminRole) {
+		adminRole = await prisma.rol.create({ data: { nombre: "Administrador" } });
+	}
+
+	// Crear usuario administrador (correo único). Cambia la contraseña por seguridad en producción.
+	const adminEmail = "admin@elitehub.test";
+	const adminPassword = await hash("Admin1234", 12);
+
+	await prisma.usuario.upsert({
+		where: { correo: adminEmail },
+		update: { nombre: "Admin", apellido: "Root", isAdmin: true, rolId: adminRole.id, password: adminPassword },
+		create: {
+			nombre: "Admin",
+			apellido: "Root",
+			correo: adminEmail,
+			password: adminPassword,
+			isAdmin: true,
+			rolId: adminRole.id,
 		},
 	});
 

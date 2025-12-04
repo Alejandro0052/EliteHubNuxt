@@ -53,6 +53,10 @@
 </template>
 
 <script setup lang="ts">
+	import { ref } from 'vue'
+	import { storeToRefs } from 'pinia'
+	import { useAuthStore } from '~/stores/auth'
+
 	const authStore = useAuthStore();
 	const { user } = storeToRefs(authStore);
 	const formUser = ref(structuredClone(user.value)); // editable

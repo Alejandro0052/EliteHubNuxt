@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
 				informacion: {
 					include: { tipoUsuario: true },
 				},
+				rol: true,
 			},
 		});
 
@@ -27,6 +28,8 @@ export default defineEventHandler(async (event) => {
 			apellido: user.apellido,
 			correo: user.correo,
 			avatar: user.avatar || null,
+			isAdmin: user.isAdmin || false,
+			rol: user.rol ? { id: user.rol.id, nombre: user.rol.nombre } : null,
 			informacion: user.informacion || null,
 		};
 	} catch (error: any) {

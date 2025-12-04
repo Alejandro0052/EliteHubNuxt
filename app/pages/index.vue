@@ -103,19 +103,31 @@
 		<div>
 			<div class="flex flex-col justify-between gap-4 py-12 md:flex-row md:items-center">
 				<h2 class="text-6xl text-white">Noticias</h2>
-				<NuxtLink to="/">
-					<div class="group flex items-center gap-2">
-						<div class="flex rounded-full bg-black p-4 text-white">
-							<Icon name="fa6-solid:right-long"></Icon>
+				<div class="flex items-center gap-4">
+					<NuxtLink to="/noticias">
+						<div class="group flex items-center gap-2">
+							<div class="flex rounded-full bg-black p-4 text-white">
+								<Icon name="fa6-solid:right-long"></Icon>
+							</div>
+							<h2
+								class="text-2xl text-gray-400 underline-offset-4 group-hover:text-white group-hover:underline">
+								Ver todas las noticias
+							</h2>
 						</div>
-						<h2
-							class="text-2xl text-gray-400 underline-offset-4 group-hover:text-white group-hover:underline">
-							Ver todas las noticias
-						</h2>
-					</div>
-				</NuxtLink>
+					</NuxtLink>
+				<!-- Create button for admins -->
+				<div v-if="authStore.user?.isAdmin">
+					<NuxtLink to="/admin/noticias/create" class="block">
+						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
+							<div class="text-xl font-bold text-white">+</div>
+							<div class="text-white font-semibold">Crear</div>
+						</div>
+					</NuxtLink>
+				</div>
+				</div>
 			</div>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+				<NewsCard v-for="n in noticiasPreview" :key="n.id" :news="n" />
 				<!-- <news
           href=""
           image="/Nutritionist.jpg"
@@ -175,19 +187,30 @@
 		<div>
 			<div class="flex flex-col justify-between gap-4 py-12 md:flex-row md:items-center">
 				<h2 class="text-6xl text-white">Eventos</h2>
-				<NuxtLink to="/">
-					<div class="group flex items-center gap-2">
-						<div class="flex rounded-full bg-black p-4 text-white">
-							<Icon name="fa6-solid:right-long"></Icon>
+				<div class="flex items-center gap-4">
+					<NuxtLink to="/eventos">
+						<div class="group flex items-center gap-2">
+							<div class="flex rounded-full bg-black p-4 text-white">
+								<Icon name="fa6-solid:right-long"></Icon>
+							</div>
+							<h2
+								class="text-2xl text-gray-400 underline-offset-4 group-hover:text-white group-hover:underline">
+								Ver todos los eventos
+							</h2>
 						</div>
-						<h2
-							class="text-2xl text-gray-400 underline-offset-4 group-hover:text-white group-hover:underline">
-							Ver todos los eventos
-						</h2>
-					</div>
-				</NuxtLink>
+					</NuxtLink>
+				<div v-if="authStore.user?.isAdmin">
+					<NuxtLink to="/admin/eventos/create" class="block">
+						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
+							<div class="text-xl font-bold text-white">+</div>
+							<div class="text-white font-semibold">Crear</div>
+						</div>
+					</NuxtLink>
+				</div>
+				</div>
 			</div>
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+				<EventCard v-for="e in eventosPreview" :key="e.id" :evento="e" />
 				<!-- <events
 					image="/maraton.jpg"
 					title="Maraton Cali - 2025"
@@ -213,4 +236,24 @@
 	definePageMeta({
 		auth: false,
 	});
+
+import { useAuthStore } from '~/stores/auth'
+import NewsCard from '~/components/NewsCard.vue'
+import EventCard from '~/components/EventCard.vue'
+import { ref, onMounted } from 'vue'
+
+const authStore = useAuthStore()
+const noticiasPreview = ref([])
+const eventosPreview = ref([])
+
+onMounted(async () => {
+	try {
+		const noticias = await $fetch('/api/noticias')
+		const eventos = await $fetch('/api/eventos')
+		noticiasPreview.value = (noticias as any[]).slice(0, 5)
+		eventosPreview.value = (eventos as any[]).slice(0, 5)
+	} catch (err) {
+		console.error('Error loading preview data:', err)
+	}
+})
 </script>
