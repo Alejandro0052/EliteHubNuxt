@@ -23,6 +23,7 @@ model Usuario {
   avatar         String?
   password       String
   isAdmin        Boolean          @default(false)
+  activo         Boolean          @default(true)
   rolId          Int?
   rol            Rol?             @relation(fields: [rolId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   informacionId  Int?
