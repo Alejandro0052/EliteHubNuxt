@@ -278,7 +278,7 @@
 				nombre: user.nombre || "",
 				apellido: user.apellido || "",
 				correo: user.correo || user.email || "",
-				avatar: window.location.origin + user.avatar || "",
+				avatar: user.avatar ? (user.avatar.startsWith('http') ? user.avatar : window.location.origin + user.avatar) : "",
 				avatarFile: null,
 				informacion: {
 					profesion: user.informacion?.profesion || null,
@@ -294,7 +294,7 @@
 			};
 
 			if (user.avatar) {
-				avatarPreview.value = user.avatar;
+				avatarPreview.value = user.avatar.startsWith('http') ? user.avatar : window.location.origin + user.avatar;
 			}
 		} catch (error) {
 			console.error("Error al cargar los datos del usuario:", error);
@@ -315,7 +315,34 @@
 	const updateProfile = async () => {
 		isLoading.value = true;
 		try {
-			const body = structuredClone(form.value);
+			// Build a plain payload object to avoid cloning reactive proxies or File objects
+			const fv: any = form.value
+
+			// Normalize avatar before sending: if it's a full URL, strip the origin so server stores a relative path
+			let avatarToSend: string | null = fv.avatar || null
+			try {
+				if (avatarToSend && avatarToSend.startsWith(window.location.origin)) {
+					avatarToSend = avatarToSend.replace(window.location.origin, '')
+				}
+			} catch (e) {
+				// defensive: in case window is not available or other issue
+			}
+
+			const body: any = {
+				nombre: fv.nombre,
+				apellido: fv.apellido,
+				correo: fv.correo,
+				avatar: avatarToSend,
+				informacion: {
+					profesion: fv.informacion?.profesion || null,
+					especialidad: fv.informacion?.especialidad || null,
+					telefono: fv.informacion?.telefono || null,
+					genero: fv.informacion?.genero || null,
+					fechaNacimiento: fv.informacion?.fechaNacimiento || null,
+					experiencia: fv.informacion?.experiencia || null,
+					tipoUsuarioId: fv.informacion?.tipoUsuarioId ?? null,
+				}
+			}
 
 			// manejar avatarFile si hay
 			if (avatarFile.value) {

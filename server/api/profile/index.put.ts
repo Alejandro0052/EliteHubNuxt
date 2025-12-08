@@ -11,11 +11,7 @@ export default defineEventHandler(async (event) => {
 
 		const userId = parseInt(session.user.id);
 
-		const formData = await readMultipartFormData(event);
-		if (!formData) {
-			throw createError({ statusCode: 400, message: "Datos inválidos" });
-		}
-		console.log(formData);
+		const contentType = (event.node.req.headers['content-type'] || '') as string;
 
 		let nombre = "";
 		let apellido = "";
@@ -25,31 +21,49 @@ export default defineEventHandler(async (event) => {
 
 		const storage = useStorage("public");
 
-		for (const field of formData) {
-			if (field.type?.startsWith("image/") && field.name === "avatarFile" && field.filename) {
-				// Validar extensión
-				const allowedExts = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
-				let ext = extname(field.filename).toLowerCase();
-				if (!allowedExts.includes(ext)) {
-					ext = ".jpg";
-				}
+		if (contentType.includes('application/json')) {
+			// Client sent JSON (no file upload). Read JSON body.
+			const json = await readBody(event) as any;
+			nombre = json.nombre || '';
+			apellido = json.apellido || '';
+			correo = json.correo || json.email || '';
+			avatar = json.avatar || '';
+			if (json.informacion) {
+				Object.assign(informacion, json.informacion);
+			}
+		} else {
+			// Fallback: expect multipart/form-data
+			const formData = await readMultipartFormData(event);
+			if (!formData) {
+				throw createError({ statusCode: 400, message: "Datos inválidos" });
+			}
 
-				// Generar clave única dentro del storage
-				const fileKey = userId.toString() + ext;
-				await storage.setItemRaw(fileKey, field.data);
+			for (const field of formData) {
+				if (field.type?.startsWith("image/") && field.name === "avatarFile" && field.filename) {
+					// Validar extensión
+					const allowedExts = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+					let ext = extname(field.filename).toLowerCase();
+					if (!allowedExts.includes(ext)) {
+						ext = ".jpg";
+					}
 
-				avatar = fileKey;
-			} else {
-				const key = field.name;
-				const value = field.data.toString();
+					// Generar clave única dentro del storage
+					const fileKey = userId.toString() + ext;
+					await storage.setItemRaw(fileKey, field.data);
 
-				if (key === "nombre") nombre = value;
-				else if (key === "apellido") apellido = value;
-				else if (key === "correo" || key === "email") correo = value;
-				else if (key === "avatar") avatar = avatar || value;
-				else if (key?.startsWith("informacion.")) {
-					const infoKey = key.split(".")[1];
-					informacion[infoKey] = value;
+					avatar = fileKey;
+				} else {
+					const key = field.name;
+					const value = field.data.toString();
+
+					if (key === "nombre") nombre = value;
+					else if (key === "apellido") apellido = value;
+					else if (key === "correo" || key === "email") correo = value;
+					else if (key === "avatar") avatar = avatar || value;
+					else if (key?.startsWith("informacion.")) {
+						const infoKey = key.split(".")[1];
+						informacion[infoKey] = value;
+					}
 				}
 			}
 		}
@@ -63,7 +77,8 @@ export default defineEventHandler(async (event) => {
 			updateData.correo = correo;
 		}
 		if (avatar) {
-			updateData.avatar = "/" + avatar;
+			// avatar may already include a leading slash (from upload endpoint) or be a bare key
+			updateData.avatar = avatar.startsWith('/') ? avatar : '/' + avatar;
 		}
 
 		// Actualizar información adicional en el modelo Informacion
