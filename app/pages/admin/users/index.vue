@@ -34,8 +34,19 @@
             <td class="px-4 py-3">{{ u.correo }}</td>
             <td class="px-4 py-3">{{ u.isAdmin ? 'Administrador' : 'Usuario' }}</td>
             <td class="px-4 py-3">
-              <span v-if="u.activo" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Sí</span>
-              <span v-else class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">No</span>
+              <button
+                v-if="authStore.user?.isAdmin && u.id !== authStore.user.id"
+                @click="toggleActivo(u)"
+                :class="u.activo ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-red-100 text-red-800 hover:bg-red-200'"
+                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-colors border border-gray-300"
+              >
+                <Icon :name="u.activo ? 'fa6-solid:toggle-on' : 'fa6-solid:toggle-off'" class="mr-1" />
+                {{ u.activo ? 'Activo' : 'Inactivo' }}
+              </button>
+              <span v-else>
+                <span v-if="u.activo" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Sí</span>
+                <span v-else class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">No</span>
+              </span>
             </td>
             <td class="px-4 py-3 text-sm text-gray-500">{{ formatDate(u.createdAt) }}</td>
           </tr>
@@ -55,6 +66,19 @@ const loading = ref(true)
 
 function formatDate(d: string) {
   return new Date(d).toLocaleString()
+}
+
+async function toggleActivo(user: any) {
+  const nuevoEstado = !user.activo
+  try {
+    await $fetch(`/api/admin/users/${user.id}/activo`, {
+      method: 'PUT',
+      body: { activo: nuevoEstado }
+    })
+    user.activo = nuevoEstado
+  } catch (err) {
+    alert('No se pudo cambiar el estado: ' + (err?.data?.message || err?.message || 'Error desconocido'))
+  }
 }
 
 onMounted(async () => {

@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
 			correo: user.correo,
 			avatar: user.avatar || null,
 			isAdmin: user.isAdmin || false,
+			activo: user.activo,
 			rol: user.rol ? { id: user.rol.id, nombre: user.rol.nombre } : null,
 			informacion: user.informacion || null,
 		};

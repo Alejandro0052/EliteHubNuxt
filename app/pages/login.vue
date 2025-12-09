@@ -83,7 +83,8 @@
 
 	onMounted(async () => {
 		await authStore.checkAuth();
-		if (authStore.isAuthenticated == true) {
+		// Solo redirige si está autenticado y no hay error
+		if (authStore.isAuthenticated === true && !authStore.error) {
 			await navigateTo("/");
 		}
 	});

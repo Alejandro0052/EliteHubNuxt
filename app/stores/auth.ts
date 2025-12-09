@@ -51,6 +51,13 @@ export const useAuthStore = defineStore("auth", () => {
         try {
           const profile = await $fetch('/api/profile', { headers: useRequestHeaders(['cookie']) });
           if (profile) {
+            // Si el usuario está inactivo, no permitir acceso
+            if (profile.activo === false) {
+              user.value = null;
+              isAuthenticated.value = false;
+              error.value = 'Usuario inactivo. Contacte a un administrador.';
+              return false;
+            }
             user.value.nombre = profile.nombre || user.value.nombre;
             user.value.apellido = profile.apellido || user.value.apellido;
             user.value.avatar = profile.avatar || user.value.avatar;
@@ -105,8 +112,8 @@ export const useAuthStore = defineStore("auth", () => {
         return false;
       }
 
-      await checkAuth();
-      return true;
+      const ok = await checkAuth();
+      return !!ok;
     } catch (e) {
       error.value = "Error al iniciar sesión";
       return false;
