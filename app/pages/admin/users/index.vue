@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-5xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+    <div class="max-w-5xl mx-auto py-12 px-4">
     <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <h1 class="text-3xl font-bold text-gray-900">Usuarios</h1>
       <div class="flex items-center gap-3">
@@ -52,6 +53,7 @@
           </tr>
         </tbody>
       </table>
+    </div>
     </div>
   </div>
 </template>
