@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-7xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+    <div class="max-w-7xl mx-auto py-12 px-4">
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
         <button @click="goBack" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
@@ -22,6 +23,7 @@
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <NewsCard v-for="n in noticias" :key="n.id" :news="n" />
     </div>
+    </div>
   </div>
 </template>
 
@@ -38,7 +40,8 @@ const noticias = ref<any[]>([])
 const loading = ref(true)
 
 const goBack = () => {
-  router.back()
+  // Always navigate to home to avoid returning to a previous 'create' page in history
+  navigateTo('/')
 }
 
 onMounted(async () => {

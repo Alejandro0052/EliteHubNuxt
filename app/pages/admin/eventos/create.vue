@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-3xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div class="max-w-3xl mx-auto py-12 px-4">
     <h1 class="text-2xl font-bold mb-6">Crear Evento</h1>
 
     <div v-if="!authStore.user?.isAdmin" class="p-6 bg-yellow-50 rounded">Solo administradores pueden crear eventos.</div>
@@ -37,12 +38,13 @@
 
       <div class="flex items-center gap-4">
         <button :disabled="loading" class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors">Crear</button>
-        <NuxtLink to="/eventos" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors inline-block">Cancelar</NuxtLink>
+        <NuxtLink to="/eventos" replace class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors inline-block">Cancelar</NuxtLink>
       </div>
 
       <div v-if="error" class="text-red-600">{{ error }}</div>
       <div v-if="success" class="text-green-600">Evento creado correctamente.</div>
     </form>
+    </div>
   </div>
 </template>
 

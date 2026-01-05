@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-3xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+    <div class="max-w-3xl mx-auto py-12 px-4">
     <h1 class="text-2xl font-bold mb-6">Crear Usuario</h1>
 
     <div v-if="!authStore.user?.isAdmin" class="p-6 bg-yellow-50 rounded">Solo administradores pueden crear usuarios.</div>
@@ -46,6 +47,7 @@
       <div v-if="error" class="text-red-600">{{ error }}</div>
       <div v-if="success" class="text-green-600">Usuario creado correctamente.</div>
     </form>
+    </div>
   </div>
 </template>
 

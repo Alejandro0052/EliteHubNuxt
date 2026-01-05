@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-4xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div class="max-w-4xl mx-auto py-12 px-4">
     <button @click="goBack" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-6 flex items-center gap-2 transition-colors">
       <Icon name="fa6-solid:arrow-left" />
       <span>Volver</span>
@@ -11,6 +12,7 @@
       <img v-if="evento.imagen" :src="evento.imagen" class="w-full rounded-lg mb-6" />
       <div v-if="evento.ubicacion" class="mb-4"><strong>Ubicación:</strong> {{ evento.ubicacion }}</div>
       <div v-html="evento.contenido" class="prose max-w-none"></div>
+    </div>
     </div>
   </div>
 </template>
