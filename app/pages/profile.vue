@@ -40,12 +40,33 @@
 
 						<div>
 							<label for="correo" class="block text-sm font-medium text-gray-700">Correo</label>
-							<input
-								id="correo"
-								v-model="form.correo"
-								type="email"
-								required
-								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
+							<div class="mt-1 flex items-end gap-3">
+								<input
+									id="correo"
+									v-model="form.correo"
+									type="email"
+									required
+									class="flex-1 rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
+
+								<div class="flex w-80 items-center gap-2">
+									<input
+										type="password"
+										placeholder="Nueva contraseña"
+										v-model="newPassword"
+										class="flex-1 rounded-md border-gray-300 px-2 py-1 shadow-sm focus:ring-2 focus:ring-black focus:outline-none" />
+									<button
+										type="button"
+										:disabled="isChangingPassword"
+										@click="changePassword"
+										class="rounded-md bg-red-600 px-3 py-1 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50">
+										Cambiar contraseña
+										</button>
+								</div>
+							</div>
+						</div>
+						<div class="mt-1 w-80">
+							<p v-if="passwordMessage" class="text-sm text-green-600">{{ passwordMessage }}</p>
+							<p v-if="passwordError" class="text-sm text-red-600">{{ passwordError }}</p>
 						</div>
 
 						<div>
@@ -197,7 +218,11 @@
 	const authStore = useAuthStore();
 	const tiposUsuario = ref<Array<{ id: number; tipo: string }>>([]);
 	const isLoading = ref(false);
+	const isChangingPassword = ref(false);
 	const successMessage = ref("");
+	const passwordMessage = ref<string | null>(null);
+	const passwordError = ref<string | null>(null);
+	const newPassword = ref('');
 	const avatarFile = ref<File | null>(null);
 	const avatarPreview = ref<string | null>(null);
 	const avatarError = ref<string | null>(null);
@@ -359,6 +384,29 @@
 			console.error('Error updating profile', err);
 		} finally {
 			isLoading.value = false;
+		}
+	}
+
+	const changePassword = async () => {
+		passwordMessage.value = null;
+		passwordError.value = null;
+		if (!newPassword.value || newPassword.value.length < 6) {
+			passwordError.value = 'La contraseña debe tener al menos 6 caracteres.';
+			return;
+		}
+		isChangingPassword.value = true;
+		try {
+			const res = await $fetch('/api/profile/change-password', {
+				method: 'POST',
+				body: { newPassword: newPassword.value }
+			});
+			passwordMessage.value = res?.message || 'Contraseña cambiada correctamente.';
+			newPassword.value = '';
+		} catch (err: any) {
+			console.error('Error cambiando contraseña', err);
+			passwordError.value = err?.message || 'Error cambiando la contraseña.';
+		} finally {
+			isChangingPassword.value = false;
 		}
 	}
 </script>
