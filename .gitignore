@@ -22,3 +22,23 @@ logs
 .env
 .env.*
 !.env.example
+
+
+# Virtual Environment
+venv/
+
+# Pytest cache
+.pytest_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
