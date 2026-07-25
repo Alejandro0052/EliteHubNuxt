@@ -1,15 +1,29 @@
 <template>
-	<div class="mx-auto w-full max-w-[120rem] space-y-6 py-10 text-black">
-		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
-			<h1 class="text-3xl font-semibold">¿Quienes Somos?</h1>
-			<p class="text-pretty"> 
-				EliteHub es mucho más que una plataforma digital. Somos un ecosistema de conexión,
-				crecimiento y apoyo mutuo entre deportistas, profesionales de la salud, marcas y
-				patrocinadores. Nacemos con la convicción de que el rendimiento deportivo y el bienestar
-				integral de los atletas se logra cuando las piezas clave del entorno deportivo trabajan en
-				sintonía, impulsando el talento y acompañando cada etapa de su desarrollo.
-			</p>
+	<div class="mx-auto min-h-screen py-10">
+		<ContentEditor page="aboutUs" :initial-content="pageContent" @updated="handleContentUpdate" />
+
+		<!-- Hero Section -->
+		<section class="relative bg-black px-4 py-16 sm:px-6 lg:px-8">
+			<div class="mx-auto max-w-4xl text-center">
+				<h1 class="mb-6 text-4xl font-bold text-white md:text-5xl">
+					{{ pageContent.title || "¿Quienes Somos?" }}
+				</h1>
+				<p class="mb-8 text-lg text-gray-300 md:text-xl">
+					{{
+						pageContent.subtitle ||
+						"EliteHub es mucho más que una plataforma digital. Somos un ecosistema de conexión, crecimiento y apoyo mutuo entre deportistas, profesionales de la salud, marcas y patrocinadores."
+					}}
+				</p>
+			</div>
+		</section>
+
+		<!-- Main Content -->
+		<section class="mx-auto max-w-[120rem] space-y-6 px-4 py-16 sm:px-6 lg:px-8">
+		<div v-if="pageContent.content" class="rounded-xl bg-white p-8 text-gray-800 shadow-lg md:p-12">
+			<div class="prose max-w-none" v-html="pageContent.content"></div>
 		</div>
+
+		<template v-else>
 		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
 			<h1 class="text-3xl font-semibold">Nuestra Misión</h1>
 			<p class="text-pretty">
@@ -80,6 +94,8 @@
 				oportunidades.
 			</p>
 		</div>
+		</template>
+		</section>
 	</div>
 </template>
 
@@ -88,6 +104,28 @@
 		auth: false,
 		title: "¿Quienes Somos?",
 		description: "Conoce más sobre la plataforma EliteHub",
+	});
+
+	const { getContent } = useContent();
+
+	const pageContent = ref({
+		title: "",
+		subtitle: "",
+		content: "",
+		metadata: {},
+	});
+
+	const handleContentUpdate = (updatedContent: any) => {
+		pageContent.value = updatedContent;
+	};
+
+	onMounted(async () => {
+		try {
+			const content = await getContent("aboutUs");
+			pageContent.value = content;
+		} catch (error) {
+			console.error("Error loading content:", error);
+		}
 	});
 </script>
 

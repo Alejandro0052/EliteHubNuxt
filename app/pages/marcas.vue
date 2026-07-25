@@ -1,12 +1,5 @@
 <template>
   <div class="w-full min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-    <!-- Content Editor for Admins -->
-    <ContentEditor 
-      page="marcas" 
-      :initial-content="pageContent" 
-      @updated="handleContentUpdate"
-    />
-
     <!-- Hero Section -->
     <section class="relative py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto">
@@ -224,10 +217,6 @@ const featuredBrands = ref([
   { name: 'Speedo', logo: 'S' },
   { name: 'Oakley', logo: 'O' }
 ])
-
-const handleContentUpdate = (updatedContent) => {
-  pageContent.value = updatedContent
-}
 
 // Load content on mount
 onMounted(async () => {

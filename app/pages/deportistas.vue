@@ -1,12 +1,5 @@
 <template>
   <div class="w-full min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
-    <!-- Content Editor for Admins -->
-    <ContentEditor 
-      page="deportistas" 
-      :initial-content="pageContent" 
-      @updated="handleContentUpdate"
-    />
-
     <!-- Hero Section -->
     <section class="relative py-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto">
@@ -120,10 +113,6 @@ const sports = ref([
   { name: 'CrossFit', icon: '🏋️' },
   { name: 'Más deportes', icon: '🏆' }
 ])
-
-const handleContentUpdate = (updatedContent) => {
-  pageContent.value = updatedContent
-}
 
 // Load content on mount
 onMounted(async () => {

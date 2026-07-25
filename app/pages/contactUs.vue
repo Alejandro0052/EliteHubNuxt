@@ -1,8 +1,5 @@
 <template>
 	<div class="mx-auto min-h-screen py-10">
-		<!-- Content Editor for Admins -->
-		<ContentEditor page="contactUs" :initial-content="pageContent" @updated="handleContentUpdate" />
-
 		<!-- Hero Section -->
 		<section class="relative px-4 sm:px-6 lg:px-8">
 			<div class="text-center">
@@ -28,6 +25,12 @@
 			<div class="grid grid-cols-1 gap-12 lg:grid-cols-2">
 				<!-- Contact Form -->
 				<div class="flex flex-col justify-center rounded-xl bg-white p-8 shadow-lg">
+					<div v-if="submitted" class="py-8 text-center">
+						<Icon name="fa6-solid:circle-check" class="mb-4 text-5xl text-green-600" />
+						<p class="text-xl font-bold text-gray-900">Registro guardado con éxito</p>
+					</div>
+
+					<template v-else>
 					<h2 class="mb-6 text-2xl font-bold text-gray-900">Envíanos un mensaje</h2>
 					<form @submit.prevent="submitForm" class="space-y-6">
 						<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -92,12 +95,12 @@
 								required
 								class="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors duration-300 focus:border-transparent focus:ring-2 focus:ring-blue-500">
 								<option value="">Selecciona un asunto</option>
-								<option value="general">Consulta General</option>
-								<option value="support">Soporte Técnico</option>
-								<option value="partnership">Alianzas y Patrocinios</option>
-								<option value="nutrition">Servicios de Nutrición</option>
-								<option value="training">Entrenamiento Deportivo</option>
-								<option value="other">Otro</option>
+								<option value="Consulta General">Consulta General</option>
+								<option value="Soporte Técnico">Soporte Técnico</option>
+								<option value="Alianzas y Patrocinios">Alianzas y Patrocinios</option>
+								<option value="Servicios de Nutrición">Servicios de Nutrición</option>
+								<option value="Entrenamiento Deportivo">Entrenamiento Deportivo</option>
+								<option value="Otro">Otro</option>
 							</select>
 						</div>
 
@@ -121,6 +124,7 @@
 							{{ loading ? "Enviando..." : "Enviar Mensaje" }}
 						</button>
 					</form>
+					</template>
 				</div>
 
 				<!-- Contact Information -->
@@ -219,6 +223,7 @@
 	});
 
 	const { getContent } = useContent();
+	const { showToast } = useToast();
 
 	const pageContent = ref({
 		title: "",
@@ -228,6 +233,7 @@
 	});
 
 	const loading = ref(false);
+	const submitted = ref(false);
 
 	const form = ref({
 		firstName: "",
@@ -241,30 +247,18 @@
 	const submitForm = async () => {
 		loading.value = true;
 		try {
-			// Here you would typically send the form data to your API
-			await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+			await $fetch("/api/mensajes-contacto", {
+				method: "POST",
+				body: form.value,
+			});
 
-			// Reset form
-			form.value = {
-				firstName: "",
-				lastName: "",
-				email: "",
-				phone: "",
-				subject: "",
-				message: "",
-			};
-
-			alert("¡Mensaje enviado exitosamente! Te contactaremos pronto.");
+			submitted.value = true;
 		} catch (error) {
 			console.error("Error sending message:", error);
-			alert("Error al enviar el mensaje. Por favor, inténtalo de nuevo.");
+			showToast("Error al enviar el mensaje. Por favor, inténtalo de nuevo.", "error");
 		} finally {
 			loading.value = false;
 		}
-	};
-
-	const handleContentUpdate = (updatedContent) => {
-		pageContent.value = updatedContent;
 	};
 
 	// Load content on mount

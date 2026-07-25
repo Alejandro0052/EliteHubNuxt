@@ -1,15 +1,29 @@
 <template>
-	<div class="mx-auto max-w-4xl p-6">
-		<div class="prose max-w-none text-gray-800 dark:text-gray-200">
-			<h1 v-if="content.title">{{ content.title }}</h1>
-			<h2 v-if="content.subtitle" class="text-lg text-gray-600 dark:text-gray-400">{{ content.subtitle }}</h2>
+	<div class="mx-auto min-h-screen py-10">
+		<ContentEditor page="privacity" :initial-content="content" @updated="handleContentUpdate" />
 
-			<div v-if="content.content" v-html="content.content" />
-
-			<div v-else class="py-6 text-gray-600 dark:text-gray-400">
-				<p>La política de privacidad aún no ha sido publicada. Si usted es administrador puede editarla desde el panel de contenidos.</p>
+		<!-- Hero Section -->
+		<section class="relative bg-black px-4 py-16 sm:px-6 lg:px-8">
+			<div class="mx-auto max-w-4xl text-center">
+				<h1 class="mb-6 text-4xl font-bold text-white md:text-5xl">
+					{{ content.title || "Política de Privacidad" }}
+				</h1>
+				<p class="mb-8 text-lg text-gray-300 md:text-xl">
+					{{ content.subtitle || "Última actualización: Enero 2024" }}
+				</p>
 			</div>
-		</div>
+		</section>
+
+		<!-- Main Content -->
+		<section class="px-4 py-16 sm:px-6 lg:px-8">
+			<div class="mx-auto max-w-4xl rounded-xl bg-white p-8 text-gray-800 shadow-lg md:p-12">
+				<div v-if="content.content" class="prose max-w-none" v-html="content.content" />
+
+				<div v-else class="py-6 text-gray-600">
+					<p>La política de privacidad aún no ha sido publicada. Si usted es administrador puede editarla desde el panel de contenidos.</p>
+				</div>
+			</div>
+		</section>
 	</div>
 </template>
 
@@ -24,6 +38,10 @@ import { ref, onMounted } from 'vue'
 const content = ref({ page: 'privacity', title: '', subtitle: '', content: '', metadata: {} })
 
 const { getContent } = useContent()
+
+const handleContentUpdate = (updatedContent: any) => {
+	content.value = updatedContent
+}
 
 onMounted(async () => {
 	try {

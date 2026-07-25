@@ -202,6 +202,18 @@ model TipoPQRS {
   updatedAt DateTime @updatedAt
 }
 
+model MensajeContacto {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  apellido  String
+  correo    String
+  telefono  String?
+  asunto    String
+  mensaje   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Deporte {
   id          Int              @id @default(autoincrement())
   nombre      String           @unique

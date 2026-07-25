@@ -1,12 +1,5 @@
 <template>
   <div class="w-full min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex flex-col">
-    <!-- Content Editor for Admins -->
-    <ContentEditor 
-      page="patrocinadores" 
-      :initial-content="pageContent" 
-      @updated="handleContentUpdate"
-    />
-
     <!-- Hero Section -->
     <section class="relative py-20 px-4 sm:px-6 lg:px-8 flex-shrink-0">
       <div class="w-full max-w-7xl mx-auto">
@@ -212,10 +205,6 @@ const pageContent = ref({
   content: '',
   metadata: {}
 })
-
-const handleContentUpdate = (updatedContent) => {
-  pageContent.value = updatedContent
-}
 
 // Load content on mount
 onMounted(async () => {

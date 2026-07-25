@@ -60,7 +60,7 @@ const { getContent, updateContent } = useContent()
 
 const privacity = ref({ page: 'privacity', title: '', subtitle: '', content: '', metadata: {} })
 const terms = ref({ page: 'terms', title: '', subtitle: '', content: '', metadata: {} })
-const about = ref({ page: 'about', title: '', subtitle: '', content: '', metadata: {} })
+const about = ref({ page: 'aboutUs', title: '', subtitle: '', content: '', metadata: {} })
 
 const saving = ref(false)
 const saved = ref({ privacity: false, terms: false, about: false })
@@ -78,8 +78,8 @@ async function loadAll() {
 	} catch (e) { console.error(e) }
 
 	try {
-		const a = await getContent('about')
-		about.value = { page: 'about', title: a.title || '', subtitle: a.subtitle || '', content: a.content || '', metadata: a.metadata || {} }
+		const a = await getContent('aboutUs')
+		about.value = { page: 'aboutUs', title: a.title || '', subtitle: a.subtitle || '', content: a.content || '', metadata: a.metadata || {} }
 	} catch (e) { console.error(e) }
 }
 

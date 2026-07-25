@@ -4,8 +4,8 @@
 		<ContentEditor page="terms" :initial-content="pageContent" @updated="handleContentUpdate" />
 
 		<!-- Hero Section -->
-		<section class="relative px-4 sm:px-6 lg:px-8">
-			<div class="text-center">
+		<section class="relative bg-black px-4 py-16 sm:px-6 lg:px-8">
+			<div class="mx-auto max-w-4xl text-center">
 				<h1 class="mb-6 text-4xl font-bold text-white md:text-5xl">
 					{{ pageContent.title || "Términos y Condiciones" }}
 				</h1>
@@ -16,14 +16,16 @@
 		</section>
 
 		<!-- Main Content -->
-		<section class="px-4 sm:px-6 lg:px-8">
+		<section class="px-4 py-16 sm:px-6 lg:px-8">
 			<!-- Custom Content -->
-			<div v-if="pageContent.content" class="mb-16">
-				<div class="max-w-none" v-html="pageContent.content"></div>
+			<div
+				v-if="pageContent.content"
+				class="mx-auto max-w-4xl rounded-xl bg-white p-8 text-gray-800 shadow-lg md:p-12">
+				<div class="prose max-w-none" v-html="pageContent.content"></div>
 			</div>
 
 			<!-- Default Terms Content -->
-			<div v-else class="rounded-xl bg-white p-8 shadow-lg md:p-12">
+			<div v-else class="mx-auto max-w-4xl rounded-xl bg-white p-8 text-gray-800 shadow-lg md:p-12">
 				<div class="max-w-none">
 					<h2>1. Aceptación de los Términos</h2>
 					<p>

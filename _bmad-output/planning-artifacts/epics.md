@@ -485,6 +485,14 @@ So that I control my own information, while admin retains an emergency override 
 **When** I navigate to my Perfil
 **Then** I see and can edit my own Informacion fields
 
+**Given** I am on my Perfil
+**When** the edit form renders
+**Then** it shows exactly the same field set defined for my TipoUsuario at registration (Story 1.1's per-type field lists — Deportista/Marca/Nutricionista/Patrocinador), pre-filled with my current values, so I can update any of that information at any time after registration
+
+**Given** the TipoUsuario field on my Perfil
+**When** the edit form renders
+**Then** it is displayed as read-only/informative (not an editable control), consistent with TipoUsuario's immutability (Story 1.2, AD-8)
+
 **Given** I attempt to edit another Usuario's profile via direct request
 **When** I am not admin
 **Then** the request is rejected (FR-18)

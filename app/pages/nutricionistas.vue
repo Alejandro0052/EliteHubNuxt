@@ -1,11 +1,5 @@
 <template>
 	<div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
-		<!-- Content Editor for Admins -->
-		<ContentEditor
-			page="nutricionistas"
-			:initial-content="pageContent"
-			@updated="handleContentUpdate" />
-
 		<!-- Hero Section -->
 		<section class="relative px-4 py-20 sm:px-6 lg:px-8">
 			<div class="mx-auto max-w-7xl">
@@ -342,10 +336,6 @@
 			description: "Estrategias para días de competición",
 		},
 	]);
-
-	const handleContentUpdate = (updatedContent) => {
-		pageContent.value = updatedContent;
-	};
 
 	// Load content on mount
 	onMounted(async () => {

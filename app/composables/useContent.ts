@@ -7,8 +7,7 @@ export const useContent = () => {
 
   const getContent = async (page: string) => {
     try {
-      const { data } = await $fetch(`/api/content/${page}`)
-      return data
+      return await $fetch(`/api/content/${page}`)
     } catch (error) {
       console.error('Error fetching content:', error)
       return {

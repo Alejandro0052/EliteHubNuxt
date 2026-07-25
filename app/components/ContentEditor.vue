@@ -31,7 +31,7 @@
 
 				<!-- Modal panel -->
 				<div
-					class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:align-middle">
+					class="relative z-10 inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl sm:align-middle">
 					<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 						<div class="sm:flex sm:items-start">
 							<div class="w-full">
@@ -116,6 +116,7 @@
 	const emit = defineEmits(["updated"]);
 
 	const { isAdmin, updateContent } = useContent();
+	const { showToast } = useToast();
 	const showModal = ref(false);
 	const loading = ref(false);
 
@@ -146,11 +147,10 @@
 			const updatedContent = await updateContent(props.page, formData.value);
 			emit("updated", updatedContent);
 			closeModal();
-			// Show success message
-			alert("Contenido actualizado exitosamente");
+			showToast("Contenido actualizado exitosamente", "success");
 		} catch (error) {
 			console.error("Error saving content:", error);
-			alert("Error al guardar el contenido");
+			showToast("Error al guardar el contenido", "error");
 		} finally {
 			loading.value = false;
 		}

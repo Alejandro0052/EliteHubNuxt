@@ -50,13 +50,11 @@
 
 						<div>
 							<label for="tipoUsuario" class="block text-sm font-medium text-gray-700">Tipo de usuario</label>
-							<select
+							<p
 								id="tipoUsuario"
-								v-model.number="form.informacion.tipoUsuarioId"
-								class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-black focus:outline-none">
-								<option value="">Selecciona un tipo</option>
-								<option v-for="t in tiposUsuario" :key="t.id" :value="t.id">{{ t.tipo }}</option>
-							</select>
+								class="mt-1 block w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-gray-700">
+								{{ tipoUsuarioActual || "Sin tipo asignado" }}
+							</p>
 						</div>
 
 						<div class="flex flex-col items-start gap-2 md:col-span-2">
@@ -195,7 +193,7 @@
 	import { ref } from 'vue'
 
 	const authStore = useAuthStore();
-	const tiposUsuario = ref<Array<{ id: number; tipo: string }>>([]);
+	const tipoUsuarioActual = ref<string | null>(null);
 	const isLoading = ref(false);
 	const successMessage = ref("");
 	const avatarFile = ref<File | null>(null);
@@ -227,6 +225,8 @@
 			experiencia: null,
 		} as UserInformacion,
 	});
+	// TipoUsuario es inmutable (AD-8): se muestra en `tipoUsuarioActual`, un ref aparte,
+	// no en `form.informacion` (UserInformacion no tiene ese campo, y no debe enviarse al servidor).
 
 	const handleAvatarUpload = (event: Event) => {
 		avatarError.value = null;
@@ -267,12 +267,7 @@
 				return;
 			}
 
-			// Cargar tipos de usuario para el selector
-			try {
-				tiposUsuario.value = await $fetch('/api/tipousuario');
-			} catch (e) {
-				console.error('No se pudieron cargar los tipos de usuario:', e);
-			}
+			tipoUsuarioActual.value = user.informacion?.tipoUsuario?.tipo ?? null;
 
 			form.value = {
 				nombre: user.nombre || "",
@@ -289,7 +284,6 @@
 						? new Date(user.informacion.fechaNacimiento).toISOString().split("T")[0]
 						: null,
 					experiencia: user.informacion?.experiencia || null,
-					tipoUsuarioId: user.informacion?.tipoUsuario?.id || user.informacion?.tipoUsuarioId || null,
 				},
 			};
 
@@ -340,7 +334,6 @@
 					genero: fv.informacion?.genero || null,
 					fechaNacimiento: fv.informacion?.fechaNacimiento || null,
 					experiencia: fv.informacion?.experiencia || null,
-					tipoUsuarioId: fv.informacion?.tipoUsuarioId ?? null,
 				}
 			}
 
@@ -362,5 +355,3 @@
 		}
 	}
 </script>
-
-*** End Patch

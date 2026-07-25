@@ -88,17 +88,11 @@ export default defineEventHandler(async (event) => {
 			include: { informacion: true },
 		});
 
-		if (Object.keys(informacion).length > 0) {
-		
-			if (informacion.tipoUsuarioId) {
-				const parsed = parseInt(informacion.tipoUsuarioId as string);
-				if (!Number.isNaN(parsed)) {
-					informacion.tipoUsuarioId = parsed;
-				} else {
-					delete informacion.tipoUsuarioId;
-				}
-			}
+		// TipoUsuario es inmutable tras el registro (AD-8): se descarta incondicionalmente aquí,
+		// sin importar quién llame a este endpoint (self-edit hoy, admin-override en el futuro).
+		delete informacion.tipoUsuarioId;
 
+		if (Object.keys(informacion).length > 0) {
 			if (informacion.fechaNacimiento) {
 				const dateStr = informacion.fechaNacimiento;
 				if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
