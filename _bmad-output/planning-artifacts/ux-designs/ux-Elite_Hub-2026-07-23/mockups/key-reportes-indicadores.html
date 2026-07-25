@@ -1,0 +1,211 @@
+<title>Elite Hub — Reportes/Indicadores (admin, tema oscuro)</title>
+<style>
+/*
+  Key-screen mock: Reportes/Indicadores, admin-only, DARK theme (tests the dark palette on the
+  highest-polish-bar surface, per FR-29's "muy agradable de ver" note).
+  Governed by:
+   - DESIGN.md: Colors dark set (surface-dark, surface-container-dark, surface-inverse-dark flips header/footer
+     polarity in dark mode, primary-dark/on-primary-dark, border-hairline-dark), Elevation (shadow-lg + hairline
+     border stand in for shadow on a near-black canvas), Components (card rounded-xl shadow-lg).
+     Chart segment colors are NOT a new hue: all four are the single primary-dark (#22c55e) token at
+     descending stroke-opacity, satisfying "only green ever means primary action / no second accent hue" while
+     still separating four values — validated (dataviz skill, ordinal one-hue ramp) against surface-dark
+     #0a0a0a: lightness monotone, ΔL steps clear, light-end contrast 2.35:1, single hue. Identity is never
+     color-alone: every segment carries a direct label + legend entry with its exact count.
+   - EXPERIENCE.md: Information Architecture ("Reportes/Indicadores | UserDropdown, admin-only"), Responsive &
+     Platform table ("Reportes/Indicadores: chart and numeric counts sit side-by-side" at lg+), Key Flows > Flow 6
+     (UJ-6: donut/bar chart + numeric counts, "muy agradable de ver," cross-checks against homepage stats FR-12/SM-4).
+   - PRD FR-29/FR-30 (chart + numeric counts, not chart-only).
+*/
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #1a1a1a;
+  color: #f5f5f5;
+}
+.browser-frame {
+  max-width: 1440px;
+  margin: 24px auto;
+  background: #171717;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  border: 1px solid #2e2e2e;
+}
+.browser-chrome { background: #111111; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #2e2e2e; }
+.dot { width: 11px; height: 11px; border-radius: 9999px; background: #3f3f3f; }
+.dot.red { background: #f87171; } .dot.yellow { background: #d4a72c; } .dot.green { background: #22c55e; }
+.addr { margin-left: 12px; background: #0a0a0a; border: 1px solid #2e2e2e; border-radius: 9999px; padding: 4px 14px; font-size: 0.75rem; color: #a3a3a3; flex: 1; max-width: 460px; }
+.app { background: #0a0a0a; }
+
+/* Header/footer flip polarity in dark mode: surface-inverse-dark (white) bg, on-surface-inverse-dark (near-black) text */
+header.site { background: #ffffff; color: #0a0a0a; }
+.page-shell { max-width: 120rem; margin: 0 auto; padding: 0 1.5rem; }
+.nav-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; }
+.logo { font-size: 1.125rem; font-weight: 700; letter-spacing: 0.02em; color: #0a0a0a; }
+.nav-links { display: flex; gap: 1.75rem; list-style: none; }
+.nav-links a { color: #0a0a0a; text-decoration: none; font-size: 0.875rem; }
+.user-chip { display: flex; align-items: center; gap: 0.5rem; color: #0a0a0a; font-size: 0.875rem; }
+.avatar-circle { width: 32px; height: 32px; border-radius: 9999px; background: #0a0a0a; color: #fff; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; }
+
+.subnav { background: #171717; border-bottom: 1px solid #2e2e2e; }
+.subnav-row { display: flex; gap: 1.75rem; padding: 0.75rem 1.5rem; font-size: 0.8125rem; }
+.subnav a { color: #a3a3a3; text-decoration: none; }
+.subnav a.active { color: #4ade80; font-weight: 700; }
+.crumb { font-size: 0.75rem; color: #a3a3a3; padding: 1rem 1.5rem 0; }
+.crumb b { color: #f5f5f5; }
+
+main { background: #0a0a0a; padding: 1.5rem 0 3rem; min-height: 640px; }
+.report-col { padding: 0 1.5rem; }
+h1.report-title { font-size: 2.25rem; font-weight: 700; line-height: 1.2; color: #f5f5f5; margin-bottom: 0.4rem; }
+p.report-sub { font-size: 1rem; color: #a3a3a3; margin-bottom: 1.75rem; max-width: 42rem; }
+
+.report-card {
+  background: #171717;
+  border: 1px solid #2e2e2e;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.4);
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.chart-col { display: flex; flex-direction: column; align-items: center; }
+.donut-wrap { position: relative; width: 260px; height: 260px; }
+.donut-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.donut-center .n { font-size: 2rem; font-weight: 700; color: #f5f5f5; }
+.donut-center .l { font-size: 0.75rem; color: #a3a3a3; margin-top: 0.15rem; text-align: center; }
+.chart-caption { font-size: 0.75rem; color: #a3a3a3; margin-top: 1rem; text-align: center; max-width: 20rem; }
+
+.counts-col { }
+.headline-row { font-size: 1.125rem; font-weight: 600; color: #f5f5f5; margin-bottom: 1rem; }
+.legend-list { display: flex; flex-direction: column; gap: 0.9rem; }
+.legend-item { display: flex; align-items: center; gap: 0.75rem; }
+.swatch { width: 16px; height: 16px; border-radius: 0.25rem; flex-shrink: 0; }
+.legend-label { flex: 1; font-size: 0.9375rem; color: #f5f5f5; font-weight: 500; }
+.legend-pct { font-size: 0.8125rem; color: #a3a3a3; width: 3.2rem; text-align: right; }
+.legend-count { font-size: 1rem; font-weight: 700; color: #f5f5f5; width: 3.5rem; text-align: right; }
+.divider { border-top: 1px solid #2e2e2e; margin: 1.1rem 0; }
+.total-row { display: flex; justify-content: space-between; align-items: baseline; }
+.total-row .tl { font-size: 0.9375rem; color: #a3a3a3; }
+.total-row .tv { font-size: 1.5rem; font-weight: 700; color: #22c55e; }
+
+.crosscheck {
+  margin-top: 1.5rem;
+  font-size: 0.8125rem;
+  color: #a3a3a3;
+  border-left: 2px solid #22c55e;
+  padding-left: 0.75rem;
+}
+</style>
+
+<div class="browser-frame">
+  <div class="browser-chrome">
+    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+    <div class="addr">elitehub.app/admin/reportes</div>
+  </div>
+  <div class="app">
+    <header class="site">
+      <div class="page-shell">
+        <div class="nav-row">
+          <div class="logo">ELITE HUB</div>
+          <ul class="nav-links">
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Eventos</a></li>
+            <li><a href="#">Noticias</a></li>
+            <li><a href="#">Patrocinadores</a></li>
+            <li><a href="#">Deportistas</a></li>
+            <li><a href="#">Marcas</a></li>
+            <li><a href="#">Nutricionistas</a></li>
+          </ul>
+          <div class="user-chip">
+            <div class="avatar-circle">AD</div>
+            <span>Admin ▾</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="subnav">
+      <div class="subnav-row">
+        <a href="#">Gestión de usuarios</a>
+        <a href="#">Mensajes de contacto</a>
+        <a href="#" class="active">Reportes/Indicadores</a>
+      </div>
+    </div>
+
+    <main>
+      <div class="report-col">
+        <p class="crumb">Panel de administración › <b>Reportes/Indicadores</b></p>
+        <h1 class="report-title" style="margin-top:0.75rem;">Reportes/Indicadores</h1>
+        <p class="report-sub">Distribución de Usuarios registrados por tipo de usuario, calculada en tiempo real sobre la base de datos.</p>
+
+        <div class="report-card">
+          <div class="chart-col">
+            <div class="donut-wrap">
+              <svg viewBox="0 0 180 180" width="260" height="260">
+                <circle cx="90" cy="90" r="70" fill="none" stroke="#262626" stroke-width="26"></circle>
+                <g transform="rotate(-90 90 90)">
+                  <circle cx="90" cy="90" r="70" fill="none" stroke="#22c55e" stroke-width="26"
+                    stroke-dasharray="236.98 202.84" stroke-dashoffset="0"></circle>
+                  <circle cx="90" cy="90" r="70" fill="none" stroke="#1d9c4c" stroke-width="26"
+                    stroke-dasharray="92.02 347.80" stroke-dashoffset="-236.98"></circle>
+                  <circle cx="90" cy="90" r="70" fill="none" stroke="#18763b" stroke-width="26"
+                    stroke-dasharray="63.42 376.40" stroke-dashoffset="-329.00"></circle>
+                  <circle cx="90" cy="90" r="70" fill="none" stroke="#14592d" stroke-width="26"
+                    stroke-dasharray="47.42 392.40" stroke-dashoffset="-392.42"></circle>
+                </g>
+              </svg>
+              <div class="donut-center">
+                <span class="n">631</span>
+                <span class="l">usuarios<br>registrados</span>
+              </div>
+            </div>
+            <p class="chart-caption">Distribución por tipo de usuario. El mismo agregado alimenta los contadores públicos de Inicio.</p>
+          </div>
+
+          <div class="counts-col">
+            <div class="headline-row">Conteo por tipo de usuario</div>
+            <div class="legend-list">
+              <div class="legend-item">
+                <span class="swatch" style="background:#22c55e;"></span>
+                <span class="legend-label">Deportistas</span>
+                <span class="legend-pct">53.9%</span>
+                <span class="legend-count">340</span>
+              </div>
+              <div class="legend-item">
+                <span class="swatch" style="background:#1d9c4c;"></span>
+                <span class="legend-label">Patrocinadores</span>
+                <span class="legend-pct">20.9%</span>
+                <span class="legend-count">132</span>
+              </div>
+              <div class="legend-item">
+                <span class="swatch" style="background:#18763b;"></span>
+                <span class="legend-label">Nutricionistas</span>
+                <span class="legend-pct">14.4%</span>
+                <span class="legend-count">91</span>
+              </div>
+              <div class="legend-item">
+                <span class="swatch" style="background:#14592d;"></span>
+                <span class="legend-label">Marcas</span>
+                <span class="legend-pct">10.8%</span>
+                <span class="legend-count">68</span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="total-row">
+              <span class="tl">Total de Usuarios registrados</span>
+              <span class="tv">631</span>
+            </div>
+            <p class="crosscheck">Estos totales coinciden con los contadores públicos de la página de Inicio — misma consulta agregada (FR-12 / FR-29).</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,212 @@
+<title>Elite Hub — Registro segmentado por tipo</title>
+<style>
+/*
+  Key-screen mock: Registration, "Deportista" type selected, sport-specific fields revealed.
+  Governed by:
+   - DESIGN.md: Brand & Style ("surface-inverse is the brand-chrome color... login/register hero panel"),
+     Colors (primary=green-700 CTA, on-surface-inverse text on black), Components (Inputs: white bg,
+     border-hairline, rounded-DEFAULT, focus-ring; Chips/Tags selected-state inversion to primary — reused here
+     for the type selector, since no separate "type selector" pattern exists in EXPERIENCE.md's Component
+     Patterns table and this is functionally a single-select-from-fixed-list control like the sport chips).
+   - EXPERIENCE.md: Key Flows > Flow 1 step 1 (FR-1: form reveals type-specific fields immediately on selection,
+     no page transition), Accessibility Floor (labels not placeholder-as-label; required vs optional marked in
+     text, not color alone).
+   - PRD prd-Elite_Hub-2026-07-19 §5.1 FR-1/FR-2/FR-4/FR-38 (exact Deportista field list; T&C checkbox+hyperlink).
+   - memlog.md: Jugador.jpeg replaced with a brand-chrome abstract pattern panel, not new photography.
+*/
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #e5e7eb;
+  color: #111827;
+}
+.browser-frame {
+  max-width: 1440px;
+  margin: 24px auto;
+  background: #f3f4f6;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+  border: 1px solid #d1d5db;
+}
+.browser-chrome { background: #e5e7eb; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d1d5db; }
+.dot { width: 11px; height: 11px; border-radius: 9999px; background: #cbd5e1; }
+.dot.red { background: #f87171; } .dot.yellow { background: #fbbf24; } .dot.green { background: #34d399; }
+.addr { margin-left: 12px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 9999px; padding: 4px 14px; font-size: 0.75rem; color: #4b5563; flex: 1; max-width: 460px; }
+
+.topbar { background: #000000; color: #ffffff; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-size: 1.125rem; font-weight: 700; letter-spacing: 0.02em; }
+.topbar a { color: #ffffff; font-size: 0.8125rem; text-decoration: none; }
+.topbar a span.link { color: #4ade80; font-weight: 600; }
+
+.split { display: grid; grid-template-columns: 1.35fr 1fr; min-height: 760px; }
+
+/* Left: black form panel */
+.form-panel { background: #000000; color: #ffffff; padding: 2rem 2.5rem 2.5rem; overflow-y: auto; max-height: 760px; }
+h1.reg-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+p.reg-sub { font-size: 0.875rem; color: #d1d5db; margin-bottom: 1.5rem; }
+
+.type-row { display: flex; gap: 0.75rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+.type-opt {
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  background: transparent;
+  border-radius: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.type-opt.selected { background: #15803d; border-color: #15803d; color: #ffffff; font-weight: 700; }
+
+.field-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4ade80;
+  margin: 1.25rem 0 0.75rem;
+}
+.field-section-title.first { margin-top: 0; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem 1.25rem; }
+.form-field { display: flex; flex-direction: column; gap: 0.3rem; }
+.form-field.span-2 { grid-column: span 2; }
+label { font-size: 0.8125rem; font-weight: 500; color: #f5f5f5; }
+label .opt-tag { color: #a3a3a3; font-weight: 400; }
+input, select, textarea {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.875rem;
+  color: #111827;
+  font-family: inherit;
+}
+textarea { resize: none; min-height: 3rem; }
+
+.tc-row { display: flex; align-items: flex-start; gap: 0.6rem; margin: 1.5rem 0 1.25rem; }
+.tc-row input[type=checkbox] { margin-top: 0.2rem; width: 16px; height: 16px; accent-color: #15803d; }
+.tc-row label { font-size: 0.8125rem; color: #f5f5f5; font-weight: 400; }
+.tc-row a { color: #4ade80; }
+
+.btn-primary {
+  background: #15803d;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+/* Right: brand-chrome abstract pattern panel (replaces Jugador.jpeg) */
+.brand-panel {
+  position: relative;
+  background: #f9fafb;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+.brand-panel::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 25%, rgba(21,128,61,0.16) 0, rgba(21,128,61,0.16) 120px, transparent 121px),
+    radial-gradient(circle at 82% 70%, rgba(17,24,39,0.10) 0, rgba(17,24,39,0.10) 160px, transparent 161px),
+    repeating-linear-gradient(135deg, rgba(17,24,39,0.05) 0 2px, transparent 2px 26px);
+}
+.brand-content { position: relative; text-align: center; max-width: 22rem; }
+.brand-badge {
+  width: 76px; height: 76px; border-radius: 9999px;
+  background: #000000; color: #ffffff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.75rem; font-weight: 700;
+  margin: 0 auto 1.5rem;
+}
+.brand-content h2 { font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; }
+.brand-content p { font-size: 0.9375rem; color: #4b5563; line-height: 1.6; }
+</style>
+
+<div class="browser-frame">
+  <div class="browser-chrome">
+    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+    <div class="addr">elitehub.app/register</div>
+  </div>
+
+  <div class="topbar">
+    <div class="logo">ELITE HUB</div>
+    <a href="#">¿Ya tienes cuenta? <span class="link">Iniciar sesión</span></a>
+  </div>
+
+  <div class="split">
+    <div class="form-panel">
+      <h1 class="reg-title">Crea tu cuenta</h1>
+      <p class="reg-sub">Selecciona tu tipo de perfil para continuar. Los campos cambian según el tipo elegido.</p>
+
+      <div class="type-row" role="group" aria-label="Tipo de usuario">
+        <button type="button" class="type-opt selected">Deportista</button>
+        <button type="button" class="type-opt">Marca</button>
+        <button type="button" class="type-opt">Nutricionista</button>
+        <button type="button" class="type-opt">Patrocinador</button>
+      </div>
+
+      <div class="field-section-title first">Datos de acceso</div>
+      <div class="form-grid">
+        <div class="form-field"><label for="correo">Correo electrónico</label><input id="correo" type="email" placeholder="tu@correo.com"></div>
+        <div class="form-field"><label for="pass">Contraseña</label><input id="pass" type="password" placeholder="Mínimo 8 caracteres"></div>
+      </div>
+
+      <div class="field-section-title">Datos personales</div>
+      <div class="form-grid">
+        <div class="form-field"><label for="pnom">Primer nombre</label><input id="pnom" type="text"></div>
+        <div class="form-field"><label for="snom">Segundo nombre</label><input id="snom" type="text"></div>
+        <div class="form-field"><label for="pape">Primer apellido</label><input id="pape" type="text"></div>
+        <div class="form-field"><label for="sape">Segundo apellido</label><input id="sape" type="text"></div>
+        <div class="form-field"><label for="fnac">Fecha de nacimiento</label><input id="fnac" type="date"></div>
+        <div class="form-field"><label for="genero">Género</label>
+          <select id="genero"><option>Selecciona…</option><option>Femenino</option><option>Masculino</option><option>Otro</option><option>Prefiero no decir</option></select>
+        </div>
+        <div class="form-field"><label for="nac">Nacionalidad</label>
+          <select id="nac"><option>Selecciona…</option><option selected>Colombiana</option><option>Venezolana</option><option>Ecuatoriana</option><option>Otra</option></select>
+        </div>
+        <div class="form-field"><label for="ciudad">Ciudad de residencia</label><input id="ciudad" type="text" placeholder="Bogotá"></div>
+        <div class="form-field"><label for="tel">Teléfono <span class="opt-tag">(opcional)</span></label><input id="tel" type="tel"></div>
+        <div class="form-field span-2"><label for="bio">Biografía corta</label><textarea id="bio" placeholder="Cuéntanos brevemente quién eres como deportista"></textarea></div>
+      </div>
+
+      <div class="field-section-title">Perfil deportivo</div>
+      <div class="form-grid">
+        <div class="form-field"><label for="deporte">Deporte</label>
+          <select id="deporte"><option>Selecciona…</option><option>Fútbol</option><option>Baloncesto</option><option selected>Ciclismo</option><option>Running</option><option>Crossfit</option><option>Voleibol</option><option>Gimnasia</option><option>Boxeo</option><option>Natación</option><option>Otros</option></select>
+        </div>
+        <div class="form-field"><label for="nivel">Nivel deportivo</label>
+          <select id="nivel"><option>Selecciona…</option><option>Principiante</option><option>Intermedio</option><option>Avanzado</option><option>Profesional</option></select>
+        </div>
+        <div class="form-field"><label for="altura">Altura (m)</label><input id="altura" type="number" step="0.01" placeholder="1.68"></div>
+        <div class="form-field"><label for="peso">Peso (kg)</label><input id="peso" type="number" placeholder="58"></div>
+        <div class="form-field"><label for="anios">Años de experiencia en el deporte</label><input id="anios" type="number" placeholder="6"></div>
+        <div class="form-field"><label for="redes">Link de redes sociales</label><input id="redes" type="text" placeholder="instagram.com/tuusuario"></div>
+        <div class="form-field span-2"><label for="obj">Objetivos actuales</label><textarea id="obj" placeholder="¿Qué buscas lograr esta temporada?"></textarea></div>
+        <div class="form-field"><label for="marcas">Marcas personales <span class="opt-tag">(si aplica)</span></label><input id="marcas" type="text" placeholder="Ej. 120 km en 3h42min"></div>
+        <div class="form-field"><label for="lesiones">Lesiones <span class="opt-tag">(si aplica)</span></label><input id="lesiones" type="text" placeholder="Ninguna"></div>
+      </div>
+
+      <div class="tc-row">
+        <input type="checkbox" id="tc">
+        <label for="tc">Acepto los <a href="#">Términos y Condiciones</a> de Elite Hub.</label>
+      </div>
+
+      <button type="button" class="btn-primary">Crear cuenta</button>
+    </div>
+
+    <div class="brand-panel">
+      <div class="brand-content">
+        <div class="brand-badge">EH</div>
+        <h2>Únete a la comunidad deportiva</h2>
+        <p>Deportistas, marcas, nutricionistas y patrocinadores, en un mismo lugar. Tu tipo de perfil define lo que ves y lo que puedes hacer desde el primer momento.</p>
+      </div>
+    </div>
+  </div>
+</div>

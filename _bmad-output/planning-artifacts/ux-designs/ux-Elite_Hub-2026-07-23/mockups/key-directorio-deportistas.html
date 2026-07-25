@@ -1,0 +1,301 @@
+<title>Elite Hub — Directorio y Detalle (Deportistas)</title>
+<style>
+/*
+  Key-screen mock: Directorio de Deportistas (listing) + Detalle (Camila Torres), light theme.
+  Governed by:
+   - DESIGN.md: Colors (surface/surface-container-high for chips/filters, primary for selected-chip/CTA, border-hairline),
+     Shapes (rounded-DEFAULT chips, rounded-xl cards), Components (card hover:scale-105, button-secondary pill,
+     Chips/Tags selected-state inversion to primary).
+   - EXPERIENCE.md: Component Patterns ("Directory card", "Detail view", "Infinite-scroll list",
+     "Sport/category filter chips"), Interaction Primitives ("Sport/category filter chips are tap/click single-select",
+     "Scroll position preserved on back-navigation"), Key Flows > Flow 1 (UJ-1, Camila found by a patrocinador
+     filtering "ciclismo"), FR-17 full field set on detail view (no field-level privacy in MVP).
+*/
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #e5e7eb;
+  color: #111827;
+}
+.browser-frame {
+  max-width: 1440px;
+  margin: 24px auto;
+  background: #f3f4f6;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+  border: 1px solid #d1d5db;
+}
+.browser-chrome {
+  background: #e5e7eb;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #d1d5db;
+}
+.dot { width: 11px; height: 11px; border-radius: 9999px; background: #cbd5e1; }
+.dot.red { background: #f87171; } .dot.yellow { background: #fbbf24; } .dot.green { background: #34d399; }
+.addr { margin-left: 12px; background: #ffffff; border: 1px solid #d1d5db; border-radius: 9999px; padding: 4px 14px; font-size: 0.75rem; color: #4b5563; flex: 1; max-width: 460px; }
+.app { background: #ffffff; }
+
+header.site { background: #000000; color: #ffffff; }
+.page-shell { max-width: 120rem; margin: 0 auto; padding: 0 1.5rem; }
+.nav-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; }
+.logo { font-size: 1.125rem; font-weight: 700; letter-spacing: 0.02em; color: #ffffff; }
+.nav-links { display: flex; gap: 1.75rem; list-style: none; }
+.nav-links a { color: #ffffff; text-decoration: none; font-size: 0.875rem; }
+.nav-links a.active { font-weight: 700; }
+.user-chip { display: flex; align-items: center; gap: 0.5rem; color: #ffffff; font-size: 0.875rem; }
+.avatar-circle { width: 32px; height: 32px; border-radius: 9999px; background: linear-gradient(135deg,#15803d,#1e293b); display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.75rem; font-weight:700; }
+
+main { background: #f9fafb; }
+
+/* ---------- (a) Directory listing ---------- */
+.section-directory { padding: 2rem 0 3rem; border-bottom: 8px solid #e5e7eb; }
+.dir-col { padding: 0 1.5rem; }
+h1.dir-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+p.dir-sub { font-size: 0.875rem; color: #4b5563; margin-bottom: 1.25rem; }
+
+.chip-row { display: flex; gap: 0.625rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.chip {
+  background: #f3f4f6; color: #111827;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.chip.selected { background: #15803d; color: #ffffff; font-weight: 700; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+.dir-card {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 200ms ease;
+}
+.dir-card.highlight { outline: 2px solid #15803d; outline-offset: 2px; }
+.dir-photo {
+  height: 150px;
+  display: flex; align-items: center; justify-content: center;
+  color: #ffffff; font-size: 1.75rem; font-weight: 700;
+}
+.dir-info { padding: 0.875rem; }
+.dir-name { font-size: 0.9375rem; font-weight: 600; color: #111827; margin-bottom: 0.2rem; }
+.dir-sport { font-size: 0.8125rem; color: #4b5563; }
+.dir-level { font-size: 0.75rem; color: #15803d; font-weight: 600; margin-top: 0.3rem; }
+.click-note { font-size: 0.75rem; color: #4b5563; text-align: center; margin-top: 0.4rem; }
+
+.end-sentinel {
+  text-align: center;
+  color: #4b5563;
+  font-size: 0.8125rem;
+  padding: 1.5rem 0 0;
+}
+
+/* ---------- (b) Detail view ---------- */
+.section-detail { padding: 2rem 0 3.5rem; }
+.detail-col { padding: 0 1.5rem; max-width: 62rem; margin: 0 auto; }
+.back-link { font-size: 0.8125rem; color: #16a34a; margin-bottom: 1rem; display: inline-block; }
+.detail-flag {
+  display: inline-block;
+  background: #1e293b; color: #fff; font-size: 0.6875rem; font-weight: 600;
+  padding: 0.2rem 0.6rem; border-radius: 9999px; margin-bottom: 0.75rem;
+}
+.detail-card {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.08);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+.detail-photo {
+  background: linear-gradient(160deg, #15803d, #111827);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 3rem; font-weight: 700;
+}
+.detail-body { padding: 1.75rem; }
+.detail-name { font-size: 1.5rem; font-weight: 700; color: #111827; }
+.detail-type { font-size: 0.9375rem; color: #4b5563; margin-bottom: 1rem; }
+.bio { font-size: 1rem; line-height: 1.6; color: #111827; margin-bottom: 1.25rem; }
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.field-label { font-size: 0.75rem; color: #4b5563; text-transform: uppercase; letter-spacing: 0.04em; }
+.field-value { font-size: 0.9375rem; color: #111827; font-weight: 500; }
+.contact-box {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+}
+.contact-box .field-label { margin-bottom: 0.15rem; }
+.contact-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+</style>
+
+<div class="browser-frame">
+  <div class="browser-chrome">
+    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+    <div class="addr">elitehub.app/deportistas</div>
+  </div>
+  <div class="app">
+    <header class="site">
+      <div class="page-shell">
+        <div class="nav-row">
+          <div class="logo">ELITE HUB</div>
+          <ul class="nav-links">
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Eventos</a></li>
+            <li><a href="#">Noticias</a></li>
+            <li><a href="#">Patrocinadores</a></li>
+            <li><a href="#" class="active">Deportistas</a></li>
+            <li><a href="#">Marcas</a></li>
+            <li><a href="#">Nutricionistas</a></li>
+          </ul>
+          <div class="user-chip">
+            <div class="avatar-circle">FI</div>
+            <span>Fundación Impulso ▾</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- (a) Directory listing: infinite-scroll, sport filter chips, one selected -->
+      <section class="section-directory">
+        <div class="dir-col">
+          <h1 class="dir-title">Directorio de Deportistas</h1>
+          <p class="dir-sub">Encuentra deportistas por disciplina. Toca una tarjeta para ver el perfil completo.</p>
+
+          <div class="chip-row" role="group" aria-label="Filtrar por deporte">
+            <span class="chip">Fútbol</span>
+            <span class="chip">Baloncesto</span>
+            <span class="chip selected">Ciclismo</span>
+            <span class="chip">Running</span>
+            <span class="chip">Crossfit</span>
+            <span class="chip">Voleibol</span>
+            <span class="chip">Gimnasia</span>
+            <span class="chip">Boxeo</span>
+            <span class="chip">Natación</span>
+            <span class="chip">Otros</span>
+          </div>
+
+          <div class="card-grid">
+            <div class="dir-card highlight">
+              <div class="dir-photo" style="background:#15803d;">CT</div>
+              <div class="dir-info">
+                <div class="dir-name">Camila Torres</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Avanzado</div>
+              </div>
+            </div>
+            <div class="dir-card">
+              <div class="dir-photo" style="background:#1e293b;">JR</div>
+              <div class="dir-info">
+                <div class="dir-name">Juan Pablo Restrepo</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Profesional</div>
+              </div>
+            </div>
+            <div class="dir-card">
+              <div class="dir-photo" style="background:#16a34a;">AS</div>
+              <div class="dir-info">
+                <div class="dir-name">Andrea Salazar</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Intermedio</div>
+              </div>
+            </div>
+            <div class="dir-card">
+              <div class="dir-photo" style="background:#4b5563;">MV</div>
+              <div class="dir-info">
+                <div class="dir-name">Mateo Villalba</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Principiante</div>
+              </div>
+            </div>
+            <div class="dir-card">
+              <div class="dir-photo" style="background:#166534;">SR</div>
+              <div class="dir-info">
+                <div class="dir-name">Sofía Ramírez</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Avanzado</div>
+              </div>
+            </div>
+            <div class="dir-card">
+              <div class="dir-photo" style="background:#334155;">DF</div>
+              <div class="dir-info">
+                <div class="dir-name">Diego Fernández</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Intermedio</div>
+              </div>
+            </div>
+            <div class="dir-card">
+              <div class="dir-photo" style="background:#15803d;">VP</div>
+              <div class="dir-info">
+                <div class="dir-name">Valentina Pardo</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Principiante</div>
+              </div>
+            </div>
+            <div class="dir-card">
+              <div class="dir-photo" style="background:#1e293b;">RC</div>
+              <div class="dir-info">
+                <div class="dir-name">Ricardo Castaño</div>
+                <div class="dir-sport">Ciclismo</div>
+                <div class="dir-level">Avanzado</div>
+              </div>
+            </div>
+          </div>
+          <p class="click-note">Tarjeta resaltada: enlaza a la vista de Detalle mostrada abajo.</p>
+
+          <p class="end-sentinel" aria-live="polite">Cargando más resultados…</p>
+        </div>
+      </section>
+
+      <!-- (b) Detail view: click-through from Camila Torres's card above -->
+      <section class="section-detail">
+        <div class="detail-col">
+          <a href="#" class="back-link">← Volver al directorio</a>
+          <div><span class="detail-flag">Vista de Detalle</span></div>
+          <div class="detail-card">
+            <div class="detail-photo">CT</div>
+            <div class="detail-body">
+              <div class="detail-name">Camila Andrea Torres Gómez</div>
+              <div class="detail-type">Deportista · Ciclismo · Nivel Avanzado</div>
+              <p class="bio">Ciclista de ruta amateur, entrenando para el campeonato nacional 2026. Empecé compitiendo por diversión y hoy es mi mayor disciplina.</p>
+
+              <div class="field-grid">
+                <div><div class="field-label">Fecha de nacimiento</div><div class="field-value">14 de marzo de 1998</div></div>
+                <div><div class="field-label">Género</div><div class="field-value">Femenino</div></div>
+                <div><div class="field-label">Nacionalidad</div><div class="field-value">Colombiana</div></div>
+                <div><div class="field-label">Ciudad de residencia</div><div class="field-value">Bogotá, Colombia</div></div>
+                <div><div class="field-label">Altura</div><div class="field-value">1.68 m</div></div>
+                <div><div class="field-label">Peso</div><div class="field-value">58 kg</div></div>
+                <div><div class="field-label">Años de experiencia</div><div class="field-value">6 años</div></div>
+                <div><div class="field-label">Objetivos actuales</div><div class="field-value">Clasificar al campeonato nacional de ciclismo de ruta y conseguir un patrocinador para la temporada 2026-2027.</div></div>
+                <div><div class="field-label">Marcas personales</div><div class="field-value">120 km en 3h42min (ruta La Calera – Bogotá)</div></div>
+                <div><div class="field-label">Lesiones</div><div class="field-value">Ninguna reportada actualmente</div></div>
+              </div>
+
+              <div class="contact-box">
+                <div class="contact-row">
+                  <div><div class="field-label">Teléfono</div><div class="field-value">+57 300 456 7812</div></div>
+                  <div><div class="field-label">Redes sociales</div><div class="field-value">instagram.com/camilators.ciclismo</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

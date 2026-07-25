@@ -1,0 +1,97 @@
+# generated: 2026-07-24
+# last_updated: 2026-07-24
+# project: Elite_Hub
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; sprint-status surfaces open ones
+
+generated: 2026-07-24
+last_updated: 2026-07-24
+project: Elite_Hub
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  epic-1: in-progress
+  1-1-registro-segmentado-por-tipo: in-progress
+  1-2-inmutabilidad-de-tipo-de-usuario: backlog
+  1-3-fix-de-contenteditor-y-reubicacion: backlog
+  1-4-persistencia-del-formulario-de-contacto: backlog
+  1-5-bandeja-admin-de-mensajes-de-contacto: backlog
+  1-6-stats-reales-del-homepage: backlog
+  1-7-apertura-de-creacion-de-eventos-noticias-con-permisos-autor-admin: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-directorios-segmentados-con-scroll-infinito: backlog
+  2-2-vista-de-detalle-con-navegacion-de-vuelta: backlog
+  2-3-edicion-de-perfil-propio-foto-y-recuperacion-admin: backlog
+  2-4-ocultamiento-de-contenido-por-cuenta-desactivada: backlog
+  2-5-filtro-de-deporte-en-deportistas: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-creacion-de-items-de-catalogo-restringida-a-marca: backlog
+  3-2-vistas-de-catalogo-perfil-propio-y-agregado: backlog
+  3-3-edicion-y-borrado-de-items-de-catalogo: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-dejar-y-ver-resenas-de-nutricionista: backlog
+  4-2-moderacion-de-resenas-retractar-y-bloquear: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-crear-y-ver-publicaciones-en-el-feed: backlog
+  5-2-moderacion-de-publicaciones-autor-y-admin: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-visualizacion-de-distribucion-de-usuarios: backlog
+  epic-6-retrospective: optional
+
+  epic-7: backlog
+  7-1-toggle-de-tema-claro-oscuro: backlog
+  7-2-sistema-de-diseno-y-consolidacion-visual: backlog
+  7-3-accesibilidad-y-responsividad-como-piso-verificable: backlog
+  epic-7-retrospective: optional
+
+  epic-8: backlog
+  8-1-migracion-de-almacenamiento-a-cloudflare-r2: backlog
+  epic-8-retrospective: optional

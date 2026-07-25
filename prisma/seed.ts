@@ -133,6 +133,27 @@ async function main() {
 		create: { tipo: "Deportista" },
 	});
 
+	// Story 1.1: lista fija de deportes (FR-19)
+	const deportes = [
+		"Fútbol",
+		"Baloncesto",
+		"Ciclismo",
+		"Running",
+		"Crossfit",
+		"Voleibol",
+		"Gimnasia",
+		"Boxeo",
+		"Natación",
+		"Otros",
+	];
+	for (const nombre of deportes) {
+		await prisma.deporte.upsert({
+			where: { nombre },
+			update: {},
+			create: { nombre },
+		});
+	}
+
 	console.log("✅ Seed completado");
 }
 

@@ -1,14 +1,14 @@
 ---
 name: Elite Hub
 description: Brand-chrome visual system (black / white / green-700) for a four-sided sports community app — ratified from the existing header/footer/homepage/auth surfaces and extended sitewide, replacing the pastel per-category gradient language.
-status: draft
+status: final
 sources:
   - ../../../specs/spec-Elite_Hub/SPEC.md
   - ../../../specs/spec-Elite_Hub/glossary.md
   - ../../../specs/spec-Elite_Hub/functional-requirements.md
   - ../../architecture/architecture-Elite_Hub-2026-07-22/ARCHITECTURE-SPINE.md
   - ../../prds/prd-Elite_Hub-2026-07-19/prd.md
-updated: '2026-07-23'
+updated: '2026-07-24'
 colors:
   surface: '#ffffff'
   surface-container: '#f9fafb'
@@ -136,15 +136,15 @@ Elite Hub is a functional, four-sided sports community tool, not a lifestyle bra
 
 ## Colors
 
-- **`surface-inverse` (`#000000`, black)** is the brand-chrome color — header, footer, and (per `[ASSUMPTION]`) the login/register hero panel. It signals "this is app structure," never body content. Never used as a card or content background.
-- **`surface` (`#ffffff`) / `surface-container` / `surface-container-high`** are the content canvas — page background, card background, and the subtly-elevated container tone used for filter bars and empty-state panels. This is the one color family that replaces every pastel gradient background sitewide.
-- **`primary` (`#15803d`, green-700)** is the one CTA/action color: primary buttons, active nav-link weight, focus affordances tied to a submit action. `primary-hover` is `green-700/80` opacity, matching the existing `hover:bg-green-700/80` idiom — do not introduce a separate hover hue.
-- **`link` (`#16a34a`, green-600)** is reserved for inline text links inside body copy (distinct from `primary` so buttons and links stay visually distinguishable at a glance).
-- **`secondary` (`#1e293b`, slate-800)** `[ASSUMPTION]` — a real, defined secondary neutral, replacing the dead `hover:bg-secondary` class found in `header.vue` (no such Tailwind token exists today; it currently no-ops). Used sparingly: secondary chip backgrounds, admin-surface accents. Not a second CTA color — `primary` remains the only "act here" signal.
-- **`destructive` (`#dc2626`, red-600)** — admin/moderation actions only (retract review, delete another user's post, deactivate account). Never used for a user's own delete-my-content action, which uses `button-secondary` with a confirm step instead.
+- **`surface-inverse`** (black) is the brand-chrome color — header, footer, and (per `[ASSUMPTION]`) the login/register hero panel. It signals "this is app structure," never body content. Never used as a card or content background.
+- **`surface` / `surface-container` / `surface-container-high`** are the content canvas — page background, card background, and the subtly-elevated container tone used for filter bars and empty-state panels. This is the one color family that replaces every pastel gradient background sitewide.
+- **`primary`** (green-700) is the one CTA/action color: primary buttons, active nav-link weight, focus affordances tied to a submit action. `primary-hover` is `green-700/80` opacity, matching the existing `hover:bg-green-700/80` idiom — do not introduce a separate hover hue.
+- **`link`** (green-600) is reserved for inline text links inside body copy (distinct from `primary` so buttons and links stay visually distinguishable at a glance).
+- **`secondary`** (slate-800) `[ASSUMPTION]` — a real, defined secondary neutral, replacing the dead `hover:bg-secondary` class found in `header.vue` (no such Tailwind token exists today; it currently no-ops). Used sparingly: secondary chip backgrounds, admin-surface accents. Not a second CTA color — `primary` remains the only "act here" signal.
+- **`destructive`** (red-600) — admin/moderation actions only (retract review, delete another user's post, deactivate account). Never used for a user's own delete-my-content action, which uses `button-secondary` with a confirm step instead.
 - **`on-surface` / `on-surface-variant`** — body text and secondary/meta text on light surfaces. `on-surface-inverse` (white) is body text on the black brand-chrome surfaces.
 
-**Dark mode** `[ASSUMPTION — designed from scratch, no prior dark usage existed]`: the system inverts around the same three-color logic rather than introducing a new palette. `surface-dark` (`#0a0a0a`, near-black, not pure black — reduces OLED smear and softens card-edge contrast) replaces white as the content canvas; `surface-inverse-dark` (white) replaces black as the brand-chrome color, so header/footer flip to a white bar with black text in dark mode — brand chrome stays the highest-contrast element in both themes, it just swaps polarity. `primary-dark` (`#22c55e`, green-500) is lightened one step from `#15803d` to hold WCAG AA contrast against the dark canvas. All dark tokens are separate kebab-case keys (`-dark` suffix) per the DESIGN.md spec's light/dark convention, applied via Tailwind's `dark:` variant driven by a `data-theme`/class toggle, not the OS media query alone (FR-31 requires an explicit user-facing toggle).
+**Dark mode** `[ASSUMPTION — designed from scratch, no prior dark usage existed]`: the system inverts around the same three-color logic rather than introducing a new palette. `surface-dark` (near-black, not pure black — reduces OLED smear and softens card-edge contrast) replaces white as the content canvas; `surface-inverse-dark` (white) replaces black as the brand-chrome color, so header/footer flip to a white bar with black text in dark mode — brand chrome stays the highest-contrast element in both themes — it just swaps polarity. `primary-dark` (green-500) is lightened one step from `primary`'s green-700 to hold WCAG AA contrast against the dark canvas. All dark tokens are separate kebab-case keys (`-dark` suffix) per the DESIGN.md spec's light/dark convention, applied via Tailwind's `dark:` variant driven by a `data-theme`/class toggle, not the OS media query alone (FR-31 requires an explicit user-facing toggle).
 
 Avoid: introducing a second chromatic accent color (only green ever means "primary action"); tinting card backgrounds by TipoUsuario or content category (this is exactly the pastel-gradient pattern being retired); pure `#000`/`#fff` in dark mode for anything except the intentional brand-chrome inversion.
 
@@ -158,15 +158,15 @@ Six roles cover every surface: `display` (page-level H1, e.g. Reportes/Indicador
 
 `{spacing.page-shell}` (`max-w-[120rem]`) is ratified as the **single** sitewide content-shell width `[ASSUMPTION]`, replacing admin's narrower `max-w-7xl`/`max-w-5xl` — the brand-chrome convention already used on header/footer/index/login/register/profile extends to admin and every directory/catalog/feed surface, so the shell never visibly narrows when a user moves between a "brand" page and an "admin" or "directory" page.
 
-Spacing follows stock Tailwind scale (`spacing.1`–`spacing.12`, 4px base unit) — no custom scale invented. `gutter-mobile` (16px) and `gutter-desktop` (24px) govern card-grid and section padding. Card grids are CSS grid, 1 column on mobile, scaling to 2/3/4 columns at `md`/`lg`/`xl` — the same responsive rhythm as the existing homepage feature-tile grid, extended to directory and catálogo listings.
+Spacing follows stock Tailwind scale (`spacing.1`–`spacing.12`, 4px base unit) — no custom scale invented. `gutter-mobile` (16px) and `gutter-desktop` (24px) govern card-grid and section padding. Card grids are CSS grid, 1 column on mobile, scaling to 2/3/4 columns at `md`/`lg`/`xl` — the same responsive rhythm as the existing homepage feature-tile grid, extended to directory and catalog listings.
 
 ## Elevation & Depth
 
-Depth is expressed almost entirely through `shadow-lg` on cards (see Shapes/Components) — flat, un-elevated surfaces are the default (page background, form panels, admin table rows), and `shadow-lg` is reserved for discrete, individually-interactive content units: directory cards, event/news cards, catalog item cards, publicación cards. Modals/dialogs sit above an overlay using a plain `shadow-xl` + solid background, no colored shadow tint (unlike Linen & Logic's tobacco-tinted shadow — Elite Hub's shadow language is neutral gray, matching what already ships).
+Depth is expressed almost entirely through `shadow-lg` on cards (see Shapes/Components) — flat, un-elevated surfaces are the default (page background, form panels, admin table rows), and `shadow-lg` is reserved for discrete, individually-interactive content units: directory cards, event/news cards, catalog item cards, publicación cards. Modals/dialogs sit above an overlay using a plain `shadow-xl` + solid background — no colored shadow tint. Elite Hub's shadow language is neutral gray throughout, matching what already ships.
 
 ## Shapes
 
-`{rounded.xl}` (0.75rem) is the canonical corner radius for cards, ratified from the `EventCard`/`NewsCard` idiom as the majority pattern `[ASSUMPTION — consolidation choice]`: `stats.vue`'s `rounded-2xl` no-shadow variant and the admin panel's `rounded-lg shadow-md` variant are retired in favor of this one shape+shadow pairing. `{rounded.full}` is reserved for pill buttons (`button-secondary`) and circular avatar/icon-badge treatments — never for cards. `{rounded.DEFAULT}` (0.5rem) covers inputs, primary/destructive buttons, and small inline chips (sport-filter tags, catalog category tags).
+`{rounded.xl}` is the canonical corner radius for cards, ratified from the `EventCard`/`NewsCard` idiom as the majority pattern `[ASSUMPTION — consolidation choice]`: `stats.vue`'s `rounded-2xl` no-shadow variant and the admin panel's `rounded-lg shadow-md` variant are retired in favor of this one shape+shadow pairing. `{rounded.full}` is reserved for pill buttons (`button-secondary`) and circular avatar/icon-badge treatments — never for cards. `{rounded.DEFAULT}` covers inputs, primary/destructive buttons, and small inline chips (sport-filter tags, catalog category tags).
 
 ## Components
 

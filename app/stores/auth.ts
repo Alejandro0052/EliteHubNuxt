@@ -125,12 +125,7 @@ export const useAuthStore = defineStore("auth", () => {
   // --------------------
   // REGISTER
   // --------------------
-  async function register(userData: {
-    nombre: string;
-    apellido: string;
-    correo: string;
-    password: string;
-  }) {
+  async function register(userData: Record<string, unknown>) {
     isLoading.value = true;
     error.value = null;
 
@@ -142,8 +137,8 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (response) {
         const loginResult = await signIn("credentials", {
-          email: userData.correo,
-          password: userData.password,
+          email: userData.correo as string,
+          password: userData.password as string,
           redirect: false,
         });
 

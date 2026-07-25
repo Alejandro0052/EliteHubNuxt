@@ -1,13 +1,13 @@
 ---
 name: Elite Hub
-status: draft
+status: final
 sources:
   - ../../../specs/spec-Elite_Hub/SPEC.md
   - ../../../specs/spec-Elite_Hub/glossary.md
   - ../../../specs/spec-Elite_Hub/functional-requirements.md
   - ../../architecture/architecture-Elite_Hub-2026-07-22/ARCHITECTURE-SPINE.md
   - ../../prds/prd-Elite_Hub-2026-07-19/prd.md
-updated: '2026-07-23'
+updated: '2026-07-24'
 ---
 
 # Elite Hub — Experience Spine
@@ -16,7 +16,7 @@ updated: '2026-07-23'
 
 ## Foundation
 
-Single-surface responsive web, Nuxt 4 + Vue 3 + Tailwind CSS 4, no native mobile app (Constraints, SPEC.md). One layout (`app/layouts/default.vue`) wraps every authenticated and public page with the same header + footer. `DESIGN.md` is the visual identity reference; this spine is the behavior, structure, and states. Authorization is enforced server-side via shared guards (ARCHITECTURE-SPINE AD-1/AD-4); this spine's permission-dependent UI (edit/delete/retract buttons) is driven client-side by the shared `useResourcePermissions(resource, resourceType)` composable (AD-6), never by ad hoc `authStore.user?.isAdmin` checks — every Component Pattern below that shows conditional action buttons assumes this composable as its source of truth, not a bespoke check.
+Single-surface responsive web, Nuxt 4 + Vue 3 + Tailwind CSS 4, no native mobile app (Constraints, SPEC.md). One layout (`app/layouts/default.vue`) wraps every authenticated and public page with the same header + footer. `DESIGN.md` is the visual identity reference; this spine covers behavior, structure, and states. Authorization is enforced server-side via shared guards (ARCHITECTURE-SPINE AD-1/AD-4); this spine's permission-dependent UI (edit/delete/retract buttons) is driven client-side by the shared `useResourcePermissions(resource, resourceType)` composable (AD-6), never by ad hoc `authStore.user?.isAdmin` checks — every Component Pattern below that shows conditional action buttons assumes this composable as its source of truth.
 
 No anonymous visibility beyond home/terms/contact (Constraints): directories, profiles, catálogo, and feed all require an authenticated session — an unauthenticated visitor hitting any of these routes is redirected to `/login`, not shown a locked/teaser view.
 
@@ -36,7 +36,7 @@ No anonymous visibility beyond home/terms/contact (Constraints): directories, pr
 
 Header carries 7 nav links post-promotion (Inicio, Eventos, Noticias, Patrocinadores, Deportistas, Marcas, Nutricionistas) — same hamburger-below-`md` / horizontal-list-at-`md`+ mechanism as today, unchanged mechanically, just more items. Footer is unchanged (legal/informational links). Modal stacks one level deep everywhere (ContentEditor, catalog-item create, publicación composer) — never a modal opened on top of another modal.
 
-→ Composition reference: none produced this pass (Fast path, spine-only). Spine wins on conflict with any future mockup.
+→ Composition reference: 4 key-screen mocks in `mockups/` — [Home/Feed (authenticated, light)](mockups/key-home-feed.html), [Directorio + Detalle: Deportistas (light)](mockups/key-directorio-deportistas.html), [Registro segmentado por tipo (brand chrome)](mockups/key-registro-tipo.html), [Reportes/Indicadores (dark)](mockups/key-reportes-indicadores.html). Every other IA surface (Catálogo, Reseñas, Settings/theme, Login, admin tables) is spine-only by user confirmation — build directly from the Component/State Patterns tables below — no visual reference exists or is needed. Spine wins on conflict with any mockup.
 
 ## Voice and Tone
 
@@ -56,18 +56,21 @@ Behavioral. Visual specs live in `DESIGN.md.components`.
 
 | Component | Use | Behavioral rules |
 |---|---|---|
-| Directory card | Deportistas/Marcas/Nutricionistas/Patrocinadores listing | Photo + type-relevant summary fields (FR-16). Click anywhere on card → detail view. `{design.components.card}` hover treatment. |
-| Detail view | Any directory card click-through | Full field set (FR-17, incl. health-adjacent/PII fields — no field-level privacy in MVP, per Constraints). Back-navigation returns to listing with scroll position preserved. |
-| Publicación card (feed) | Home feed (authenticated) | Author name/photo, text, optional single image, timestamp. Edit/delete controls driven by `useResourcePermissions('publicacion', ...)` — author sees edit+delete, admin sees delete-only (never edit, per AD-1's matrix), other viewers see neither. |
+| Directory card | Deportistas/Marcas/Nutricionistas/Patrocinadores listing | Photo + type-relevant summary fields (FR-16). Click anywhere on card → detail view (hover treatment per Interaction Primitives). See [mockup](mockups/key-directorio-deportistas.html). |
+| Detail view | Any directory card click-through | Full field set (FR-17, incl. health-adjacent/PII fields — no field-level privacy in MVP, per Constraints). Back-navigation behavior per Interaction Primitives. See [mockup](mockups/key-directorio-deportistas.html). |
+| Profile photo upload | Perfil (FR-6) | Single-image picker in the UI — the storage layer always returns `Promise<string[]>` (ARCHITECTURE-SPINE AD-2), but this component only ever displays/sends the array's first element; a new upload replaces it wholesale, never appends. The array contract is a storage-layer uniformity detail, not a multi-photo feature — do not expose a gallery/carousel here. |
+| Publicación card (feed) | Home feed (authenticated) | Author name/photo, text, optional single image, timestamp. Edit/delete controls driven by `useResourcePermissions('publicacion', ...)` — author sees edit+delete, admin sees delete-only (never edit, per AD-1's matrix), other viewers see neither. See [mockup](mockups/key-home-feed.html). |
 | Event/News card | Eventos/Noticias listing | Existing `EventCard`/`NewsCard` idiom (`{design.components.card}`), unchanged visually. Author + admin get edit/delete (uniform matrix per AD-1). |
-| Catalog item card | Marca's own profile section + aggregate Catálogo view | `nombre`, `tipo` (servicio/físico) badge, image(s), contact-only — no price/cart affordance anywhere (FR-23). Creating Marca + admin get edit/delete. |
+| Catalog item card | Marca's own profile section + aggregate Catálogo view | `nombre`, `tipo` (servicio/físico) badge, image(s), contact-only — no price/cart affordance anywhere (FR-23). The creating Marca + admin get edit/delete. |
 | Reseña row | Nutricionista detail view | Rating + comment + reviewer name. No self-edit ever (AD-1 matrix: author edit = no). Admin sees a "Retractar" action, distinct from delete — retracting removes it from the profile but is logged as moderation, not a generic delete. |
 | Infinite-scroll list | Every directory, feed, catálogo aggregate view | Cursor-based, 20 records/batch (NFR-10/ARCHITECTURE-SPINE convention) — never numbered pagination. Loading sentinel at list end triggers next batch on intersection. |
 | UserDropdown | Header, authenticated | Perfil / Ajustes / Cerrar sesión; admin additionally sees "Gestión de usuarios," "Mensajes de contacto," and "Reportes/Indicadores." |
-| Theme toggle | Settings | Two-state switch (claro/oscuro). Applies instantly, no page reload, no confirm. |
+| Theme toggle | Settings | Two-state switch (claro/oscuro); apply behavior per Interaction Primitives. |
 | ContentEditor modal | Settings (terms/privacity/aboutUs edit entry points), admin | Opens with its own stacking context above the overlay (FR-7 fix) — this was a real bug, now a hard behavioral requirement, not just a visual note. |
-| Sport/category filter chips | Deportistas directory (FR-19), Catálogo (FR-39) | Multi-select-looking but single-select in MVP (fixed lists, one active filter at a time); "no filter" state shows the unfiltered full list. |
+| Admin table (Gestión de usuarios, Mensajes de Contacto inbox) | Admin surfaces (UserDropdown) | Row-based list, not card-grid — `{design.spacing.page-shell}` shell, `border-hairline` row dividers, no per-row shadow. Same `rounded-DEFAULT` inputs/buttons as elsewhere; retires the admin-specific `rounded-lg shadow-md` card variant DESIGN.md already deprecates. In scope for FR-33's visual refresh and FR-34's responsiveness gate like any other touched surface. |
+| Deactivate/reactivate control | Admin table row (Gestión de usuarios), Reseña "Retractar" flow (FR-36) | A labeled toggle-style action ("Desactivar cuenta" / "Reactivar cuenta") on the target Usuario's admin row — distinct from the generic `button-destructive` used for content deletion, since this acts on an account, not a piece of content. Always paired with the standard destructive-confirm step. Reflects `activeUserFilter(..., { bypassForAdmin: true })` — admin sees deactivated Usuarios in this table (unlike every public-facing list, where they're simply absent). |
 | Publicación composer | Home feed (authenticated) | Text + optional single image, inline at top of feed (not a separate modal) — lowest-friction posting per UJ-4's "daily habit" framing `[ASSUMPTION]`. |
+| Sport/category filter chips | Deportistas directory (FR-19), Catálogo (FR-39) | Looks multi-select but is single-select in MVP (fixed lists, one active filter at a time); "no filter" state shows the unfiltered full list. |
 
 ## State Patterns
 
@@ -86,17 +89,17 @@ Behavioral. Visual specs live in `DESIGN.md.components`.
 | Upload in progress | Photo/catalog-image/publicación-image upload | Inline "Subiendo…" state on the affected field only; rest of the form stays interactive. Reflects the insert-then-upload-then-patch server ordering (ARCHITECTURE-SPINE convention) — UI shows the record as saved-with-placeholder briefly, then the image resolves in place. |
 | Theme persistence | Any page, on return visit | Applied from `localStorage` before first paint where feasible (avoids a flash of the wrong theme); no server round-trip, no cross-device sync (FR-31 convention). |
 | Admin moderation action | Reseña retract, Publicación/Evento/Noticia/Catálogo-item admin delete | Confirm step ("Esta acción no se puede deshacer.") before firing; item disappears from the list immediately on success, no separate refresh needed. |
+| Forced logout on deactivation | Any authenticated route, mid-session | Per AD-4's per-request DB recheck, a Usuario deactivated while logged in is rejected on their very next request (not just next login) — the UI treats this exactly like an expired session: redirect to `/login` with "Tu sesión ya no es válida. Inicia sesión de nuevo." No separate "you were blocked" messaging — the app does not editorialize the admin moderation action for the affected user. |
 
 ## Interaction Primitives
 
 - **Click/tap to act.** Directory and content cards: click anywhere on the card opens the detail view (existing `NuxtLink`-wrapping-card pattern, retained).
-- **Infinite scroll, not pagination**, everywhere a collection is listed (directories, feed, catálogo) — 20-record cursor batches (NFR-10). Pagination controls are never introduced as an alternative.
 - **Scroll position preserved on back-navigation** from a detail view to its originating directory list (FR-17 assumption, confirmed in SPEC.md Assumptions) — re-entering a list via back-nav does not reset to top.
 - **Hover card lift** (`hover:scale-105`, `DESIGN.md.components.card`) is the one hover affordance on every content card; no secondary hover-reveal actions (no hover-only edit/delete icons) — action buttons are always visible when permitted, per the accessibility floor below.
 - **Sport/category filter chips** are tap/click single-select; selecting a new chip replaces the active filter and immediately refetches the first cursor batch (not client-side re-filtering of already-loaded data).
 - **Theme toggle** is a single tap, applies instantly, no confirm, no reload.
 - **Destructive actions require a confirm step** (delete own or another's content, retract reseña, deactivate account) — a lightweight inline confirm ("Esta acción no se puede deshacer." + Cancelar/Confirmar), not a full modal, to keep the flow fast on an MVP timeline.
-- **Mobile nav**: hamburger below `md`, full-width dropdown panel, closes on route change (existing pattern, unchanged, now covering 7 links instead of 5).
+- **Mobile nav**: closes on route change (existing pattern, unchanged) — breakpoint mechanics in Responsive & Platform.
 - **Banned:** numbered pagination on any list that has infinite scroll available; hover-only affordances for actions available on touch (`md`-below breakpoints get always-visible action buttons, not hover-reveal); auto-playing carousels.
 
 ## Accessibility Floor
@@ -119,8 +122,8 @@ Ratifying the existing baseline (`sm`/`md`/`lg`/`xl` stock Tailwind breakpoints,
 
 | Breakpoint | Behavior |
 |---|---|
-| `< md` (mobile, default) | Hamburger nav → full-width dropdown panel. Card grids: 1 column. Directory filter chips wrap/scroll horizontally. Feed composer stacks above the feed, full-width. Reportes/Indicadores: chart above numeric counts, stacked. |
-| `md` (768px+) | Horizontal nav bar replaces hamburger (existing collapse point, unchanged). Card grids: 2 columns. Filter chips sit in a single row. |
+| `< md` (mobile, default) | Hamburger nav → full-width dropdown panel. Card grids: 1 column. Directory filter chips wrap/scroll horizontally. Feed composer stacks above the feed, full-width. Reportes/Indicadores: chart above numeric counts, stacked. Admin tables: card-per-row (labeled key/value stack), not a horizontal table — no horizontal scroll. |
+| `md` (768px+) | Horizontal nav bar replaces hamburger (existing collapse point, unchanged). Card grids: 2 columns. Filter chips sit in a single row. Admin tables switch to true tabular rows. |
 | `lg` (1024px+) | Card grids: 3 columns. Reportes/Indicadores: chart and numeric counts sit side-by-side. |
 | `xl` (1280px+) | Card grids: 4 columns (directories, catálogo, feed on wide viewports). Page content respects `{design.spacing.page-shell}` (`max-w-[120rem]`) and centers with auto margins beyond it. |
 
@@ -132,10 +135,12 @@ Protagonist names and scenarios mirror PRD `prd-Elite_Hub-2026-07-19` §2.3 UJ-1
 
 ### Flow 1 — Camila registers as a deportista and is found by a sponsor the same week (UJ-1)
 
+→ Mockups: [Registro segmentado por tipo](mockups/key-registro-tipo.html) (step 1), [Directorio + Detalle: Deportistas](mockups/key-directorio-deportistas.html) (steps 5-6)
+
 1. Camila, unauthenticated, lands on `/register`. Selects "Deportista" — the form immediately reveals sport-specific fields (deporte, nivel, años de experiencia, objetivos actuales, etc.) below the type selector, no page transition (FR-1).
 2. She fills required fields, leaves "lesiones" and "marcas personales" blank (optional), checks the T&C box (hyperlinked to the live `terms` Content page), submits.
 3. **State check:** if she closes the tab mid-form, nothing persists — reopening `/register` starts blank (no partial account, SPEC.md Assumptions).
-4. She logs in, is dropped on Home (feed, since she's now authenticated). She navigates to Perfil (UserDropdown) and uploads a profile photo — the only field deferred off the registration form (FR-6).
+4. She logs in, is dropped on Home (feed, since she's now authenticated). She navigates to Perfil (UserDropdown) and uploads a profile photo — the only field deferred from the registration form (FR-6).
 5. Days later, a patrocinador opens the Deportistas directory, taps the "ciclismo" filter chip — list refetches to that sport only, infinite-scrolls, finds Camila's card, taps it.
 6. **Climax:** Detail view opens with her full profile (contact info visible, no field-level privacy gate in MVP). The patrocinador reaches out via her listed contact info, outside the app.
 7. **Resolution:** Nowhere in Perfil or any admin surface is there a control that could change Camila's TipoUsuario — it is not present, not just disabled (FR-3/AD-8).
@@ -160,6 +165,8 @@ Protagonist names and scenarios mirror PRD `prd-Elite_Hub-2026-07-19` §2.3 UJ-1
 
 ### Flow 4 — Daily use is anchored by the home feed (UJ-4)
 
+→ Mockup: [Home/Feed (authenticated)](mockups/key-home-feed.html)
+
 1. A patrocinador opens the app on a weekday morning. Home resolves to the Publicaciones feed (authenticated landing, `[ASSUMPTION]`) — most-recent-first (FR-27), skeleton cards while the first cursor batch loads.
 2. They scroll — publicaciones from deportistas, marcas, nutricionistas, other patrocinadores, mixed text/photo, infinite-scrolling in 20-record batches.
 3. They use the inline composer at the top of the feed: text + optional single image, tap "Publicar."
@@ -171,11 +178,13 @@ Protagonist names and scenarios mirror PRD `prd-Elite_Hub-2026-07-19` §2.3 UJ-1
 
 1. Camila forgets her password; `/login` has no self-service recovery link in MVP (a deliberate non-goal, not an oversight — the UI does not imply one exists).
 2. She contacts the admin outside the app.
-3. Admin logs in, navigates to Camila's profile via the Deportistas directory (or a future admin user-search — not specified further this pass), and uses the admin profile-edit override (available because `activeUserFilter(..., { bypassForAdmin: true })` lets admin reach even a deactivated account) to reset her credentials.
+3. Admin logs in, navigates to Camila's profile via the Deportistas directory (or a future admin user-search — not specified further in this pass), and uses the admin profile-edit override (available because `activeUserFilter(..., { bypassForAdmin: true })` lets admin reach even a deactivated account) to reset her credentials.
 4. **Climax:** Admin's edit view for another Usuario's profile looks identical in structure to a self-edit view but is visibly framed (e.g. a header note: "Editando el perfil de {nombre} como administrador") so admin never mistakes it for their own profile.
 5. **Resolution:** Camila logs in with the reset credentials — no formal recovery flow exists beyond this manual stopgap, by design, until post-MVP email recovery ships.
 
 ### Flow 6 — The admin checks community composition before a stakeholder update (UJ-6)
+
+→ Mockup: [Reportes/Indicadores (dark theme)](mockups/key-reportes-indicadores.html)
 
 1. Admin, authenticated, opens UserDropdown → "Reportes/Indicadores."
 2. View loads: donut/bar chart (vue-chartjs, per ARCHITECTURE-SPINE AD-3) breaking down registered Usuarios by TipoUsuario, with numeric counts displayed alongside — not chart-only (FR-30). At `< lg`, chart stacks above the counts; at `lg`+, side-by-side.

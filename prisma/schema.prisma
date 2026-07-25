@@ -88,6 +88,32 @@ model Informacion {
   usuarios           Usuario[]
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
+
+  // --- Story 1.1: Registro segmentado por tipo ---
+  segundoNombre           String?
+  segundoApellido         String?
+  nacionalidad            String?
+  ciudadResidencia        String?
+  altura                  Float?
+  peso                    Float?
+  objetivosActuales       String?
+  marcasPersonales        String?
+  lesiones                String?
+  pais                    String?
+  universidad             String?
+  anoGraduacion           Int?
+  anosExperiencia         Int?
+  certificadosAdicionales String?
+  modalidadAtencion       ModalidadAtencion?
+  nombreContacto          String?
+  cargoContacto           String?
+  direccionContacto       String?
+}
+
+enum ModalidadAtencion {
+  VIRTUAL
+  PRESENCIAL
+  HIBRIDO
 }
 
 model TipoUsuario {
@@ -191,7 +217,7 @@ model UsuarioDeporte {
   deporteId         Int
   experiencia       Int
   nivel             Nivel    @default(PRINCIPIANTE)
-  frecuenciaSemanal Int
+  frecuenciaSemanal Int      @default(0)
   usuario           Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   deporte           Deporte  @relation(fields: [deporteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt         DateTime @default(now())
