@@ -1,9 +1,11 @@
 <template>
   <div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
     <div class="max-w-3xl mx-auto py-12 px-4">
-    <h1 class="text-2xl font-bold mb-6">Crear Noticia</h1>
+    <h1 class="text-2xl font-bold mb-6">Editar Noticia</h1>
 
-    <div v-if="!authStore.isAuthenticated" class="p-6 bg-yellow-50 rounded">Debes iniciar sesión para crear una noticia.</div>
+    <div v-if="loading">Cargando...</div>
+
+    <div v-else-if="!canEdit" class="p-6 bg-yellow-50 rounded">No tienes permiso para editar esta noticia.</div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-4">
       <div>
@@ -27,40 +29,52 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <button :disabled="loading" class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors">Crear</button>
-        <NuxtLink to="/noticias" replace class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors inline-block">Cancelar</NuxtLink>
+        <button :disabled="saving" class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors">Guardar</button>
+        <NuxtLink :to="`/noticias/${route.params.id}`" replace class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors inline-block">Cancelar</NuxtLink>
       </div>
 
       <div v-if="error" class="text-red-600">{{ error }}</div>
-      <div v-if="success" class="text-green-600">Noticia creada correctamente.</div>
+      <div v-if="success" class="text-green-600">Noticia actualizada correctamente.</div>
     </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '~/stores/auth'
 
-const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+
+const noticia = ref<any>(null)
+const loading = ref(true)
+const { canEdit } = useResourcePermissions('evento_noticia', noticia)
 
 const titulo = ref('')
 const resumen = ref('')
 const contenido = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
-const loading = ref(false)
+const saving = ref(false)
 const error = ref('')
 const success = ref(false)
+
+onMounted(async () => {
+  try {
+    noticia.value = await $fetch(`/api/noticias/${route.params.id}`)
+    titulo.value = noticia.value.titulo || ''
+    resumen.value = noticia.value.resumen || ''
+    contenido.value = noticia.value.contenido || ''
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
+})
 
 async function handleSubmit() {
   error.value = ''
   success.value = false
-  if (!authStore.isAuthenticated) {
-    error.value = 'Debes iniciar sesión para crear una noticia.'
-    return
-  }
 
   const fd = new FormData()
   fd.append('titulo', titulo.value)
@@ -72,17 +86,16 @@ async function handleSubmit() {
     fd.append('imageFile', fileEl.files[0])
   }
 
-  loading.value = true
+  saving.value = true
   try {
-    const res = await $fetch('/api/noticias', { method: 'POST', body: fd })
+    await $fetch(`/api/noticias/${route.params.id}`, { method: 'PUT', body: fd })
     success.value = true
-    // redirect to news listing or the created item if id returned
-    await router.push('/noticias')
+    await router.push(`/noticias/${route.params.id}`)
   } catch (e: any) {
     console.error(e)
-    error.value = e?.message || 'Error al crear noticia'
+    error.value = e?.message || 'Error al actualizar noticia'
   } finally {
-    loading.value = false
+    saving.value = false
   }
 }
 </script>

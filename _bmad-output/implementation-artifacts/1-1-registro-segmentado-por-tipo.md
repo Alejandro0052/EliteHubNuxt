@@ -4,7 +4,7 @@ baseline_commit: 15f62c9f4a914086df42e026d20a7a85f2196431
 
 # Story 1.1: Registro segmentado por tipo
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

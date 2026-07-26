@@ -9,7 +9,7 @@
         </button>
         <h1 class="text-3xl font-bold">Eventos</h1>
       </div>
-      <div v-if="authStore.user?.isAdmin">
+      <div v-if="authStore.isAuthenticated">
         <NuxtLink to="/admin/eventos/create" class="block">
           <div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
             <div class="text-xl font-bold text-white">+</div>

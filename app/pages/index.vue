@@ -91,12 +91,12 @@
 		</div>
 
 		<!-- Estadísticas -->
-		<div class="grid grid-cols-1 gap-6 text-black sm:grid-cols-2 lg:grid-cols-5">
-			<stats :endValue="327" text="Deportistas" icon="fa6-solid:person-running"></stats>
-			<stats :endValue="125" text="Patrocinadores" icon="fa6-solid:chart-line"></stats>
-			<stats :endValue="62" text="Marcas" icon="fa6-solid:handshake"></stats>
-			<stats :endValue="86" text="Nutricionistas" icon="fa6-solid:user-doctor"></stats>
-			<stats :endValue="51" text="Eventos" icon="fa6-solid:trophy"></stats>
+		<div v-if="siteStats" class="grid grid-cols-1 gap-6 text-black sm:grid-cols-2 lg:grid-cols-5">
+			<stats :endValue="siteStats.deportistas" text="Deportistas" icon="fa6-solid:person-running"></stats>
+			<stats :endValue="siteStats.patrocinadores" text="Patrocinadores" icon="fa6-solid:chart-line"></stats>
+			<stats :endValue="siteStats.marcas" text="Marcas" icon="fa6-solid:handshake"></stats>
+			<stats :endValue="siteStats.nutricionistas" text="Nutricionistas" icon="fa6-solid:user-doctor"></stats>
+			<stats :endValue="siteStats.eventos" text="Eventos" icon="fa6-solid:trophy"></stats>
 		</div>
 
 		<!-- Noticias -->
@@ -115,8 +115,8 @@
 							</h2>
 						</div>
 					</NuxtLink>
-				<!-- Create button for admins -->
-				<div v-if="authStore.user?.isAdmin">
+				<!-- Create button for any authenticated user -->
+				<div v-if="authStore.isAuthenticated">
 					<NuxtLink to="/admin/noticias/create" class="block">
 						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
 							<div class="text-xl font-bold text-white">+</div>
@@ -199,7 +199,7 @@
 							</h2>
 						</div>
 					</NuxtLink>
-				<div v-if="authStore.user?.isAdmin">
+				<div v-if="authStore.isAuthenticated">
 					<NuxtLink to="/admin/eventos/create" class="block">
 						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
 							<div class="text-xl font-bold text-white">+</div>
@@ -245,6 +245,13 @@ import { ref, onMounted } from 'vue'
 const authStore = useAuthStore()
 const noticiasPreview = ref([])
 const eventosPreview = ref([])
+const siteStats = ref<{
+	deportistas: number
+	patrocinadores: number
+	marcas: number
+	nutricionistas: number
+	eventos: number
+} | null>(null)
 
 onMounted(async () => {
 	try {
@@ -254,6 +261,12 @@ onMounted(async () => {
 		eventosPreview.value = (eventos as any[]).slice(0, 5)
 	} catch (err) {
 		console.error('Error loading preview data:', err)
+	}
+
+	try {
+		siteStats.value = await $fetch('/api/stats')
+	} catch (err) {
+		console.error('Error loading stats:', err)
 	}
 })
 </script>

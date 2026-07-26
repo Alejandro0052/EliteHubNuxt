@@ -41,27 +41,27 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-24
-last_updated: 2026-07-25
+last_updated: 2026-07-26
 project: Elite_Hub
 project_key: NOKEY
 tracking_system: file-system
 story_location: _bmad-output/implementation-artifacts
 
 development_status:
-  epic-1: in-progress
-  1-1-registro-segmentado-por-tipo: review
-  1-2-inmutabilidad-de-tipo-de-usuario: review
-  1-3-fix-de-contenteditor-y-reubicacion: review
+  epic-1: done
+  1-1-registro-segmentado-por-tipo: done
+  1-2-inmutabilidad-de-tipo-de-usuario: done
+  1-3-fix-de-contenteditor-y-reubicacion: done
   1-4-persistencia-del-formulario-de-contacto: done
-  1-5-bandeja-admin-de-mensajes-de-contacto: ready-for-dev
-  1-6-stats-reales-del-homepage: backlog
-  1-7-apertura-de-creacion-de-eventos-noticias-con-permisos-autor-admin: backlog
+  1-5-bandeja-admin-de-mensajes-de-contacto: done
+  1-6-stats-reales-del-homepage: done
+  1-7-apertura-de-creacion-de-eventos-noticias-con-permisos-autor-admin: done
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-directorios-segmentados-con-scroll-infinito: backlog
-  2-2-vista-de-detalle-con-navegacion-de-vuelta: backlog
-  2-3-edicion-de-perfil-propio-foto-y-recuperacion-admin: backlog
+  epic-2: in-progress
+  2-1-directorios-segmentados-con-scroll-infinito: done
+  2-2-vista-de-detalle-con-navegacion-de-vuelta: done
+  2-3-edicion-de-perfil-propio-foto-y-recuperacion-admin: ready-for-dev
   2-4-ocultamiento-de-contenido-por-cuenta-desactivada: backlog
   2-5-filtro-de-deporte-en-deportistas: backlog
   epic-2-retrospective: optional

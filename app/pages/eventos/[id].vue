@@ -7,6 +7,20 @@
     </button>
     <div v-if="loading">Cargando...</div>
     <div v-else>
+      <div class="mb-4 flex items-center gap-3">
+        <NuxtLink
+          v-if="canEdit"
+          :to="`/admin/eventos/edit/${evento.id}`"
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+          Editar
+        </NuxtLink>
+        <button
+          v-if="canDelete"
+          @click="handleDelete"
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+          Eliminar
+        </button>
+      </div>
       <h1 class="text-4xl font-bold mb-4">{{ evento.titulo }}</h1>
       <div class="text-sm text-gray-500 mb-6">{{ formatDate(evento.fechaEvento || evento.createdAt) }}</div>
       <img v-if="evento.imagen" :src="evento.imagen" class="w-full rounded-lg mb-6" />
@@ -24,6 +38,7 @@ const router = useRouter()
 const evento = ref<any>(null)
 const loading = ref(true)
 const route = useRoute()
+const { canEdit, canDelete } = useResourcePermissions('evento_noticia', evento)
 
 function formatDate(d: string | Date | null | undefined) {
   if (!d) return ''
@@ -44,4 +59,14 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+async function handleDelete() {
+  if (!confirm('¿Eliminar este evento? Esta acción no se puede deshacer.')) return
+  try {
+    await $fetch(`/api/eventos/${route.params.id}`, { method: 'DELETE' })
+    await router.push('/eventos')
+  } catch (err) {
+    console.error(err)
+  }
+}
 </script>

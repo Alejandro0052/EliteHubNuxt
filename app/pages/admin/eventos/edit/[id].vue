@@ -1,9 +1,11 @@
 <template>
   <div class="w-full min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
     <div class="max-w-3xl mx-auto py-12 px-4">
-    <h1 class="text-2xl font-bold mb-6">Crear Evento</h1>
+    <h1 class="text-2xl font-bold mb-6">Editar Evento</h1>
 
-    <div v-if="!authStore.isAuthenticated" class="p-6 bg-yellow-50 rounded">Debes iniciar sesión para crear un evento.</div>
+    <div v-if="loading">Cargando...</div>
+
+    <div v-else-if="!canEdit" class="p-6 bg-yellow-50 rounded">No tienes permiso para editar este evento.</div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-4">
       <div>
@@ -37,24 +39,27 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <button :disabled="loading" class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors">Crear</button>
-        <NuxtLink to="/eventos" replace class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors inline-block">Cancelar</NuxtLink>
+        <button :disabled="saving" class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors">Guardar</button>
+        <NuxtLink :to="`/eventos/${route.params.id}`" replace class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors inline-block">Cancelar</NuxtLink>
       </div>
 
       <div v-if="error" class="text-red-600">{{ error }}</div>
-      <div v-if="success" class="text-green-600">Evento creado correctamente.</div>
+      <div v-if="success" class="text-green-600">Evento actualizado correctamente.</div>
     </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '~/stores/auth'
 
-const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+
+const evento = ref<any>(null)
+const loading = ref(true)
+const { canEdit } = useResourcePermissions('evento_noticia', evento)
 
 const titulo = ref('')
 const resumen = ref('')
@@ -62,17 +67,30 @@ const contenido = ref('')
 const fechaEvento = ref('')
 const ubicacion = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
-const loading = ref(false)
+const saving = ref(false)
 const error = ref('')
 const success = ref(false)
+
+onMounted(async () => {
+  try {
+    evento.value = await $fetch(`/api/eventos/${route.params.id}`)
+    titulo.value = evento.value.titulo || ''
+    resumen.value = evento.value.resumen || ''
+    contenido.value = evento.value.contenido || ''
+    ubicacion.value = evento.value.ubicacion || ''
+    if (evento.value.fechaEvento) {
+      fechaEvento.value = new Date(evento.value.fechaEvento).toISOString().slice(0, 10)
+    }
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
+})
 
 async function handleSubmit() {
   error.value = ''
   success.value = false
-  if (!authStore.isAuthenticated) {
-    error.value = 'Debes iniciar sesión para crear un evento.'
-    return
-  }
 
   const fd = new FormData()
   fd.append('titulo', titulo.value)
@@ -86,16 +104,16 @@ async function handleSubmit() {
     fd.append('imageFile', fileEl.files[0])
   }
 
-  loading.value = true
+  saving.value = true
   try {
-    const res = await $fetch('/api/eventos', { method: 'POST', body: fd })
+    await $fetch(`/api/eventos/${route.params.id}`, { method: 'PUT', body: fd })
     success.value = true
-    await router.push('/eventos')
+    await router.push(`/eventos/${route.params.id}`)
   } catch (e: any) {
     console.error(e)
-    error.value = e?.message || 'Error al crear evento'
+    error.value = e?.message || 'Error al actualizar evento'
   } finally {
-    loading.value = false
+    saving.value = false
   }
 }
 </script>
