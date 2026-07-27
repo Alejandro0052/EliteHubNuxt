@@ -22,8 +22,13 @@
           <div v-html="pageContent.content"></div>
         </div>
 
+        <!-- Filtro por deporte -->
+        <div class="mb-6">
+          <FilterChips v-model="selectedDeporteId" :options="deporteOptions" />
+        </div>
+
         <!-- Directorio de Deportistas -->
-        <InfiniteScrollList :fetch-page="fetchPage">
+        <InfiniteScrollList :key="selectedDeporteId ?? 'all'" :fetch-page="fetchPage">
           <template #default="{ item }">
             <UsuarioDirectoryCard :usuario="item" />
           </template>
@@ -52,8 +57,17 @@ const pageContent = ref({
   metadata: {}
 })
 
+const deportes = ref([])
+const selectedDeporteId = ref(null)
+const deporteOptions = computed(() => [
+  { value: null, label: 'Todos' },
+  ...deportes.value.map((d) => ({ value: d.id, label: d.nombre })),
+])
+
 function fetchPage(cursor) {
-  return $fetch('/api/usuarios', { query: { tipo: 'Deportista', cursor } })
+  return $fetch('/api/usuarios', {
+    query: { tipo: 'Deportista', cursor, deporteId: selectedDeporteId.value || undefined },
+  })
 }
 
 // Load content on mount
@@ -63,6 +77,12 @@ onMounted(async () => {
     pageContent.value = content
   } catch (error) {
     console.error('Error loading content:', error)
+  }
+
+  try {
+    deportes.value = await $fetch('/api/deportes')
+  } catch (error) {
+    console.error('Error loading deportes:', error)
   }
 })
 </script>

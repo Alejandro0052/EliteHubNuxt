@@ -22,6 +22,16 @@
           <div class="max-w-none" v-html="pageContent.content"></div>
         </div>
 
+        <!-- CTA al catálogo agregado -->
+        <div class="mb-8 text-center">
+          <NuxtLink
+            to="/catalogo"
+            class="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 font-semibold text-white transition-colors hover:bg-gray-800">
+            <Icon name="fa6-solid:store" />
+            Ver catálogo completo
+          </NuxtLink>
+        </div>
+
         <!-- Directorio de Marcas -->
         <InfiniteScrollList :fetch-page="fetchPage">
           <template #default="{ item }">

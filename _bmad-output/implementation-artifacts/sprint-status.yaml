@@ -58,18 +58,18 @@ development_status:
   1-7-apertura-de-creacion-de-eventos-noticias-con-permisos-autor-admin: done
   epic-1-retrospective: optional
 
-  epic-2: in-progress
+  epic-2: done
   2-1-directorios-segmentados-con-scroll-infinito: done
   2-2-vista-de-detalle-con-navegacion-de-vuelta: done
-  2-3-edicion-de-perfil-propio-foto-y-recuperacion-admin: ready-for-dev
-  2-4-ocultamiento-de-contenido-por-cuenta-desactivada: backlog
-  2-5-filtro-de-deporte-en-deportistas: backlog
+  2-3-edicion-de-perfil-propio-foto-y-recuperacion-admin: done
+  2-4-ocultamiento-de-contenido-por-cuenta-desactivada: done
+  2-5-filtro-de-deporte-en-deportistas: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-creacion-de-items-de-catalogo-restringida-a-marca: backlog
-  3-2-vistas-de-catalogo-perfil-propio-y-agregado: backlog
-  3-3-edicion-y-borrado-de-items-de-catalogo: backlog
+  epic-3: in-progress
+  3-1-creacion-de-items-de-catalogo-restringida-a-marca: done
+  3-2-vistas-de-catalogo-perfil-propio-y-agregado: done
+  3-3-edicion-y-borrado-de-items-de-catalogo: review
   epic-3-retrospective: optional
 
   epic-4: backlog

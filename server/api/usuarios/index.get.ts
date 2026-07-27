@@ -10,10 +10,15 @@ export default defineEventHandler(async (event) => {
 	}
 
 	const cursor = query.cursor ? parseInt(query.cursor as string) : undefined;
+	const deporteId = query.deporteId ? parseInt(query.deporteId as string) : undefined;
 	const take = 20;
 
 	const items = await prisma.usuario.findMany({
-		where: { activo: true, informacion: { tipoUsuario: { tipo } } },
+		where: {
+			...activeUserFilter(),
+			informacion: { tipoUsuario: { tipo } },
+			...(deporteId ? { UsuarioDeporte: { some: { deporteId } } } : {}),
+		},
 		take,
 		...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
 		orderBy: { id: "asc" },

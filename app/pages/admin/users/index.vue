@@ -23,9 +23,11 @@
             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Nombre</th>
             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Apellido</th>
             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Correo</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Tipo de usuario</th>
             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Rol</th>
             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Activo</th>
             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Creado</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Acciones</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -33,6 +35,7 @@
             <td class="px-4 py-3">{{ u.nombre }}</td>
             <td class="px-4 py-3">{{ u.apellido }}</td>
             <td class="px-4 py-3">{{ u.correo }}</td>
+            <td class="px-4 py-3">{{ u.informacion?.tipoUsuario?.tipo || 'Sin tipo' }}</td>
             <td class="px-4 py-3">{{ u.isAdmin ? 'Administrador' : 'Usuario' }}</td>
             <td class="px-4 py-3">
               <button
@@ -50,6 +53,15 @@
               </span>
             </td>
             <td class="px-4 py-3 text-sm text-gray-500">{{ formatDate(u.createdAt) }}</td>
+            <td class="px-4 py-3">
+              <NuxtLink
+                :to="`/profile/${u.id}`"
+                class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-50"
+                title="Editar perfil (recuperación admin)">
+                <Icon name="fa6-solid:pen" />
+                Editar perfil
+              </NuxtLink>
+            </td>
           </tr>
         </tbody>
       </table>

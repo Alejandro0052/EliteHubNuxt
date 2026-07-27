@@ -6,7 +6,10 @@ export async function requireSession(event: any, options: { requireAdmin?: boole
 		throw createError({ statusCode: 401, message: "No autenticado" });
 	}
 
-	const usuario = await prisma.usuario.findUnique({ where: { id: parseInt(session.user.id as string) } });
+	const usuario = await prisma.usuario.findUnique({
+		where: { id: parseInt(session.user.id as string) },
+		include: { informacion: { include: { tipoUsuario: true } } },
+	});
 	if (!usuario || !usuario.activo) {
 		throw createError({ statusCode: 401, message: "Tu sesión ya no es válida. Inicia sesión de nuevo." });
 	}

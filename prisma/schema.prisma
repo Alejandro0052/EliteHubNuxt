@@ -34,6 +34,7 @@ model Usuario {
   UsuarioDeporte UsuarioDeporte[]
   noticias       Noticia[]
   eventos        Evento[]
+  itemsCatalogo  ItemCatalogo[]
 }
 
 model Rol {
@@ -212,6 +213,32 @@ model MensajeContacto {
   mensaje   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CategoriaCatalogo {
+  id        Int            @id @default(autoincrement())
+  nombre    String         @unique
+  items     ItemCatalogo[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+enum TipoItemCatalogo {
+  SERVICIO
+  FISICO
+}
+
+model ItemCatalogo {
+  id          Int               @id @default(autoincrement())
+  nombre      String
+  tipoItem    TipoItemCatalogo
+  imagenes    String[]
+  categoriaId Int
+  categoria   CategoriaCatalogo @relation(fields: [categoriaId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  usuarioId   Int
+  usuario     Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 }
 
 model Deporte {

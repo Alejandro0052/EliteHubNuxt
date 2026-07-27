@@ -4,7 +4,7 @@ baseline_commit: 1d528cb26f89c80c0048b3aabc9a38dc2455ad85
 
 # Story 2.3: Edición de perfil propio, foto, y recuperación admin
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -24,42 +24,42 @@ so that I control my own information, while admin retains an emergency override 
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Read the current profile surface in full before touching anything (AC: all)
-  - [ ] **Critical finding from analysis, confirm by reading yourself:** `app/pages/profile.vue`'s edit form today is a **generic, pre-Story-1.1 leftover** — a fixed field set (profesión, especialidad, teléfono, género, fecha de nacimiento, experiencia) shown identically **regardless of TipoUsuario**. It does not expose Deportista's altura/peso/deporte/nivel/objetivosActuales/lesiones, Marca's nombreComercial/nit/direccionContacto/nombreContacto/cargoContacto, Nutricionista's universidad/anoGraduacion/anosExperiencia/modalidadAtencion, or Patrocinador's país/ciudadResidencia at all. AC #2 requires the *actual* per-type field set (Story 1.1's, confirmed in `server/api/auth/register.post.ts`) — this story replaces the generic form, it does not patch it.
-  - [ ] TipoUsuario is **already** read-only on this page (a `<p>`, not a `<select>` — Story 1.2 already fixed this) — confirm AC #3 is already satisfied, no change needed there.
-  - [ ] `server/api/profile/index.get.ts` / `.put.ts` are today **hardcoded to `session.user.id`** — there is no way to target another Usuario at all (no admin override exists yet). `server/api/profile/avatar.post.ts` already returns a single `{ url }` and the PUT endpoint always **overwrites** `Usuario.avatar` (never appends — it's a single scalar field) — AC #5 is already structurally satisfied by the current single-string design; don't build a `Promise<string[]>`-returning storage layer here, that's explicitly `server/utils/storage.ts`'s job in Story 8.1 (not yet built) — this story's avatar handling is unchanged from today's working behavior.
+- [x] Task 1: Read the current profile surface in full before touching anything (AC: all)
+  - [x] **Critical finding from analysis, confirm by reading yourself:** `app/pages/profile.vue`'s edit form today is a **generic, pre-Story-1.1 leftover** — a fixed field set (profesión, especialidad, teléfono, género, fecha de nacimiento, experiencia) shown identically **regardless of TipoUsuario**. It does not expose Deportista's altura/peso/deporte/nivel/objetivosActuales/lesiones, Marca's nombreComercial/nit/direccionContacto/nombreContacto/cargoContacto, Nutricionista's universidad/anoGraduacion/anosExperiencia/modalidadAtencion, or Patrocinador's país/ciudadResidencia at all. AC #2 requires the *actual* per-type field set (Story 1.1's, confirmed in `server/api/auth/register.post.ts`) — this story replaces the generic form, it does not patch it.
+  - [x] TipoUsuario is **already** read-only on this page (a `<p>`, not a `<select>` — Story 1.2 already fixed this) — confirm AC #3 is already satisfied, no change needed there.
+  - [x] `server/api/profile/index.get.ts` / `.put.ts` are today **hardcoded to `session.user.id`** — there is no way to target another Usuario at all (no admin override exists yet). `server/api/profile/avatar.post.ts` already returns a single `{ url }` and the PUT endpoint always **overwrites** `Usuario.avatar` (never appends — it's a single scalar field) — AC #5 is already structurally satisfied by the current single-string design; don't build a `Promise<string[]>`-returning storage layer here, that's explicitly `server/utils/storage.ts`'s job in Story 8.1 (not yet built) — this story's avatar handling is unchanged from today's working behavior.
 
-- [ ] Task 2: Extend `server/api/profile/index.get.ts`'s include (AC: #2)
-  - [ ] Add `UsuarioDeporte: { include: { deporte: true } }` and `informacion: { include: { tipoUsuario: true, redesSociales: true } }` to the existing `include` — needed so the edit form can pre-fill a Deportista's current deporte/nivel/experiencia and a Deportista/Marca's current red social URL, neither of which the endpoint returns today.
+- [x] Task 2: Extend `server/api/profile/index.get.ts`'s include (AC: #2)
+  - [x] Add `UsuarioDeporte: { include: { deporte: true } }` and `informacion: { include: { tipoUsuario: true, redesSociales: true } }` to the existing `include` — needed so the edit form can pre-fill a Deportista's current deporte/nivel/experiencia and a Deportista/Marca's current red social URL, neither of which the endpoint returns today.
 
-- [ ] Task 3: Create `server/api/profile/[id].get.ts` and `server/api/profile/[id].put.ts` — the admin recovery override (AC: #4, #6, #7)
-  - [ ] Both admin-only: `await requireSession(event, { requireAdmin: true })` (Story 1.7's primitive; throws 403 for a non-admin caller attempting this route directly — this is what makes AC #4 real server-side, not just UI-hidden, per NFR-3).
-  - [ ] `[id].get.ts` fetches the target Usuario by the route param `id` (not the session's own id) with the same `include` shape as Task 2 — **deliberately no `activo: true` filter** here: admin must be able to see and act on a deactivated Usuario's profile (AC #6's "including a deactivated Usuario's"). This is a single-record admin lookup, not a collection query, so it does **not** need (and should not attempt to use) the still-unbuilt `activeUserFilter()` helper — same reasoning already applied in Stories 2.1/2.2 to `activo`-filtering on a single record vs. a list.
-  - [ ] `[id].put.ts` mirrors `index.put.ts`'s update logic exactly (same field-mapping, same `delete informacion.tipoUsuarioId` guard for AC #7) but resolves the target id from `event.context.params.id` instead of `session.user.id`. **Do not duplicate the entire update logic by copy-paste-and-diverge** — extract the shared update logic (both endpoints' bodies are otherwise identical) into a small helper in `server/utils/` (e.g. `updateUsuarioProfile(targetId, body)`) that both `index.put.ts` and `[id].put.ts` call, so the AD-8 TipoUsuario-immutability guard and the field-mapping logic live in exactly one place.
+- [x] Task 3: Create `server/api/profile/[id].get.ts` and `server/api/profile/[id].put.ts` — the admin recovery override (AC: #4, #6, #7)
+  - [x] Both admin-only: `await requireSession(event, { requireAdmin: true })` (Story 1.7's primitive; throws 403 for a non-admin caller attempting this route directly — this is what makes AC #4 real server-side, not just UI-hidden, per NFR-3).
+  - [x] `[id].get.ts` fetches the target Usuario by the route param `id` (not the session's own id) with the same `include` shape as Task 2 — **deliberately no `activo: true` filter** here: admin must be able to see and act on a deactivated Usuario's profile (AC #6's "including a deactivated Usuario's"). This is a single-record admin lookup, not a collection query, so it does **not** need (and should not attempt to use) the still-unbuilt `activeUserFilter()` helper — same reasoning already applied in Stories 2.1/2.2 to `activo`-filtering on a single record vs. a list.
+  - [x] `[id].put.ts` mirrors `index.put.ts`'s update logic exactly (same field-mapping, same `delete informacion.tipoUsuarioId` guard for AC #7) but resolves the target id from `event.context.params.id` instead of `session.user.id`. **Do not duplicate the entire update logic by copy-paste-and-diverge** — extract the shared update logic (both endpoints' bodies are otherwise identical) into a small helper in `server/utils/` (e.g. `updateUsuarioProfile(targetId, body)`) that both `index.put.ts` and `[id].put.ts` call, so the AD-8 TipoUsuario-immutability guard and the field-mapping logic live in exactly one place.
 
-- [ ] Task 4: Build `app/components/ProfileEditForm.vue` — one adaptive per-type edit form (AC: #1, #2, #3, #5)
-  - [ ] **Read `app/pages/register.vue` in full first** — this story's edit form must expose exactly the fields that page collects per TipoUsuario, this time pre-filled and editable rather than empty. Do not guess the field list from memory; the required/optional split per type is also confirmed in `server/api/auth/register.post.ts`'s `requireFields()` calls.
-  - [ ] Props: `usuario` (the fetched profile object, already includes `informacion`/`tipoUsuario`/`UsuarioDeporte`/`redesSociales`), `submitting` (loading state passed from the parent page). Emits `submit` with the built payload — the parent page owns the actual `$fetch` call (self vs. `/api/profile/[id]`), this component only builds the form and its data.
-  - [ ] TipoUsuario rendered as a read-only line (`{{ usuario.informacion?.tipoUsuario?.tipo }}`) — never a `<select>`/editable control (AC #3, #7) — matching the already-fixed pattern in the current `profile.vue`.
-  - [ ] Per-type editable fields (all of Story 1.1's fields for that type, pre-filled from `usuario`/`usuario.informacion`/`usuario.UsuarioDeporte[0]`, same field set as `register.vue`'s corresponding branch):
+- [x] Task 4: Build `app/components/ProfileEditForm.vue` — one adaptive per-type edit form (AC: #1, #2, #3, #5)
+  - [x] **Read `app/pages/register.vue` in full first** — this story's edit form must expose exactly the fields that page collects per TipoUsuario, this time pre-filled and editable rather than empty. Do not guess the field list from memory; the required/optional split per type is also confirmed in `server/api/auth/register.post.ts`'s `requireFields()` calls.
+  - [x] Props: `usuario` (the fetched profile object, already includes `informacion`/`tipoUsuario`/`UsuarioDeporte`/`redesSociales`), `submitting` (loading state passed from the parent page). Emits `submit` with the built payload — the parent page owns the actual `$fetch` call (self vs. `/api/profile/[id]`), this component only builds the form and its data.
+  - [x] TipoUsuario rendered as a read-only line (`{{ usuario.informacion?.tipoUsuario?.tipo }}`) — never a `<select>`/editable control (AC #3, #7) — matching the already-fixed pattern in the current `profile.vue`.
+  - [x] Per-type editable fields (all of Story 1.1's fields for that type, pre-filled from `usuario`/`usuario.informacion`/`usuario.UsuarioDeporte[0]`, same field set as `register.vue`'s corresponding branch):
     - **Deportista:** segundoNombre, segundoApellido, fechaNacimiento, género, nacionalidad, ciudadResidencia, bio, altura, peso, deporte (select, from `GET /api/deportes`, matching `register.vue`'s existing pattern), nivel, experiencia (on `UsuarioDeporte`), objetivosActuales, marcasPersonales, lesiones, red social URL
     - **Marca:** nombreComercial (maps to base `nombre`, same as registration), NIT, teléfono, direccionContacto, nombreContacto, cargoContacto, bio, sitioWeb, red social URL
     - **Nutricionista:** fechaNacimiento, género, teléfono, país, ciudadResidencia, bio, profesión, universidad, anoGraduacion, especialidad, anosExperiencia, modalidadAtencion (select: Presencial/Virtual/Híbrido, Story 1.1's addition), certificadosAdicionales
     - **Patrocinador:** fechaNacimiento, teléfono, país, ciudadResidencia, bio, sitioWeb
-  - [ ] Avatar upload block (file input + preview + 2MB/image-type validation) — copy the existing, already-working logic from the current `profile.vue` verbatim into this component (don't rewrite what already works).
-  - [ ] Género/país use the shared `GENEROS`/`PAISES` fixed lists from `#shared/utils/fixedLists` (Story 1.1's convention) — do not hardcode a separate option list here (the current `profile.vue` hardcodes its own género options, e.g. `"masculino"`/`"femenino"` lowercase — **wrong values**, don't match `GENEROS`'s actual casing (`"Masculino"`, `"Femenino"`, etc.) — this story fixes that divergence as part of rebuilding the form, not a separate bug-report item).
+  - [x] Avatar upload block (file input + preview + 2MB/image-type validation) — copy the existing, already-working logic from the current `profile.vue` verbatim into this component (don't rewrite what already works).
+  - [x] Género/país use the shared `GENEROS`/`PAISES` fixed lists from `#shared/utils/fixedLists` (Story 1.1's convention) — do not hardcode a separate option list here (the current `profile.vue` hardcodes its own género options, e.g. `"masculino"`/`"femenino"` lowercase — **wrong values**, don't match `GENEROS`'s actual casing (`"Masculino"`, `"Femenino"`, etc.) — this story fixes that divergence as part of rebuilding the form, not a separate bug-report item).
 
-- [ ] Task 5: Rebuild `app/pages/profile.vue` around the shared form (AC: #1, #2, #3, #5)
-  - [ ] Fetch own profile via `GET /api/profile` (Task 2's extended include), render `<ProfileEditForm :usuario="usuario" :submitting="isLoading" @submit="handleSubmit" />`, where `handleSubmit` does the avatar upload (if a new file was picked) then `PUT /api/profile` — same two-step flow the current page already uses, just delegating the field markup to the new shared component.
-  - [ ] Keep the existing "Gestión de usuarios" admin quick-link at the top of this page unchanged.
+- [x] Task 5: Rebuild `app/pages/profile.vue` around the shared form (AC: #1, #2, #3, #5)
+  - [x] Fetch own profile via `GET /api/profile` (Task 2's extended include), render `<ProfileEditForm :usuario="usuario" :submitting="isLoading" @submit="handleSubmit" />`, where `handleSubmit` does the avatar upload (if a new file was picked) then `PUT /api/profile` — same two-step flow the current page already uses, just delegating the field markup to the new shared component.
+  - [x] Keep the existing "Gestión de usuarios" admin quick-link at the top of this page unchanged.
 
-- [ ] Task 6: Build `app/pages/profile/[id].vue` — the admin recovery override page (AC: #4, #6)
-  - [ ] Route `/profile/:id`. Client-side, gate on `authStore.user?.isAdmin` (redirect to `/` if false, matching every other admin-only page's client pattern in this codebase) — the server-side `requireSession({ requireAdmin: true })` in Task 3 is the real enforcement (AC #4), this client check only avoids flashing the form to a non-admin before the API call fails.
-  - [ ] Fetch via `GET /api/profile/:id`, render a visible banner above the form: **"Editando el perfil de {{ usuario.nombre }} {{ usuario.apellido }} como administrador"** (exact framing per AC #6/UJ-5 — this is the detail that prevents admin from mistaking this for their own profile), then the same `<ProfileEditForm>`, submitting to `PUT /api/profile/:id` (Task 3's admin endpoint) instead of `/api/profile`.
-  - [ ] This page must work for a **deactivated** target Usuario too (AC #6) — don't add a client-side `v-if="usuario.activo"` guard that would hide the form; Task 3's endpoint deliberately omits any `activo` filter for exactly this reason.
+- [x] Task 6: Build `app/pages/profile/[id].vue` — the admin recovery override page (AC: #4, #6)
+  - [x] Route `/profile/:id`. Client-side, gate on `authStore.user?.isAdmin` (redirect to `/` if false, matching every other admin-only page's client pattern in this codebase) — the server-side `requireSession({ requireAdmin: true })` in Task 3 is the real enforcement (AC #4), this client check only avoids flashing the form to a non-admin before the API call fails.
+  - [x] Fetch via `GET /api/profile/:id`, render a visible banner above the form: **"Editando el perfil de {{ usuario.nombre }} {{ usuario.apellido }} como administrador"** (exact framing per AC #6/UJ-5 — this is the detail that prevents admin from mistaking this for their own profile), then the same `<ProfileEditForm>`, submitting to `PUT /api/profile/:id` (Task 3's admin endpoint) instead of `/api/profile`.
+  - [x] This page must work for a **deactivated** target Usuario too (AC #6) — don't add a client-side `v-if="usuario.activo"` guard that would hide the form; Task 3's endpoint deliberately omits any `activo` filter for exactly this reason.
 
-- [ ] Task 7: Add the entry point admin actually uses to reach this route (AC: #6)
-  - [ ] `app/pages/admin/users/index.vue`'s user table has no per-row link to a user's profile-edit today — without one, the admin-override route from Task 6 is unreachable except by guessing a URL. Add a small "Editar perfil" icon-link (`NuxtLink :to="'/profile/' + u.id"`) per row, alongside the existing activo/inactivo toggle button — minimal addition, no broader redesign of that page (its own visual-refresh is FR-33/Epic 7 territory, out of scope here, same restraint already applied in Story 1.5's Dev Notes about this same page).
+- [x] Task 7: Add the entry point admin actually uses to reach this route (AC: #6)
+  - [x] `app/pages/admin/users/index.vue`'s user table has no per-row link to a user's profile-edit today — without one, the admin-override route from Task 6 is unreachable except by guessing a URL. Add a small "Editar perfil" icon-link (`NuxtLink :to="'/profile/' + u.id"`) per row, alongside the existing activo/inactivo toggle button — minimal addition, no broader redesign of that page (its own visual-refresh is FR-33/Epic 7 territory, out of scope here, same restraint already applied in Story 1.5's Dev Notes about this same page).
 
 ## Dev Notes
 
@@ -107,8 +107,35 @@ Comparable to Stories 1.7/2.1: rewriting the profile edit surface to be genuinel
 
 ### Agent Model Used
 
+Claude Sonnet 5
+
 ### Debug Log References
+
+None — no Prisma schema changes, no regeneration needed.
 
 ### Completion Notes List
 
+- Extended `server/api/profile/index.get.ts`'s `include` (added `redesSociales`, `UsuarioDeporte.deporte`) so the edit form can pre-fill deporte/nivel/experiencia and red social.
+- Extracted the update logic from `index.put.ts` into `server/utils/updateUsuarioProfile.ts` (called by both the self endpoint and the new admin `[id].put.ts`) — dropped the old endpoint's dead multipart-form-data branch in the process (confirmed unused: the only caller, `profile.vue`, always sent JSON).
+- Created `server/api/profile/[id].get.ts`/`[id].put.ts` — admin-only (`requireSession({ requireAdmin: true })`), deliberately no `activo` filter so a deactivated Usuario's profile remains reachable for recovery.
+- Built `app/components/ProfileEditForm.vue` — one adaptive per-type form mirroring `register.vue`'s exact field set per type, this time editable/pre-filled. Used the correct Prisma `ModalidadAtencion` enum values (`PRESENCIAL`/`VIRTUAL`/`HIBRIDO`) rather than `register.vue`'s buggy `"VIRTUAL/PRESENCIAL"` value — flagged that pre-existing Story 1.1 bug in a code comment rather than fixing `register.vue` itself (out of scope here).
+- **Two bugs caught and fixed during implementation, before they could surface at runtime:** (1) numeric inputs (`altura`/`peso`/`anoGraduacion`/`anosExperiencia`) arrive as strings from `<input type="number">` (Vue doesn't auto-cast without a `.number` modifier, and none of the source forms use one) — `updateUsuarioProfile` now casts them explicitly, same as `register.post.ts` already does for the same reason. (2) Because the form always builds the *full* `informacion` object (all four types' fields) regardless of the active type, non-applicable fields arrive as `""` — this breaks `modalidadAtencion`, a non-nullable-with-default-aside enum column that rejects empty strings; the helper now normalizes every `""` to `null` before the Prisma call, and separately omits `UsuarioDeporte.nivel` entirely (rather than sending `""`) when not set, letting Prisma's own `@default(PRINCIPIANTE)` apply on create.
+- Rebuilt `app/pages/profile.vue` → `app/pages/profile/index.vue` (git-mv'd) around `<ProfileEditForm>`; built `app/pages/profile/[id].vue` with the required "Editando el perfil de {nombre} como administrador" banner; added an "Editar perfil" link per row in `admin/users/index.vue` (previously no way to reach the admin-override route at all).
+- **Post-review additions (user request):** (1) added a "Volver a Usuarios" `NuxtLink` (→ `/admin/users`) at the top of `profile/[id].vue`, always visible regardless of loading state or whether the admin made any edit; (2) added a "Tipo de usuario" column to `admin/users/index.vue`'s table, sourced from a new `informacion: { select: { tipoUsuario: { select: { tipo: true } } } }` added to `server/api/admin/users.get.ts`'s existing `select` (that endpoint previously returned no type information at all).
+- No automated tests written — same project-wide convention as every prior story. Verified manually instead: traced the full request/response shape for all 4 types through `ProfileEditForm` → `updateUsuarioProfile`, confirmed `informacionData.tipoUsuarioId` is discarded in both the self and admin PUT paths, confirmed the admin `[id]` endpoints omit any `activo` condition.
+
 ### File List
+
+- `server/utils/updateUsuarioProfile.ts` (new)
+- `server/api/profile/[id].get.ts`, `server/api/profile/[id].put.ts` (new)
+- `app/components/ProfileEditForm.vue` (new)
+- `app/pages/profile/[id].vue` (new)
+- `server/api/profile/index.get.ts` (modified — extended include)
+- `server/api/profile/index.put.ts` (modified — delegates to shared helper, dropped dead multipart branch)
+- `app/pages/profile/index.vue` (moved from `app/pages/profile.vue`, rebuilt around `ProfileEditForm`)
+- `app/pages/admin/users/index.vue` (modified — added "Editar perfil" per-row link, "Tipo de usuario" column)
+- `server/api/admin/users.get.ts` (modified — select now includes `informacion.tipoUsuario.tipo`)
+
+## Change Log
+
+- 2026-07-26: Story implemented — profile edit is now genuinely per-type (was a generic leftover form), and admin gained a real recovery-override path that didn't exist in any form before.
