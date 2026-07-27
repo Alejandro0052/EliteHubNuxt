@@ -41,7 +41,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-24
-last_updated: 2026-07-26
+last_updated: 2026-07-27
 project: Elite_Hub
 project_key: NOKEY
 tracking_system: file-system
@@ -66,14 +66,14 @@ development_status:
   2-5-filtro-de-deporte-en-deportistas: done
   epic-2-retrospective: optional
 
-  epic-3: in-progress
+  epic-3: done
   3-1-creacion-de-items-de-catalogo-restringida-a-marca: done
   3-2-vistas-de-catalogo-perfil-propio-y-agregado: done
-  3-3-edicion-y-borrado-de-items-de-catalogo: review
+  3-3-edicion-y-borrado-de-items-de-catalogo: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
-  4-1-dejar-y-ver-resenas-de-nutricionista: backlog
+  epic-4: in-progress
+  4-1-dejar-y-ver-resenas-de-nutricionista: done
   4-2-moderacion-de-resenas-retractar-y-bloquear: backlog
   epic-4-retrospective: optional
 

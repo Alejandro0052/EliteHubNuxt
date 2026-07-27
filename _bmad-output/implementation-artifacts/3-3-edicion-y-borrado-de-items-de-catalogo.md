@@ -4,7 +4,7 @@ baseline_commit: c785728633c22229001331d21717580af2599cf5
 
 # Story 3.3: Edición y borrado de ítems de catálogo
 
-Status: review
+Status: done
 
 ## Story
 
@@ -90,6 +90,7 @@ None — no schema changes, no Prisma regeneration needed.
 - Built `server/api/catalogo/[id].put.ts`/`[id].delete.ts` — both map `{ autorId: existing.usuarioId }` at the call site (never pass the raw `ItemCatalogo` row) to bridge the `usuarioId`/`autorId` naming mismatch flagged during story creation. Verified `existing.usuarioId` is a plain scalar (no `include` needed) so the mapping is never `undefined`.
 - PUT replaces `imagenes` wholesale only if new files are uploaded; otherwise existing images are left untouched.
 - Built `app/pages/catalogo/edit/[id].vue` (mirrors `admin/eventos/edit/[id].vue`'s structure) and added Editar/Eliminar buttons to `app/pages/catalogo/[id].vue`, both using the same `{ autorId: item.usuarioId }`-mapped `computed` passed into `useResourcePermissions`.
+- **Post-review fix (user caught: clicking "Volver" after a successful save landed back on the edit form, not the detail view):** the edit page's post-save redirect used `router.push()`, which stacks a *new* detail-page history entry on top of the edit page instead of replacing it — so `router.back()` from that new entry went to the edit page, not to wherever the user was before editing. Fixed by (1) changing the post-save redirect to `router.replace()` (edit entry replaced by detail, not stacked on top of it), and (2) adding `replace` to the "Editar" `NuxtLink` on `catalogo/[id].vue` (entering edit mode also replaces rather than pushes). Together: Detail → Editar (replace) → Guardar (replace) → Detail → Volver → correctly lands on the original list/detail the user came from, matching `admin/eventos/edit/[id].vue`'s existing `replace` convention on its own Cancelar link, which this story's edit page already had but the save-success path had missed.
 - No automated tests written — same project-wide convention as every prior story. Verified manually instead, with explicit attention to the risk flagged during story creation: traced the author-path logic separately from the admin-path logic (they exercise different branches of `canPerformAction`), confirmed `{ autorId: existing.usuarioId }` resolves to a real number in both new endpoints, and confirmed the Editar/Eliminar buttons are absent (not just disabled) for a non-owning, non-admin viewer on `catalogo/[id].vue`.
 
 ### File List

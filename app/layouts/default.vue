@@ -6,5 +6,6 @@
 		</main>
 		<LayoutFooter />
 		<ToastContainer />
+		<ConfirmDialog />
 	</div>
 </template>

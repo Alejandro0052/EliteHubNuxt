@@ -13,6 +13,7 @@
 				<NuxtLink
 					v-if="canEdit"
 					:to="`/catalogo/edit/${item.id}`"
+					replace
 					class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
 					Editar
 				</NuxtLink>
@@ -81,6 +82,7 @@ const item = ref(null)
 const loading = ref(true)
 const lightboxImage = ref(null)
 const { canEdit, canDelete } = useResourcePermissions('catalogo_item', computed(() => (item.value ? { autorId: item.value.usuarioId } : null)))
+const { askConfirm } = useConfirm()
 
 const goBack = () => {
 	router.back()
@@ -101,7 +103,7 @@ onMounted(async () => {
 })
 
 async function handleDelete() {
-	if (!confirm('¿Eliminar este ítem? Esta acción no se puede deshacer.')) return
+	if (!(await askConfirm({ message: '¿Eliminar este ítem? Esta acción no se puede deshacer.' }))) return
 	try {
 		await $fetch('/api/catalogo/' + route.params.id, { method: 'DELETE' })
 		await router.push('/catalogo')

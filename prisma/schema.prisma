@@ -31,10 +31,12 @@ model Usuario {
   pqrs           PQRS[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  UsuarioDeporte UsuarioDeporte[]
-  noticias       Noticia[]
-  eventos        Evento[]
-  itemsCatalogo  ItemCatalogo[]
+  UsuarioDeporte   UsuarioDeporte[]
+  noticias         Noticia[]
+  eventos          Evento[]
+  itemsCatalogo    ItemCatalogo[]
+  resenasEscritas  Resena[]         @relation("ResenaAutor")
+  resenasRecibidas Resena[]         @relation("ResenaNutricionista")
 }
 
 model Rol {
@@ -239,6 +241,21 @@ model ItemCatalogo {
   usuario     Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+}
+
+model Resena {
+  id              Int      @id @default(autoincrement())
+  rating          Int
+  comentario      String
+  autorId         Int
+  autor           Usuario  @relation("ResenaAutor", fields: [autorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  nutricionistaId Int
+  nutricionista   Usuario  @relation("ResenaNutricionista", fields: [nutricionistaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  retractada      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([autorId, nutricionistaId])
 }
 
 model Deporte {

@@ -23,6 +23,8 @@
 				<dd class="text-sm text-gray-900">{{ field.value }}</dd>
 			</div>
 		</dl>
+
+		<ResenasSection v-if="tipo === 'Nutricionista'" :nutricionista-id="usuario.id" :nutricionista-nombre="usuario.nombre" />
 	</div>
 
 	<Teleport to="body">

@@ -100,7 +100,9 @@ async function handleSubmit() {
   try {
     await $fetch('/api/catalogo/' + route.params.id, { method: 'PUT', body: fd })
     success.value = true
-    await router.push(`/catalogo/${route.params.id}`)
+    // replace, no push: evita apilar la vista de edición en el historial, para que
+    // "Volver" desde el detalle no regrese aquí sino a la vista donde estaba antes de editar.
+    await router.replace(`/catalogo/${route.params.id}`)
   } catch (e: any) {
     console.error(e)
     error.value = e?.data?.message || 'Error al actualizar el ítem'

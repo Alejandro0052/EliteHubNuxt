@@ -38,6 +38,7 @@ const noticia = ref<any>(null)
 const loading = ref(true)
 const route = useRoute()
 const { canEdit, canDelete } = useResourcePermissions('evento_noticia', noticia)
+const { askConfirm } = useConfirm()
 
 function formatDate(d: string | Date | null | undefined) {
   if (!d) return ''
@@ -60,7 +61,7 @@ onMounted(async () => {
 })
 
 async function handleDelete() {
-  if (!confirm('¿Eliminar esta noticia? Esta acción no se puede deshacer.')) return
+  if (!(await askConfirm({ message: '¿Eliminar esta noticia? Esta acción no se puede deshacer.' }))) return
   try {
     await $fetch(`/api/noticias/${route.params.id}`, { method: 'DELETE' })
     await router.push('/noticias')

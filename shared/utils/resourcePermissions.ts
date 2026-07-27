@@ -1,4 +1,4 @@
-export type ResourceType = "evento_noticia" | "catalogo_item" | "publicacion";
+export type ResourceType = "evento_noticia" | "catalogo_item" | "publicacion" | "resena";
 export type ResourceAction = "edit" | "delete";
 
 interface PermissionRule {
@@ -16,6 +16,10 @@ const MATRIX: Record<ResourceType, Record<ResourceAction, PermissionRule>> = {
 		delete: { authorAllowed: true, adminAllowed: true },
 	},
 	publicacion: {
+		edit: { authorAllowed: true, adminAllowed: false },
+		delete: { authorAllowed: true, adminAllowed: true },
+	},
+	resena: {
 		edit: { authorAllowed: true, adminAllowed: false },
 		delete: { authorAllowed: true, adminAllowed: true },
 	},
