@@ -1,12 +1,12 @@
 export type ResourceType = "evento_noticia" | "catalogo_item" | "publicacion" | "resena";
-export type ResourceAction = "edit" | "delete";
+export type ResourceAction = "edit" | "delete" | "retract";
 
 interface PermissionRule {
 	authorAllowed: boolean;
 	adminAllowed: boolean;
 }
 
-const MATRIX: Record<ResourceType, Record<ResourceAction, PermissionRule>> = {
+const MATRIX: Partial<Record<ResourceType, Partial<Record<ResourceAction, PermissionRule>>>> = {
 	evento_noticia: {
 		edit: { authorAllowed: true, adminAllowed: true },
 		delete: { authorAllowed: true, adminAllowed: true },
@@ -21,7 +21,8 @@ const MATRIX: Record<ResourceType, Record<ResourceAction, PermissionRule>> = {
 	},
 	resena: {
 		edit: { authorAllowed: true, adminAllowed: false },
-		delete: { authorAllowed: true, adminAllowed: true },
+		delete: { authorAllowed: true, adminAllowed: false },
+		retract: { authorAllowed: false, adminAllowed: true },
 	},
 };
 
@@ -31,7 +32,8 @@ export function canPerformAction(
 	resource: { autorId: number | null | undefined },
 	actor: { id: number; isAdmin: boolean },
 ): boolean {
-	const rule = MATRIX[resourceType][action];
+	const rule = MATRIX[resourceType]?.[action];
+	if (!rule) return false;
 	if (actor.isAdmin && rule.adminAllowed) return true;
 	if (rule.authorAllowed && resource.autorId === actor.id) return true;
 	return false;

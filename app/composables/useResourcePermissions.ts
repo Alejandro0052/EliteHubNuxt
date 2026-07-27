@@ -20,7 +20,12 @@ export function useResourcePermissions(
 		return canPerformAction(resourceType, "delete", r, { id: u.id, isAdmin: !!u.isAdmin });
 	});
 
-	const canRetract = computed(() => false);
+	const canRetract = computed(() => {
+		const r = resource.value;
+		const u = authStore.user;
+		if (!r || !u) return false;
+		return canPerformAction(resourceType, "retract", r, { id: u.id, isAdmin: !!u.isAdmin });
+	});
 
 	return { canEdit, canDelete, canRetract };
 }

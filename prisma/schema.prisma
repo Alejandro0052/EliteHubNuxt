@@ -254,8 +254,6 @@ model Resena {
   retractada      Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-
-  @@unique([autorId, nutricionistaId])
 }
 
 model Deporte {

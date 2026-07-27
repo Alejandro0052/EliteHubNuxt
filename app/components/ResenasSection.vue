@@ -89,7 +89,9 @@
 							</div>
 						</div>
 
-						<div v-if="permisos(r).canEdit || permisos(r).canDelete" class="flex shrink-0 gap-2">
+						<div
+							v-if="permisos(r).canEdit || permisos(r).canDelete || permisos(r).canRetract"
+							class="flex shrink-0 gap-2">
 							<button
 								v-if="permisos(r).canEdit && editingId !== r.id"
 								type="button"
@@ -104,6 +106,31 @@
 								class="text-sm text-red-600 hover:underline">
 								Eliminar
 							</button>
+							<button
+								v-if="permisos(r).canRetract && retractingId !== r.id"
+								type="button"
+								@click="startRetract(r)"
+								class="text-sm text-red-600 hover:underline">
+								Retractar
+							</button>
+						</div>
+					</div>
+
+					<div v-if="retractingId === r.id" class="mt-3 space-y-3 rounded-lg border border-gray-200 p-4">
+						<p class="text-sm text-gray-700">¿Retractar esta reseña? Esta acción no se puede deshacer.</p>
+						<label class="flex items-center gap-2 text-sm text-gray-700">
+							<input type="checkbox" v-model="bloquearAutor" />
+							También bloquear la cuenta de {{ r.autor.nombre }} {{ r.autor.apellido }}
+						</label>
+						<div class="flex items-center gap-3">
+							<button
+								:disabled="retractSubmitting"
+								type="button"
+								@click="handleRetract(r)"
+								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:bg-gray-400">
+								Confirmar
+							</button>
+							<button type="button" @click="retractingId = null" class="text-gray-600 hover:underline">Cancelar</button>
 						</div>
 					</div>
 
@@ -171,6 +198,10 @@ const editRating = ref(0)
 const editComentario = ref('')
 const editSubmitting = ref(false)
 
+const retractingId = ref(null)
+const bloquearAutor = ref(false)
+const retractSubmitting = ref(false)
+
 const misResena = computed(() => resenas.value.find((r) => r.autorId === authStore.user?.id))
 
 const resenasOrdenadas = computed(() => {
@@ -192,11 +223,12 @@ function initials(autor) {
 
 function permisos(r) {
 	const u = authStore.user
-	if (!u) return { canEdit: false, canDelete: false }
+	if (!u) return { canEdit: false, canDelete: false, canRetract: false }
 	const actor = { id: u.id, isAdmin: !!u.isAdmin }
 	return {
 		canEdit: canPerformAction('resena', 'edit', { autorId: r.autorId }, actor),
 		canDelete: canPerformAction('resena', 'delete', { autorId: r.autorId }, actor),
+		canRetract: canPerformAction('resena', 'retract', { autorId: r.autorId }, actor),
 	}
 }
 
@@ -263,6 +295,29 @@ async function handleEditSubmit(r) {
 		showToast(err?.data?.message || 'Error al actualizar la reseña', 'error')
 	} finally {
 		editSubmitting.value = false
+	}
+}
+
+function startRetract(r) {
+	retractingId.value = r.id
+	bloquearAutor.value = false
+}
+
+async function handleRetract(r) {
+	retractSubmitting.value = true
+	try {
+		const res = await $fetch('/api/resenas/' + r.id + '/retract', {
+			method: 'PATCH',
+			body: { bloquearAutor: bloquearAutor.value },
+		})
+		resenas.value = resenas.value.filter((x) => x.id !== r.id)
+		retractingId.value = null
+		showToast(res.autorBloqueado ? 'Reseña retractada y cuenta bloqueada' : 'Reseña retractada', 'success')
+	} catch (err) {
+		console.error(err)
+		showToast(err?.data?.message || 'Error al retractar la reseña', 'error')
+	} finally {
+		retractSubmitting.value = false
 	}
 }
 

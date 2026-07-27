@@ -75,6 +75,7 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 
 const authStore = useAuthStore()
+const { showToast } = useToast()
 const users = ref<any[]>([])
 const loading = ref(true)
 
@@ -91,7 +92,7 @@ async function toggleActivo(user: any) {
     })
     user.activo = nuevoEstado
   } catch (err) {
-    alert('No se pudo cambiar el estado: ' + (err?.data?.message || err?.message || 'Error desconocido'))
+    showToast('No se pudo cambiar el estado: ' + (err?.data?.message || err?.message || 'Error desconocido'), 'error')
   }
 }
 
