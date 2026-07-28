@@ -40,6 +40,15 @@
 						Mensajes de Contacto
 					</NuxtLink>
 				</li>
+				<li v-if="(authStore.user as any)?.isAdmin">
+					<NuxtLink
+						to="/admin/reportes"
+						class="block w-full rounded px-4 py-2 hover:bg-gray-300"
+						@click="toggle()">
+						<Icon name="fa6-solid:chart-pie"></Icon>
+						Reportes/Indicadores
+					</NuxtLink>
+				</li>
 			</ul>
 			<div class="px-2 py-2">
 				<button

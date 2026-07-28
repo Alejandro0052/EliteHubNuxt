@@ -5,6 +5,21 @@ export default defineNuxtConfig({
 	compatibilityDate: "2025-05-15",
 	devtools: { enabled: false },
 	css: ["~/assets/css/main.css"],
+	app: {
+		head: {
+			script: [
+				{
+					innerHTML: `(function () {
+	try {
+		var t = localStorage.getItem('elite-hub-theme');
+		if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+	} catch (e) {}
+})();`,
+					type: "text/javascript",
+				},
+			],
+		},
+	},
 	modules: [
 		"@nuxt/icon",
 		"@nuxt/image",

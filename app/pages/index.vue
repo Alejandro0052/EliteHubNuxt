@@ -1,5 +1,5 @@
 <template>
-	<div class="mx-auto max-w-[120rem] space-y-6 py-10 text-black">
+	<div class="mx-auto max-w-[120rem] space-y-6 bg-neutral-100 py-10 text-black dark:bg-neutral-900 dark:text-white">
 		<!-- HERO -->
 		<div class="flex flex-col gap-6 lg:h-[500px] lg:flex-row xl:h-[700px]">
 			<div
@@ -21,10 +21,10 @@
 				</div>
 			</div>
 			<div
-				class="flex h-full w-full flex-col space-y-4 rounded-2xl bg-white px-8 py-10 lg:min-h-[350px] lg:w-1/3 xl:min-h-[400px]">
+				class="flex h-full w-full flex-col space-y-4 rounded-2xl bg-white px-8 py-10 lg:min-h-[350px] lg:w-1/3 xl:min-h-[400px] dark:bg-neutral-800 dark:text-white">
 				<div class="space-y-2">
 					<h1 class="text-3xl font-semibold">Bienvenido a Elite Hub</h1>
-					<p class="text-pretty text-gray-600">
+					<p class="text-pretty text-gray-600 dark:text-gray-300">
 						La red social donde deportistas, nutricionistas, patrocinadores y marcas pueden
 						conectarse y crear nuevas oportunidades.
 					</p>
@@ -32,10 +32,10 @@
 				<div class="flex flex-col gap-4 overflow-y-auto xl:max-h-[500px]">
 					<NuxtLink to="/deportistas">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
 							<div>
 								<h2 class="text-xl font-semibold group-hover:text-white">Deportistas</h2>
-								<p class="text-gray-600 group-hover:text-gray-400">Conoce nuestros deportistas</p>
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">Conoce nuestros deportistas</p>
 							</div>
 							<div
 								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black">
@@ -45,10 +45,10 @@
 					</NuxtLink>
 					<NuxtLink to="/patrocinadores">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
 							<div>
 								<h2 class="text-xl font-semibold group-hover:text-white">Patrocinadores</h2>
-								<p class="text-gray-600 group-hover:text-gray-400">
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">
 									Conoce nuestros patrocinadores
 								</p>
 							</div>
@@ -60,10 +60,10 @@
 					</NuxtLink>
 					<NuxtLink to="/marcas">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
 							<div>
 								<h2 class="text-xl font-semibold group-hover:text-white">Marcas</h2>
-								<p class="text-gray-600 group-hover:text-gray-400">Conoce nuestras marcas</p>
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">Conoce nuestras marcas</p>
 							</div>
 							<div
 								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black">
@@ -73,10 +73,10 @@
 					</NuxtLink>
 					<NuxtLink to="/nutricionistas">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
 							<div>
 								<h2 class="text-xl font-semibold group-hover:text-white">Nutricionistas</h2>
-								<p class="text-gray-600 group-hover:text-gray-400">
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">
 									Conoce nuestras nutricionistas
 								</p>
 							</div>
@@ -102,7 +102,7 @@
 		<!-- Noticias -->
 		<div>
 			<div class="flex flex-col justify-between gap-4 py-12 md:flex-row md:items-center">
-				<h2 class="text-6xl text-white">Noticias</h2>
+				<h2 class="text-6xl text-gray-900 dark:text-white">Noticias</h2>
 				<div class="flex items-center gap-4">
 					<NuxtLink to="/noticias">
 						<div class="group flex items-center gap-2">
@@ -186,7 +186,7 @@
 		<!-- Eventos -->
 		<div>
 			<div class="flex flex-col justify-between gap-4 py-12 md:flex-row md:items-center">
-				<h2 class="text-6xl text-white">Eventos</h2>
+				<h2 class="text-6xl text-gray-900 dark:text-white">Eventos</h2>
 				<div class="flex items-center gap-4">
 					<NuxtLink to="/eventos">
 						<div class="group flex items-center gap-2">
@@ -217,6 +217,37 @@
 					date="4 de mayo de 2025"
 					time="5:00 A.M."
 					></events> -->
+			</div>
+		</div>
+
+		<!-- Publicaciones -->
+		<div>
+			<div class="flex flex-col justify-between gap-4 py-12 md:flex-row md:items-center">
+				<h2 class="text-6xl text-gray-900 dark:text-white">Publicaciones</h2>
+				<div v-if="authStore.isAuthenticated" class="flex items-center gap-4">
+					<button type="button" @click="showComposer = !showComposer" class="block">
+						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
+							<div class="text-xl font-bold text-white">+</div>
+							<div class="text-white font-semibold">Crear publicación</div>
+						</div>
+					</button>
+				</div>
+			</div>
+
+			<div class="mx-auto max-w-2xl space-y-6">
+				<PublicacionComposer v-if="showComposer" @created="onPublicacionCreada" />
+
+				<InfiniteScrollList
+					:key="feedKey"
+					:fetch-page="fetchPublicaciones"
+					grid-class="grid grid-cols-1 gap-4">
+					<template #default="{ item }">
+						<PublicacionCard :publicacion="item" />
+					</template>
+					<template #empty>
+						<p class="text-center text-gray-600 dark:text-gray-400">No hay publicaciones todavía. Sé el primero en compartir algo.</p>
+					</template>
+				</InfiniteScrollList>
 			</div>
 		</div>
 
@@ -252,6 +283,18 @@ const siteStats = ref<{
 	nutricionistas: number
 	eventos: number
 } | null>(null)
+
+const feedKey = ref(0)
+const showComposer = ref(false)
+
+function fetchPublicaciones(cursor: number | null) {
+	return $fetch('/api/publicaciones', { query: { cursor } })
+}
+
+function onPublicacionCreada() {
+	feedKey.value++
+	showComposer.value = false
+}
 
 onMounted(async () => {
 	try {

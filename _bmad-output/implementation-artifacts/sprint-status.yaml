@@ -77,17 +77,17 @@ development_status:
   4-2-moderacion-de-resenas-retractar-y-bloquear: done
   epic-4-retrospective: optional
 
-  epic-5: backlog
-  5-1-crear-y-ver-publicaciones-en-el-feed: backlog
-  5-2-moderacion-de-publicaciones-autor-y-admin: backlog
+  epic-5: done
+  5-1-crear-y-ver-publicaciones-en-el-feed: done
+  5-2-moderacion-de-publicaciones-autor-y-admin: done
   epic-5-retrospective: optional
 
-  epic-6: backlog
-  6-1-visualizacion-de-distribucion-de-usuarios: backlog
+  epic-6: done
+  6-1-visualizacion-de-distribucion-de-usuarios: done
   epic-6-retrospective: optional
 
-  epic-7: backlog
-  7-1-toggle-de-tema-claro-oscuro: backlog
+  epic-7: in-progress
+  7-1-toggle-de-tema-claro-oscuro: review
   7-2-sistema-de-diseno-y-consolidacion-visual: backlog
   7-3-accesibilidad-y-responsividad-como-piso-verificable: backlog
   epic-7-retrospective: optional

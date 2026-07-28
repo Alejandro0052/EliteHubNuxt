@@ -37,6 +37,7 @@ model Usuario {
   itemsCatalogo    ItemCatalogo[]
   resenasEscritas  Resena[]         @relation("ResenaAutor")
   resenasRecibidas Resena[]         @relation("ResenaNutricionista")
+  publicaciones    Publicacion[]
 }
 
 model Rol {
@@ -254,6 +255,16 @@ model Resena {
   retractada      Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model Publicacion {
+  id        Int      @id @default(autoincrement())
+  texto     String
+  imagen    String?
+  autorId   Int
+  autor     Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Deporte {

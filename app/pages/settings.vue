@@ -4,6 +4,26 @@
 		<div class="rounded-lg bg-white p-6 shadow-md">
 			<h1 class="mb-6 text-2xl font-bold text-gray-800">Ajustes</h1>
 
+			<section class="mb-6 flex items-center justify-between rounded-lg border p-4">
+				<div>
+					<h2 class="text-lg font-semibold text-gray-800">Tema oscuro</h2>
+					<p class="text-sm text-gray-600">Cambia la apariencia de la aplicación entre modo claro y oscuro.</p>
+				</div>
+				<button
+					type="button"
+					role="switch"
+					:aria-checked="theme === 'dark'"
+					aria-label="Tema oscuro"
+					@click="toggleTheme"
+					class="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors"
+					:class="theme === 'dark' ? 'bg-green-700' : 'bg-gray-300'">
+					<span
+						class="inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform"
+						:class="theme === 'dark' ? 'translate-x-6' : 'translate-x-1'"></span>
+				</button>
+			</section>
+			<div class="sr-only" aria-live="polite">{{ announcement }}</div>
+
 			<div v-if="!isAdmin" class="text-gray-600">Las opciones actuales de perfil se movieron a Perfil.</div>
 
 			<div v-else>
@@ -57,6 +77,7 @@ const authStore = useAuthStore()
 const isAdmin = computed(() => !!authStore.user?.isAdmin)
 
 const { getContent, updateContent } = useContent()
+const { theme, announcement, toggleTheme } = useTheme()
 
 const privacity = ref({ page: 'privacity', title: '', subtitle: '', content: '', metadata: {} })
 const terms = ref({ page: 'terms', title: '', subtitle: '', content: '', metadata: {} })
