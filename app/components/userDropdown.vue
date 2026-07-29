@@ -8,15 +8,15 @@
 		<!-- Contenido del dropdown -->
 		<div
 			v-if="visible"
-			class="absolute right-0 z-50 mt-2 w-44 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white font-normal shadow-xl">
-			<div v-if="(authStore.user as any)?.isAdmin" class="px-3 py-2 border-b bg-gray-50 text-xs text-gray-600">
-				<strong class="text-sm text-gray-800">Administrador</strong>
+			class="absolute right-0 z-50 mt-2 w-44 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white font-normal shadow-xl dark:divide-gray-600 dark:bg-neutral-800">
+			<div v-if="(authStore.user as any)?.isAdmin" class="px-3 py-2 border-b bg-gray-50 text-xs text-gray-600 dark:border-gray-600 dark:bg-neutral-700 dark:text-gray-300">
+				<strong class="text-sm text-gray-800 dark:text-white">Administrador</strong>
 			</div>
-			<ul class="px-2 py-2 text-sm text-gray-700" aria-labelledby="dropdownLargeButton">
+			<ul class="px-2 py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
 				<li>
 					<NuxtLink
 						to="/profile"
-						class="block w-full rounded px-4 py-2 hover:bg-gray-300"
+						class="block w-full rounded px-4 py-2 hover:bg-gray-300 dark:hover:bg-neutral-700"
 						@click="toggle()">
 						<Icon name="fa6-solid:user"></Icon>
 						Perfil
@@ -25,7 +25,7 @@
 				<li>
 					<NuxtLink
 						to="/settings"
-						class="block w-full rounded px-4 py-2 font-semibold hover:bg-gray-300"
+						class="block w-full rounded px-4 py-2 font-semibold hover:bg-gray-300 dark:hover:bg-neutral-700"
 						@click="toggle()">
 						<Icon name="fa6-solid:gear"></Icon>
 						Ajustes
@@ -34,7 +34,7 @@
 				<li v-if="(authStore.user as any)?.isAdmin">
 					<NuxtLink
 						to="/admin/mensajes-contacto"
-						class="block w-full rounded px-4 py-2 hover:bg-gray-300"
+						class="block w-full rounded px-4 py-2 hover:bg-gray-300 dark:hover:bg-neutral-700"
 						@click="toggle()">
 						<Icon name="fa6-solid:inbox"></Icon>
 						Mensajes de Contacto
@@ -43,7 +43,7 @@
 				<li v-if="(authStore.user as any)?.isAdmin">
 					<NuxtLink
 						to="/admin/reportes"
-						class="block w-full rounded px-4 py-2 hover:bg-gray-300"
+						class="block w-full rounded px-4 py-2 hover:bg-gray-300 dark:hover:bg-neutral-700"
 						@click="toggle()">
 						<Icon name="fa6-solid:chart-pie"></Icon>
 						Reportes/Indicadores
@@ -53,7 +53,7 @@
 			<div class="px-2 py-2">
 				<button
 					@click="handleLogout()"
-					class="flex w-full items-center gap-2 rounded px-4 py-2 text-left text-sm font-semibold text-gray-700 hover:bg-red-500 hover:text-white">
+					class="flex w-full items-center gap-2 rounded px-4 py-2 text-left text-sm font-semibold text-gray-700 hover:bg-red-500 hover:text-white dark:text-gray-200">
 					<Icon name="fa-solid:sign-out-alt" />
 					Cerrar sesión
 				</button>

@@ -8,19 +8,19 @@
 				@click="showLightbox = true" />
 			<div
 				v-else
-				class="flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-300 text-2xl font-semibold text-gray-700">
+				class="flex h-24 w-24 items-center justify-center rounded-full border-2 border-gray-300 text-2xl font-semibold text-gray-700 dark:border-gray-500 dark:text-gray-200">
 				{{ initials }}
 			</div>
 			<div class="text-center sm:text-left">
-				<h1 class="text-3xl font-bold text-gray-900">{{ usuario.nombre }} {{ usuario.apellido }}</h1>
-				<p class="text-gray-600">{{ tipo }}</p>
+				<h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ usuario.nombre }} {{ usuario.apellido }}</h1>
+				<p class="text-gray-600 dark:text-gray-300">{{ tipo }}</p>
 			</div>
 		</div>
 
-		<dl class="grid grid-cols-1 gap-x-8 gap-y-4 rounded-xl bg-white p-8 shadow-lg sm:grid-cols-2">
+		<dl class="grid grid-cols-1 gap-x-8 gap-y-4 rounded-xl bg-white p-8 shadow-lg sm:grid-cols-2 dark:bg-neutral-800">
 			<div v-for="field in fields" :key="field.label" class="flex flex-col">
-				<dt class="text-xs font-semibold tracking-wide text-gray-500 uppercase">{{ field.label }}</dt>
-				<dd class="text-sm text-gray-900">{{ field.value }}</dd>
+				<dt class="text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">{{ field.label }}</dt>
+				<dd class="text-sm text-gray-900 dark:text-gray-100">{{ field.value }}</dd>
 			</div>
 		</dl>
 

@@ -1,26 +1,27 @@
 <template>
-  <div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
-    <div class="max-w-3xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
+    <div class="max-w-page-shell mx-auto py-12 px-4">
+    <div class="max-w-3xl mx-auto dark:text-white">
     <h1 class="text-2xl font-bold mb-6">Editar Noticia</h1>
 
     <div v-if="loading">Cargando...</div>
 
-    <div v-else-if="!canEdit" class="p-6 bg-yellow-50 rounded">No tienes permiso para editar esta noticia.</div>
+    <div v-else-if="!canEdit" class="p-6 bg-yellow-50 rounded dark:text-gray-900">No tienes permiso para editar esta noticia.</div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-4">
       <div>
         <label class="block text-sm font-medium mb-1">Título</label>
-        <input v-model="titulo" class="w-full border rounded px-3 py-2" required />
+        <input v-model="titulo" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" required />
       </div>
 
       <div>
         <label class="block text-sm font-medium mb-1">Resumen</label>
-        <input v-model="resumen" class="w-full border rounded px-3 py-2" />
+        <input v-model="resumen" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" />
       </div>
 
       <div>
         <label class="block text-sm font-medium mb-1">Contenido (HTML permitido)</label>
-        <textarea v-model="contenido" rows="8" class="w-full border rounded px-3 py-2"></textarea>
+        <textarea v-model="contenido" rows="8" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700"></textarea>
       </div>
 
       <div>
@@ -29,13 +30,14 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <button :disabled="saving" class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors">Guardar</button>
-        <NuxtLink :to="`/noticias/${route.params.id}`" replace class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors inline-block">Cancelar</NuxtLink>
+        <button :disabled="saving" class="button-primary px-6 py-2 font-semibold">Guardar</button>
+        <NuxtLink :to="`/noticias/${route.params.id}`" replace class="button-secondary px-6 py-2 font-semibold inline-block">Cancelar</NuxtLink>
       </div>
 
       <div v-if="error" class="text-red-600">{{ error }}</div>
       <div v-if="success" class="text-green-600">Noticia actualizada correctamente.</div>
     </form>
+    </div>
     </div>
   </div>
 </template>

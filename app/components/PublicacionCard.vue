@@ -53,7 +53,7 @@
 				<div class="flex items-center gap-3">
 					<button
 						:disabled="editSubmitting"
-						class="rounded-lg bg-green-400 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-500 disabled:bg-gray-400">
+						class="button-primary px-4 py-2 text-sm font-semibold">
 						Guardar
 					</button>
 					<button type="button" @click="editing = false" class="text-gray-600 hover:underline dark:text-gray-400">Cancelar</button>

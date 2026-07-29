@@ -1,68 +1,70 @@
 <template>
-	<div class="mx-auto min-h-screen max-w-[120rem] bg-white px-4 py-10 sm:px-6 lg:px-8">
-		<h1 class="mb-6 text-2xl font-bold text-gray-900">Mensajes de Contacto</h1>
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
+	<div class="mx-auto max-w-[120rem] px-4 py-10 sm:px-6 lg:px-8">
+		<h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">Mensajes de Contacto</h1>
 
-		<div v-if="loading" class="text-gray-600">Cargando...</div>
+		<div v-if="loading" class="text-gray-600 dark:text-gray-300">Cargando...</div>
 
-		<div v-else-if="mensajes.length === 0" class="text-gray-600">
+		<div v-else-if="mensajes.length === 0" class="text-gray-600 dark:text-gray-300">
 			No hay mensajes de contacto todavía.
 		</div>
 
-		<div v-else class="overflow-hidden rounded-lg border border-gray-200 bg-white">
+		<div v-else class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-600 dark:bg-neutral-800">
 			<!-- Stacked labeled cards below md -->
-			<div class="divide-y divide-gray-200 md:hidden">
+			<div class="divide-y divide-gray-200 dark:divide-gray-600 md:hidden">
 				<div v-for="m in mensajes" :key="m.id" class="space-y-2 p-4">
 					<div>
-						<span class="block text-xs text-gray-500">Nombre</span>
-						<span class="text-sm text-gray-900">{{ m.nombre }} {{ m.apellido }}</span>
+						<span class="block text-xs text-gray-500 dark:text-gray-400">Nombre</span>
+						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.nombre }} {{ m.apellido }}</span>
 					</div>
 					<div>
-						<span class="block text-xs text-gray-500">Correo</span>
-						<span class="text-sm text-gray-900">{{ m.correo }}</span>
+						<span class="block text-xs text-gray-500 dark:text-gray-400">Correo</span>
+						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.correo }}</span>
 					</div>
 					<div>
-						<span class="block text-xs text-gray-500">Teléfono</span>
-						<span class="text-sm text-gray-900">{{ m.telefono || "—" }}</span>
+						<span class="block text-xs text-gray-500 dark:text-gray-400">Teléfono</span>
+						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.telefono || "—" }}</span>
 					</div>
 					<div>
-						<span class="block text-xs text-gray-500">Asunto</span>
-						<span class="text-sm text-gray-900">{{ m.asunto }}</span>
+						<span class="block text-xs text-gray-500 dark:text-gray-400">Asunto</span>
+						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.asunto }}</span>
 					</div>
 					<div>
-						<span class="block text-xs text-gray-500">Mensaje</span>
-						<span class="text-sm whitespace-pre-wrap text-gray-900">{{ m.mensaje }}</span>
+						<span class="block text-xs text-gray-500 dark:text-gray-400">Mensaje</span>
+						<span class="text-sm whitespace-pre-wrap text-gray-900 dark:text-gray-100">{{ m.mensaje }}</span>
 					</div>
 					<div>
-						<span class="block text-xs text-gray-500">Fecha</span>
-						<span class="text-sm text-gray-900">{{ formatDate(m.createdAt) }}</span>
+						<span class="block text-xs text-gray-500 dark:text-gray-400">Fecha</span>
+						<span class="text-sm text-gray-900 dark:text-gray-100">{{ formatDate(m.createdAt) }}</span>
 					</div>
 				</div>
 			</div>
 
 			<!-- True tabular rows at md+ -->
-			<table class="hidden w-full table-auto divide-y divide-gray-200 md:table">
+			<table class="hidden w-full table-auto divide-y divide-gray-200 dark:divide-gray-600 md:table">
 				<thead>
-					<tr class="bg-gray-50">
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Nombre</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Correo</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Teléfono</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Asunto</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Mensaje</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Fecha</th>
+					<tr class="bg-gray-50 dark:bg-neutral-700">
+						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Nombre</th>
+						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Correo</th>
+						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Teléfono</th>
+						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Asunto</th>
+						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Mensaje</th>
+						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Fecha</th>
 					</tr>
 				</thead>
-				<tbody class="divide-y divide-gray-200">
+				<tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 					<tr v-for="m in mensajes" :key="m.id">
-						<td class="px-4 py-3 text-sm text-gray-900">{{ m.nombre }} {{ m.apellido }}</td>
-						<td class="px-4 py-3 text-sm text-gray-900">{{ m.correo }}</td>
-						<td class="px-4 py-3 text-sm text-gray-900">{{ m.telefono || "—" }}</td>
-						<td class="px-4 py-3 text-sm text-gray-900">{{ m.asunto }}</td>
-						<td class="px-4 py-3 text-sm whitespace-pre-wrap text-gray-900">{{ m.mensaje }}</td>
-						<td class="px-4 py-3 text-sm text-gray-500">{{ formatDate(m.createdAt) }}</td>
+						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.nombre }} {{ m.apellido }}</td>
+						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.correo }}</td>
+						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.telefono || "—" }}</td>
+						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.asunto }}</td>
+						<td class="px-4 py-3 text-sm whitespace-pre-wrap text-gray-900 dark:text-gray-100">{{ m.mensaje }}</td>
+						<td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ formatDate(m.createdAt) }}</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+	</div>
 	</div>
 </template>
 

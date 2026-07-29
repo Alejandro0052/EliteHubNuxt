@@ -17,7 +17,7 @@
 
 		<button
 			:disabled="submitting"
-			class="rounded-lg bg-green-700 px-6 py-2 font-semibold text-white transition-colors hover:bg-green-700/80 disabled:bg-gray-400">
+			class="button-primary px-6 py-2 font-semibold">
 			Publicar
 		</button>
 	</form>

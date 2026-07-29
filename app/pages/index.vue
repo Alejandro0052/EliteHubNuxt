@@ -32,56 +32,56 @@
 				<div class="flex flex-col gap-4 overflow-y-auto xl:max-h-[500px]">
 					<NuxtLink to="/deportistas">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600 dark:hover:bg-white">
 							<div>
-								<h2 class="text-xl font-semibold group-hover:text-white">Deportistas</h2>
-								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">Conoce nuestros deportistas</p>
+								<h2 class="text-xl font-semibold group-hover:text-white dark:group-hover:text-black">Deportistas</h2>
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400 dark:group-hover:text-gray-700">Conoce nuestros deportistas</p>
 							</div>
 							<div
-								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black">
+								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black dark:group-hover:bg-black dark:group-hover:text-white">
 								<Icon name="fa6-solid:person-running" />
 							</div>
 						</div>
 					</NuxtLink>
 					<NuxtLink to="/patrocinadores">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600 dark:hover:bg-white">
 							<div>
-								<h2 class="text-xl font-semibold group-hover:text-white">Patrocinadores</h2>
-								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">
+								<h2 class="text-xl font-semibold group-hover:text-white dark:group-hover:text-black">Patrocinadores</h2>
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400 dark:group-hover:text-gray-700">
 									Conoce nuestros patrocinadores
 								</p>
 							</div>
 							<div
-								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black">
+								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black dark:group-hover:bg-black dark:group-hover:text-white">
 								<Icon name="fa6-solid:chart-line" />
 							</div>
 						</div>
 					</NuxtLink>
 					<NuxtLink to="/marcas">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600 dark:hover:bg-white">
 							<div>
-								<h2 class="text-xl font-semibold group-hover:text-white">Marcas</h2>
-								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">Conoce nuestras marcas</p>
+								<h2 class="text-xl font-semibold group-hover:text-white dark:group-hover:text-black">Marcas</h2>
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400 dark:group-hover:text-gray-700">Conoce nuestras marcas</p>
 							</div>
 							<div
-								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black">
+								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black dark:group-hover:bg-black dark:group-hover:text-white">
 								<Icon name="fa6-solid:handshake" />
 							</div>
 						</div>
 					</NuxtLink>
 					<NuxtLink to="/nutricionistas">
 						<div
-							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600">
+							class="group flex items-center justify-between rounded-xl border border-black p-6 transition-all duration-300 hover:bg-black dark:border-gray-600 dark:hover:bg-white">
 							<div>
-								<h2 class="text-xl font-semibold group-hover:text-white">Nutricionistas</h2>
-								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400">
+								<h2 class="text-xl font-semibold group-hover:text-white dark:group-hover:text-black">Nutricionistas</h2>
+								<p class="text-gray-600 group-hover:text-gray-400 dark:text-gray-400 dark:group-hover:text-gray-700">
 									Conoce nuestras nutricionistas
 								</p>
 							</div>
 							<div
-								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black">
+								class="flex rounded-full bg-black p-4 text-xl text-white group-hover:bg-white group-hover:text-black dark:group-hover:bg-black dark:group-hover:text-white">
 								<Icon name="fa6-solid:user-doctor" />
 							</div>
 						</div>
@@ -118,7 +118,7 @@
 				<!-- Create button for any authenticated user -->
 				<div v-if="authStore.isAuthenticated">
 					<NuxtLink to="/admin/noticias/create" class="block">
-						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
+						<div class="button-primary overflow-hidden transition-transform duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
 							<div class="text-xl font-bold text-white">+</div>
 							<div class="text-white font-semibold">Crear</div>
 						</div>
@@ -201,7 +201,7 @@
 					</NuxtLink>
 				<div v-if="authStore.isAuthenticated">
 					<NuxtLink to="/admin/eventos/create" class="block">
-						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
+						<div class="button-primary overflow-hidden transition-transform duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
 							<div class="text-xl font-bold text-white">+</div>
 							<div class="text-white font-semibold">Crear</div>
 						</div>
@@ -226,7 +226,7 @@
 				<h2 class="text-6xl text-gray-900 dark:text-white">Publicaciones</h2>
 				<div v-if="authStore.isAuthenticated" class="flex items-center gap-4">
 					<button type="button" @click="showComposer = !showComposer" class="block">
-						<div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
+						<div class="button-primary overflow-hidden transition-transform duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
 							<div class="text-xl font-bold text-white">+</div>
 							<div class="text-white font-semibold">Crear publicación</div>
 						</div>

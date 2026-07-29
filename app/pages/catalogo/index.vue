@@ -1,23 +1,23 @@
 <template>
-	<div class="w-full min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 		<div class="px-4 pt-8 sm:px-6 lg:px-8">
-			<button @click="goBack" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+			<button @click="goBack" class="button-secondary px-4 py-2 flex items-center gap-2">
 				<Icon name="fa6-solid:arrow-left" />
 				<span>Volver</span>
 			</button>
 		</div>
 
 		<section class="relative px-4 py-20 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-7xl text-center">
-				<h1 class="mb-6 text-4xl font-bold text-gray-900 md:text-6xl">Catálogo</h1>
-				<p class="mx-auto max-w-3xl text-xl text-gray-600">
+			<div class="mx-auto max-w-page-shell text-center">
+				<h1 class="mb-6 text-4xl font-bold text-gray-900 dark:text-white md:text-6xl">Catálogo</h1>
+				<p class="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-300">
 					Descubre productos y servicios de todas las marcas de EliteHub.
 				</p>
 			</div>
 		</section>
 
 		<section class="px-4 py-16 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-7xl">
+			<div class="mx-auto max-w-page-shell">
 				<div class="mb-6">
 					<FilterChips v-model="selectedCategoriaId" :options="categoriaOptions" />
 				</div>
@@ -27,7 +27,7 @@
 						<CatalogoItemCard :item="item" />
 					</template>
 					<template #empty>
-						<p class="text-center text-gray-600">Todavía no hay ítems en el catálogo.</p>
+						<p class="text-center text-gray-600 dark:text-gray-400">Todavía no hay ítems en el catálogo.</p>
 					</template>
 				</InfiniteScrollList>
 			</div>

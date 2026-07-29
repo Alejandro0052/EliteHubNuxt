@@ -1,11 +1,17 @@
 <template>
 	<div class="mx-auto h-full max-w-[120rem] p-6">
 		<div class="flex min-h-[600px] flex-col overflow-hidden rounded-xl shadow-xl lg:flex-row">
-			<div class="h-48 w-full lg:h-auto lg:w-1/3">
-				<img
-					class="h-full w-full object-cover"
-					src="/Jugador.jpeg"
-					alt="Imagen jugador de futbol" />
+			<!-- Panel de marca (reemplaza la foto de stock Jugador.jpeg) -->
+			<div class="flex h-48 w-full items-center justify-center bg-primary p-8 lg:h-auto lg:w-1/3">
+				<div class="max-w-xs text-center">
+					<div
+						class="mx-auto mb-6 flex h-19 w-19 items-center justify-center rounded-full bg-black text-2xl font-bold text-white">
+						EH
+					</div>
+					<p class="text-sm leading-relaxed text-on-primary">
+						Conecta. Entrena. Crece. Tu comunidad deportiva te espera.
+					</p>
+				</div>
 			</div>
 			<div
 				class="flex w-full flex-col items-center justify-center gap-4 bg-black px-4 py-8 lg:w-2/3">
@@ -47,7 +53,7 @@
 					<button
 						type="submit"
 						:disabled="authStore.isLoading"
-						class="block w-full rounded-lg bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-700/80 focus:ring-2 focus:ring-white focus:outline-none">
+						class="button-primary block w-full px-5 py-2.5 text-center text-sm font-medium focus:ring-2 focus:ring-white focus:outline-none">
 						<span v-if="!authStore.isLoading"> Iniciar sesión </span>
 						<div v-else class="flex items-center justify-center gap-4">
 							<div class="animate-spin">

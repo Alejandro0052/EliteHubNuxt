@@ -1,6 +1,6 @@
 <template>
-	<div class="w-full min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-12 px-4">
-		<button @click="goBack" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-6 flex items-center gap-2 transition-colors">
+	<div class="w-full min-h-screen bg-surface-container py-12 px-4 dark:bg-surface-container-dark">
+		<button @click="goBack" class="button-secondary px-4 py-2 mb-6 flex items-center gap-2">
 			<Icon name="fa6-solid:arrow-left" />
 			<span>Volver</span>
 		</button>

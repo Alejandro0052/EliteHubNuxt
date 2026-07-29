@@ -1,43 +1,45 @@
 <template>
-	<div class="mx-auto min-h-screen max-w-[120rem] bg-white px-4 py-10 sm:px-6 lg:px-8">
-		<h1 class="text-4xl font-bold text-gray-900">Reportes</h1>
-		<p class="mt-2 text-gray-600">
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
+	<div class="mx-auto max-w-[120rem] px-4 py-10 sm:px-6 lg:px-8">
+		<h1 class="text-4xl font-bold text-gray-900 dark:text-white">Reportes</h1>
+		<p class="mt-2 text-gray-600 dark:text-gray-300">
 			Distribución de Usuarios registrados por tipo de usuario, calculada en tiempo real sobre la base de datos.
 		</p>
 
-		<div v-if="loading" class="mt-8 text-gray-600">Cargando...</div>
+		<div v-if="loading" class="mt-8 text-gray-600 dark:text-gray-300">Cargando...</div>
 
-		<div v-else-if="items.length" class="mt-8 rounded-xl bg-white p-8 shadow-lg">
+		<div v-else-if="items.length" class="mt-8 rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-800">
 			<div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center">
 				<div class="relative mx-auto aspect-square w-full max-w-sm">
 					<Doughnut :data="chartData" :options="chartOptions" />
 					<div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-						<span class="text-4xl font-bold text-gray-900">{{ total }}</span>
-						<span class="text-sm text-gray-500">usuarios registrados</span>
+						<span class="text-4xl font-bold text-gray-900 dark:text-white">{{ total }}</span>
+						<span class="text-sm text-gray-500 dark:text-gray-400">usuarios registrados</span>
 					</div>
 				</div>
 
 				<div>
-					<h2 class="text-lg font-semibold text-gray-900">Conteo por tipo de usuario</h2>
+					<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Conteo por tipo de usuario</h2>
 					<ul class="mt-4 space-y-3">
 						<li v-for="item in items" :key="item.tipo" class="flex items-center gap-3">
 							<span class="h-3 w-3 shrink-0 rounded-full" :style="{ backgroundColor: item.color }"></span>
-							<span class="flex-1 text-sm text-gray-800">{{ item.tipo }}</span>
-							<span class="text-sm text-gray-500">{{ item.pct }}%</span>
-							<span class="w-12 text-right text-sm font-semibold text-gray-900">{{ item.count }}</span>
+							<span class="flex-1 text-sm text-gray-800 dark:text-gray-200">{{ item.tipo }}</span>
+							<span class="text-sm text-gray-500 dark:text-gray-400">{{ item.pct }}%</span>
+							<span class="w-12 text-right text-sm font-semibold text-gray-900 dark:text-white">{{ item.count }}</span>
 						</li>
 					</ul>
-					<div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
-						<span class="font-semibold text-gray-900">Total de Usuarios registrados</span>
-						<span class="text-2xl font-bold text-green-700">{{ total }}</span>
+					<div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-600">
+						<span class="font-semibold text-gray-900 dark:text-white">Total de Usuarios registrados</span>
+						<span class="text-2xl font-bold text-green-700 dark:text-green-400">{{ total }}</span>
 					</div>
 				</div>
 			</div>
 
-			<p class="mt-6 border-l-4 border-green-700 bg-green-50 p-4 text-sm text-gray-700">
+			<p class="mt-6 border-l-4 border-green-700 bg-green-50 p-4 text-sm text-gray-700 dark:border-green-500 dark:bg-neutral-700 dark:text-gray-200">
 				Estos totales coinciden con los contadores públicos de la página de Inicio — misma consulta agregada.
 			</p>
 		</div>
+	</div>
 	</div>
 </template>
 

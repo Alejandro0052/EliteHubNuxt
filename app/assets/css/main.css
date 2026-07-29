@@ -3,9 +3,113 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/*
+ * DESIGN.md token system, wired as real Tailwind v4 @theme CSS variables (UX-DR1).
+ * Values copied verbatim from DESIGN.md's frontmatter. `-dark` suffixed color tokens
+ * are separate named utilities (bg-primary-dark, text-on-surface-dark, etc.) — they are
+ * NOT auto-applied by Tailwind's dark: variant; call sites combine them explicitly,
+ * e.g. `bg-surface dark:bg-surface-dark`, same pattern established in Story 7.1.
+ *
+ * Typography: DESIGN.md pairs fontSize+fontWeight+lineHeight per role, but Tailwind v4's
+ * --text-* namespace only carries size (+ optional paired line-height); font-weight has
+ * its own utilities already (font-bold=700, font-semibold=600, font-normal=400) that match
+ * every DESIGN.md role's weight exactly, so weight is applied via those stock utilities at
+ * the call site rather than baked into the --text-* token. Usage: `text-display font-bold`,
+ * `text-body-sm font-normal`, etc.
+ */
+@theme {
+	/* Colors -- light */
+	--color-surface: #ffffff;
+	--color-surface-container: #f9fafb;
+	--color-surface-container-high: #f3f4f6;
+	--color-surface-inverse: #000000;
+	--color-on-surface: #111827;
+	--color-on-surface-variant: #4b5563;
+	--color-on-surface-inverse: #ffffff;
+	--color-border-hairline: #e5e7eb;
+	--color-primary: #15803d;
+	--color-primary-hover: rgb(21 128 61 / 0.8);
+	--color-on-primary: #ffffff;
+	--color-link: #16a34a;
+	--color-secondary: #1e293b;
+	--color-on-secondary: #ffffff;
+	--color-destructive: #dc2626;
+	--color-destructive-hover: #b91c1c;
+	--color-on-destructive: #ffffff;
+	--color-focus-ring: #15803d;
+
+	/* Colors -- dark */
+	--color-surface-dark: #0a0a0a;
+	--color-surface-container-dark: #171717;
+	--color-surface-container-high-dark: #262626;
+	--color-surface-inverse-dark: #ffffff;
+	--color-on-surface-dark: #f5f5f5;
+	--color-on-surface-variant-dark: #a3a3a3;
+	--color-on-surface-inverse-dark: #0a0a0a;
+	--color-border-hairline-dark: #2e2e2e;
+	--color-primary-dark: #22c55e;
+	--color-primary-hover-dark: rgb(34 197 94 / 0.85);
+	--color-on-primary-dark: #0a0a0a;
+	--color-link-dark: #4ade80;
+	--color-secondary-dark: #e2e8f0;
+	--color-on-secondary-dark: #0a0a0a;
+	--color-destructive-dark: #f87171;
+	--color-on-destructive-dark: #0a0a0a;
+
+	/* Typography (sizes; weights use stock font-bold/font-semibold/font-normal) */
+	--text-display: 2.25rem;
+	--text-display--line-height: 1.2;
+	--text-headline: 1.5rem;
+	--text-headline--line-height: 1.3;
+	--text-title: 1.125rem;
+	--text-title--line-height: 1.4;
+	--text-body: 1rem;
+	--text-body--line-height: 1.6;
+	--text-body-sm: 0.875rem;
+	--text-body-sm--line-height: 1.5;
+	--text-caption: 0.75rem;
+	--text-caption--line-height: 1.4;
+
+	/* Rounded scale */
+	--radius: 0.5rem;
+	--radius-sm: 0.25rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 0.75rem;
+	--radius-full: 9999px;
+
+	/* Spacing */
+	--spacing-1: 0.25rem;
+	--spacing-2: 0.5rem;
+	--spacing-3: 0.75rem;
+	--spacing-4: 1rem;
+	--spacing-6: 1.5rem;
+	--spacing-8: 2rem;
+	--spacing-12: 3rem;
+	--spacing-page-shell: 120rem;
+	--spacing-gutter-mobile: 1rem;
+	--spacing-gutter-desktop: 1.5rem;
+}
+
 @layer base {
 	button:not(:disabled),
 	[role="button"]:not(:disabled) {
 		cursor: pointer;
+	}
+}
+
+/*
+ * The 3 canonical button roles (UX-DR3), defined once and reused sitewide via class name
+ * instead of repeating the same utility-class chain at every call site.
+ */
+@layer components {
+	.button-primary {
+		@apply rounded bg-primary text-on-primary transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:bg-gray-400 dark:bg-primary-dark dark:text-on-primary-dark;
+	}
+	.button-secondary {
+		@apply rounded-full border border-on-surface bg-transparent text-on-surface transition-colors hover:bg-black/5 dark:border-on-surface-dark dark:text-on-surface-dark dark:hover:bg-white/10;
+	}
+	.button-destructive {
+		@apply rounded bg-destructive text-on-destructive transition-colors hover:bg-destructive-hover disabled:cursor-not-allowed disabled:bg-gray-400 dark:bg-destructive-dark dark:text-on-destructive-dark;
 	}
 }

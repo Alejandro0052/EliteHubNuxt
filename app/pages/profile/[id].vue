@@ -1,12 +1,13 @@
 <template>
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 	<div class="mx-auto w-full max-w-[120rem] px-4 py-6">
-		<div class="rounded-lg bg-white p-6 shadow-md">
-			<div v-if="!authStore.user?.isAdmin" class="rounded bg-yellow-50 p-6">No autorizado.</div>
+		<div class="rounded-lg bg-white p-6 shadow-md dark:bg-neutral-800 dark:text-white">
+			<div v-if="!authStore.user?.isAdmin" class="rounded bg-yellow-50 p-6 dark:text-gray-900">No autorizado.</div>
 
 			<template v-else>
 				<NuxtLink
 					to="/admin/users"
-					class="mb-6 inline-flex items-center gap-2 rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-600">
+					class="button-secondary mb-6 inline-flex items-center gap-2 px-3 py-2 text-sm font-medium">
 					<Icon name="fa6-solid:arrow-left" />
 					Volver a Usuarios
 				</NuxtLink>
@@ -20,7 +21,7 @@
 
 					<ProfileEditForm :usuario="usuario" :submitting="isLoading" @submit="handleSubmit" />
 
-					<div v-if="successMessage" class="mt-4 rounded border border-green-400 bg-green-100 p-4 text-green-700">
+					<div v-if="successMessage" class="mt-4 rounded border border-green-400 bg-green-100 p-4 text-green-700 dark:border-green-600 dark:bg-green-900 dark:text-green-200">
 						{{ successMessage }}
 					</div>
 				</template>
@@ -28,6 +29,7 @@
 				<div v-else>Usuario no encontrado.</div>
 			</template>
 		</div>
+	</div>
 	</div>
 </template>
 

@@ -4,7 +4,7 @@ baseline_commit: 3ae498dc03620c39a69f37577aefce9faf9b7ba7
 
 # Story 7.1: Toggle de tema claro/oscuro
 
-Status: review
+Status: done
 
 ## Story
 

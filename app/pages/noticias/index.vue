@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
-    <div class="max-w-7xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
+    <div class="max-w-page-shell mx-auto py-12 px-4">
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
-        <button @click="goBack" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+        <button @click="goBack" class="button-secondary px-4 py-2 flex items-center gap-2">
           <Icon name="fa6-solid:arrow-left" />
           <span>Volver</span>
         </button>
@@ -11,9 +11,9 @@
       </div>
       <div v-if="authStore.isAuthenticated">
         <NuxtLink to="/admin/noticias/create" class="block">
-          <div class="bg-green-400 hover:bg-green-500 rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
-            <div class="text-xl font-bold text-white">+</div>
-            <div class="text-white font-semibold">Crear</div>
+          <div class="button-primary overflow-hidden transition-transform duration-300 transform hover:scale-105 flex items-center justify-center px-6 py-3 gap-2">
+            <div class="text-xl font-bold">+</div>
+            <div class="font-semibold">Crear</div>
           </div>
         </NuxtLink>
       </div>

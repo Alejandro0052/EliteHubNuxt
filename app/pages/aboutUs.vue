@@ -24,7 +24,7 @@
 		</div>
 
 		<template v-else>
-		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
+		<div class="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
 			<h1 class="text-3xl font-semibold">Nuestra Misión</h1>
 			<p class="text-pretty">
 				Crear un espacio seguro, profesional y colaborativo donde los deportistas puedan conectar
@@ -33,7 +33,7 @@
 				su carrera.
 			</p>
 		</div>
-		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
+		<div class="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
 			<h1 class="text-3xl font-semibold">Nuestra Visión</h1>
 			<p class="text-pretty">
 				Convertirnos en la plataforma líder en América Latina para la gestión integral del entorno
@@ -42,7 +42,7 @@
 				patrocinadores con visión de impacto.
 			</p>
 		</div>
-		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
+		<div class="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
 			<h1 class="text-3xl font-semibold">¿Por qué EliteHub?</h1>
 			<p class="text-pretty">
 				En el mundo del deporte, el talento no siempre es suficiente. Muchos atletas con gran
@@ -54,7 +54,7 @@
 				encontrar talentos auténticos y comprometidos.
 			</p>
 		</div>
-		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
+		<div class="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
 			<h1 class="text-3xl font-semibold">Nuestra Filosofía</h1>
 			<p class="text-pretty">
 				En EliteHub creemos en los vínculos genuinos. Sabemos que detrás de cada atleta hay
@@ -64,7 +64,7 @@
 				con propósito.
 			</p>
 		</div>
-		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
+		<div class="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
 			<h1 class="text-3xl font-semibold">Comprometidos con el futuro del deporte</h1>
 			<p class="text-pretty">
 				Cada conexión que se genera en EliteHub está orientada a fortalecer el ecosistema deportivo.
@@ -75,7 +75,7 @@
 				usuarios.
 			</p>
 		</div>
-		<div class="flex flex-col gap-6 rounded-2xl bg-white p-6">
+		<div class="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
 			<div class="flex justify-between gap-4">
 				<h1 class="text-3xl font-semibold">Únete a la comunidad EliteHub</h1>
 				<NuxtLink to="/register">

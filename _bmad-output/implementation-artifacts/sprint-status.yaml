@@ -87,8 +87,8 @@ development_status:
   epic-6-retrospective: optional
 
   epic-7: in-progress
-  7-1-toggle-de-tema-claro-oscuro: review
-  7-2-sistema-de-diseno-y-consolidacion-visual: backlog
+  7-1-toggle-de-tema-claro-oscuro: done
+  7-2-sistema-de-diseno-y-consolidacion-visual: review
   7-3-accesibilidad-y-responsividad-como-piso-verificable: backlog
   epic-7-retrospective: optional
 

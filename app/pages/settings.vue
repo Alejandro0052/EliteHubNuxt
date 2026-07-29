@@ -1,13 +1,19 @@
 
 <template>
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 	<div class="mx-auto w-full max-w-[120rem] px-4 py-6">
-		<div class="rounded-lg bg-white p-6 shadow-md">
-			<h1 class="mb-6 text-2xl font-bold text-gray-800">Ajustes</h1>
+		<button type="button" @click="router.back()" class="button-secondary mb-6 flex items-center gap-2 px-4 py-2">
+			<Icon name="fa6-solid:arrow-left" />
+			<span>Volver</span>
+		</button>
 
-			<section class="mb-6 flex items-center justify-between rounded-lg border p-4">
+		<div class="rounded-lg bg-white p-6 shadow-md dark:bg-neutral-800 dark:text-white">
+			<h1 class="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Ajustes</h1>
+
+			<section class="mb-6 flex items-center justify-between rounded-lg border p-4 dark:border-gray-600">
 				<div>
-					<h2 class="text-lg font-semibold text-gray-800">Tema oscuro</h2>
-					<p class="text-sm text-gray-600">Cambia la apariencia de la aplicación entre modo claro y oscuro.</p>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-white">Tema oscuro</h2>
+					<p class="text-sm text-gray-600 dark:text-gray-300">Cambia la apariencia de la aplicación entre modo claro y oscuro.</p>
 				</div>
 				<button
 					type="button"
@@ -24,47 +30,48 @@
 			</section>
 			<div class="sr-only" aria-live="polite">{{ announcement }}</div>
 
-			<div v-if="!isAdmin" class="text-gray-600">Las opciones actuales de perfil se movieron a Perfil.</div>
+			<div v-if="!isAdmin" class="text-gray-600 dark:text-gray-300">Las opciones actuales de perfil se movieron a Perfil.</div>
 
 			<div v-else>
-				<p class="mb-4 text-sm text-gray-600">Editor rápido de contenidos públicos. Solo administradores.</p>
+				<p class="mb-4 text-sm text-gray-600 dark:text-gray-300">Editor rápido de contenidos públicos. Solo administradores.</p>
 
 				<div class="space-y-6">
-					<section class="rounded-lg border p-4">
+					<section class="rounded-lg border p-4 dark:border-gray-600">
 						<h2 class="mb-2 text-lg font-semibold">Política de Privacidad</h2>
-						<input v-model="privacity.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1" />
-						<input v-model="privacity.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1" />
-						<textarea v-model="privacity.content" rows="6" class="w-full rounded border px-2 py-1" placeholder="Contenido HTML o texto"></textarea>
+						<input v-model="privacity.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" />
+						<input v-model="privacity.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" />
+						<textarea v-model="privacity.content" rows="6" class="w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" placeholder="Contenido HTML o texto"></textarea>
 						<div class="mt-2 flex items-center gap-2">
-							<button @click="saveContent('privacity')" :disabled="saving" class="rounded bg-green-600 px-3 py-1 text-white">Guardar</button>
-							<span v-if="saved.privacity" class="text-sm text-green-600">Guardado</span>
+							<button @click="saveContent('privacity')" :disabled="saving" class="button-primary px-3 py-1">Guardar</button>
+							<span v-if="saved.privacity" class="text-sm text-green-600 dark:text-green-400">Guardado</span>
 						</div>
 					</section>
 
-					<section class="rounded-lg border p-4">
+					<section class="rounded-lg border p-4 dark:border-gray-600">
 						<h2 class="mb-2 text-lg font-semibold">Términos y Condiciones</h2>
-						<input v-model="terms.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1" />
-						<input v-model="terms.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1" />
-						<textarea v-model="terms.content" rows="6" class="w-full rounded border px-2 py-1" placeholder="Contenido HTML o texto"></textarea>
+						<input v-model="terms.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" />
+						<input v-model="terms.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" />
+						<textarea v-model="terms.content" rows="6" class="w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" placeholder="Contenido HTML o texto"></textarea>
 						<div class="mt-2 flex items-center gap-2">
-							<button @click="saveContent('terms')" :disabled="saving" class="rounded bg-green-600 px-3 py-1 text-white">Guardar</button>
-							<span v-if="saved.terms" class="text-sm text-green-600">Guardado</span>
+							<button @click="saveContent('terms')" :disabled="saving" class="button-primary px-3 py-1">Guardar</button>
+							<span v-if="saved.terms" class="text-sm text-green-600 dark:text-green-400">Guardado</span>
 						</div>
 					</section>
 
-					<section class="rounded-lg border p-4">
+					<section class="rounded-lg border p-4 dark:border-gray-600">
 						<h2 class="mb-2 text-lg font-semibold">Quiénes Somos</h2>
-						<input v-model="about.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1" />
-						<input v-model="about.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1" />
-						<textarea v-model="about.content" rows="6" class="w-full rounded border px-2 py-1" placeholder="Contenido HTML o texto"></textarea>
+						<input v-model="about.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" />
+						<input v-model="about.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" />
+						<textarea v-model="about.content" rows="6" class="w-full rounded border px-2 py-1 dark:border-gray-600 dark:bg-neutral-700" placeholder="Contenido HTML o texto"></textarea>
 						<div class="mt-2 flex items-center gap-2">
-							<button @click="saveContent('about')" :disabled="saving" class="rounded bg-green-600 px-3 py-1 text-white">Guardar</button>
-							<span v-if="saved.about" class="text-sm text-green-600">Guardado</span>
+							<button @click="saveContent('about')" :disabled="saving" class="button-primary px-3 py-1">Guardar</button>
+							<span v-if="saved.about" class="text-sm text-green-600 dark:text-green-400">Guardado</span>
 						</div>
 					</section>
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 </template>
 
@@ -74,6 +81,7 @@ import { useAuthStore } from '~/stores/auth'
 import { useContent } from '~/composables/useContent'
 
 const authStore = useAuthStore()
+const router = useRouter()
 const isAdmin = computed(() => !!authStore.user?.isAdmin)
 
 const { getContent, updateContent } = useContent()

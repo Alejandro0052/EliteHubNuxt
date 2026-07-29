@@ -1,14 +1,14 @@
 <template>
-  <div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
-    <div class="max-w-5xl mx-auto py-12 px-4">
+  <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
+    <div class="max-w-page-shell mx-auto py-12 px-4">
     <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <h1 class="text-3xl font-bold text-gray-900">Usuarios</h1>
+      <h1 class="text-3xl font-bold text-on-surface dark:text-on-surface-dark">Usuarios</h1>
       <div class="flex items-center gap-3">
-        <NuxtLink to="/profile" class="inline-flex items-center gap-2 rounded-md bg-blue-400 hover:bg-blue-500 px-3 py-2 text-sm font-medium text-white">
+        <NuxtLink to="/profile" class="button-secondary inline-flex items-center gap-2 px-3 py-2 text-sm font-medium">
           <Icon name="fa6-solid:arrow-left" />
           Volver
         </NuxtLink>
-        <NuxtLink to="/admin/users/create" class="inline-flex items-center gap-2 rounded-md bg-green-400 hover:bg-green-500 px-3 py-2 text-sm font-medium text-white">
+        <NuxtLink to="/admin/users/create" class="button-primary inline-flex items-center gap-2 px-3 py-2 text-sm font-medium">
           <Icon name="fa6-solid:user-plus" />
           Crear Usuario
         </NuxtLink>

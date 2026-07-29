@@ -358,7 +358,7 @@
 					<button
 						type="submit"
 						:disabled="isLoading || !form.tipoUsuarioId"
-						class="rounded-lg bg-green-700 px-5 py-2.5 text-center text-sm font-bold text-white hover:bg-green-700/80 focus:ring-2 focus:ring-white focus:outline-none disabled:opacity-50">
+						class="button-primary px-5 py-2.5 text-center text-sm font-bold focus:ring-2 focus:ring-white focus:outline-none disabled:opacity-50">
 						<span v-if="!isLoading">Crear cuenta</span>
 						<span v-else>Registrando...</span>
 					</button>

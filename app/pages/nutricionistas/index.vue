@@ -1,13 +1,13 @@
 <template>
-	<div class="w-full min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 		<!-- Hero Section -->
 		<section class="relative px-4 py-20 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-7xl">
+			<div class="mx-auto max-w-page-shell">
 				<div class="text-center">
-					<h1 class="mb-6 text-4xl font-bold text-gray-900 md:text-6xl">
+					<h1 class="mb-6 text-4xl font-bold text-gray-900 dark:text-white md:text-6xl">
 						{{ pageContent.title || "Nutricionistas Deportivos" }}
 					</h1>
-					<p class="mx-auto mb-8 max-w-3xl text-xl text-gray-600 md:text-2xl">
+					<p class="mx-auto mb-8 max-w-3xl text-xl text-gray-600 dark:text-gray-300 md:text-2xl">
 						{{
 							pageContent.subtitle ||
 							"Optimiza tu rendimiento con la guía de expertos en nutrición deportiva"
@@ -19,7 +19,7 @@
 
 		<!-- Main Content -->
 		<section class="px-4 py-16 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-7xl">
+			<div class="mx-auto max-w-page-shell">
 				<!-- Custom Content -->
 				<div v-if="pageContent.content" class="mb-16">
 					<div class="max-w-none" v-html="pageContent.content"></div>
@@ -31,7 +31,7 @@
 						<UsuarioDirectoryCard :usuario="item" />
 					</template>
 					<template #empty>
-						<p class="text-center text-gray-600">Todavía no hay nutricionistas registrados.</p>
+						<p class="text-center text-gray-600 dark:text-gray-400">Todavía no hay nutricionistas registrados.</p>
 					</template>
 				</InfiniteScrollList>
 			</div>

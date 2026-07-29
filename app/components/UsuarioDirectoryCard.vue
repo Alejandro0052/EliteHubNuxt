@@ -1,7 +1,7 @@
 <template>
 	<NuxtLink
 		:to="detailRoute"
-		class="block overflow-hidden rounded-xl bg-white shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+		class="block overflow-hidden rounded-xl bg-surface shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl dark:bg-surface-container-dark">
 		<div :class="['flex h-32 items-center justify-center', themeClass]">
 			<img
 				v-if="usuario.avatar"
@@ -16,12 +16,12 @@
 		</div>
 
 		<div class="p-6 text-center">
-			<h3 class="mb-1 text-lg font-bold text-gray-900">{{ usuario.nombre }} {{ usuario.apellido }}</h3>
+			<h3 class="mb-1 text-lg font-bold text-gray-900 dark:text-white">{{ usuario.nombre }} {{ usuario.apellido }}</h3>
 			<p v-if="tagline" class="mb-3 text-sm font-semibold" :class="taglineColorClass">{{ tagline }}</p>
 
-			<ul v-if="detailLines.length" class="space-y-1.5 text-sm text-gray-600">
+			<ul v-if="detailLines.length" class="space-y-1.5 text-sm text-gray-600 dark:text-gray-300">
 				<li v-for="(line, i) in detailLines" :key="i" class="flex items-center justify-center gap-2">
-					<Icon :name="line.icon" class="flex-shrink-0 text-gray-400" />
+					<Icon :name="line.icon" class="flex-shrink-0 text-gray-400 dark:text-gray-500" />
 					<span class="truncate">{{ line.text }}</span>
 				</li>
 			</ul>
@@ -47,19 +47,19 @@
 <script setup>
 const THEMES = {
 	Deportista: {
-		gradient: "bg-gradient-to-br from-blue-500 to-green-500",
+		gradient: "bg-surface-inverse",
 		text: "text-blue-600",
 	},
 	Marca: {
-		gradient: "bg-gradient-to-br from-orange-500 to-red-500",
+		gradient: "bg-surface-inverse",
 		text: "text-orange-600",
 	},
 	Nutricionista: {
-		gradient: "bg-gradient-to-br from-green-400 to-teal-500",
+		gradient: "bg-surface-inverse",
 		text: "text-green-600",
 	},
 	Patrocinador: {
-		gradient: "bg-gradient-to-br from-purple-500 to-blue-500",
+		gradient: "bg-surface-inverse",
 		text: "text-purple-600",
 	},
 };

@@ -1,33 +1,35 @@
 <template>
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 	<div class="mx-auto w-full max-w-[120rem] px-4 py-6">
-		<div class="rounded-lg bg-white p-6 shadow-md">
-			<h1 class="mb-6 text-2xl font-bold text-gray-800">Mi Perfil</h1>
+		<div class="rounded-lg bg-white p-6 shadow-md dark:bg-neutral-800">
+			<h1 class="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Mi Perfil</h1>
 
 			<!-- Admin quick link -->
 			<div v-if="authStore.user?.isAdmin" class="mb-6">
-				<NuxtLink to="/admin/users" class="inline-flex items-center gap-2 rounded-md bg-green-400 hover:bg-green-500 px-3 py-2 text-sm font-medium text-white">
+				<NuxtLink to="/admin/users" class="button-secondary inline-flex items-center gap-2 px-3 py-2 text-sm font-medium">
 					<Icon name="fa6-solid:users" />
 					Gestión de usuarios
 				</NuxtLink>
 			</div>
 
 			<!-- Mi catálogo (solo Marca) -->
-			<div v-if="usuario?.informacion?.tipoUsuario?.tipo === 'Marca'" class="mb-6 rounded-lg bg-gray-50 p-6">
-				<h2 class="mb-2 text-lg font-semibold text-gray-700">Mi catálogo</h2>
-				<NuxtLink to="/catalogo/create" class="inline-flex items-center gap-2 rounded-md bg-blue-500 hover:bg-blue-600 px-3 py-2 text-sm font-medium text-white">
+			<div v-if="usuario?.informacion?.tipoUsuario?.tipo === 'Marca'" class="mb-6 rounded-lg bg-gray-50 p-6 dark:bg-neutral-700">
+				<h2 class="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">Mi catálogo</h2>
+				<NuxtLink to="/catalogo/create" class="button-primary inline-flex items-center gap-2 px-3 py-2 text-sm font-medium">
 					<Icon name="fa6-solid:plus" />
 					Agregar ítem
 				</NuxtLink>
 			</div>
 
-			<div v-if="loading">Cargando...</div>
+			<div v-if="loading" class="dark:text-gray-300">Cargando...</div>
 
 			<ProfileEditForm v-else-if="usuario" :usuario="usuario" :submitting="isLoading" @submit="handleSubmit" />
 
-			<div v-if="successMessage" class="mt-4 rounded border border-green-400 bg-green-100 p-4 text-green-700">
+			<div v-if="successMessage" class="mt-4 rounded border border-green-400 bg-green-100 p-4 text-green-700 dark:border-green-600 dark:bg-green-900 dark:text-green-200">
 				{{ successMessage }}
 			</div>
 		</div>
+	</div>
 	</div>
 </template>
 

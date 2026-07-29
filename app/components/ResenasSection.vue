@@ -1,15 +1,15 @@
 <template>
-	<div class="mx-auto mt-8 max-w-3xl rounded-xl bg-white p-8 shadow-lg">
-		<h2 class="mb-4 text-xl font-bold text-gray-900">Reseñas</h2>
+	<div class="mx-auto mt-8 max-w-3xl rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-800">
+		<h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Reseñas</h2>
 
-		<div v-if="loading">Cargando reseñas...</div>
+		<div v-if="loading" class="dark:text-gray-300">Cargando reseñas...</div>
 
 		<template v-else>
-			<div v-if="!authStore.isAuthenticated" class="mb-6 text-sm text-gray-500">
+			<div v-if="!authStore.isAuthenticated" class="mb-6 text-sm text-gray-500 dark:text-gray-400">
 				Inicia sesión para dejar una reseña.
 			</div>
 
-			<div v-else-if="misResena" class="mb-6 text-sm font-medium text-gray-700">
+			<div v-else-if="misResena" class="mb-6 text-sm font-medium text-gray-700 dark:text-gray-300">
 				Ya dejaste una reseña para {{ nutricionistaNombre }}
 			</div>
 
@@ -18,11 +18,11 @@
 					v-if="!showForm"
 					type="button"
 					@click="showForm = true"
-					class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-colors">
+					class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200">
 					Dejar una reseña
 				</button>
 
-				<form v-else @submit.prevent="handleSubmit" class="space-y-3 rounded-lg border border-gray-200 p-4">
+				<form v-else @submit.prevent="handleSubmit" class="space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-600 dark:text-white">
 					<div>
 						<label class="mb-1 block text-sm font-medium">Calificación</label>
 						<div class="flex gap-1" role="group" aria-label="Selecciona una calificación">
@@ -41,19 +41,19 @@
 
 					<div>
 						<label class="mb-1 block text-sm font-medium">Comentario (opcional)</label>
-						<textarea v-model="comentario" rows="3" class="w-full rounded border px-3 py-2"></textarea>
+						<textarea v-model="comentario" rows="3" class="w-full rounded border px-3 py-2 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
 					</div>
 
 					<div class="flex items-center gap-3">
 						<button
 							:disabled="submitting"
-							class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+							class="button-primary px-4 py-2 font-semibold">
 							Publicar
 						</button>
 						<button
 							type="button"
 							@click="showForm = false"
-							class="text-gray-600 hover:underline">
+							class="text-gray-600 hover:underline dark:text-gray-400">
 							Cancelar
 						</button>
 					</div>
@@ -63,12 +63,12 @@
 			<div v-if="resenas.length > 0" class="mb-6 flex flex-col items-center gap-1 border-b border-gray-100 pb-6 text-center">
 				<div class="flex items-center gap-2">
 					<StarRating :value="promedio" class="text-2xl" />
-					<span class="text-xl font-bold text-gray-900">{{ promedio.toFixed(1) }}</span>
+					<span class="text-xl font-bold text-gray-900 dark:text-white">{{ promedio.toFixed(1) }}</span>
 				</div>
-				<p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">Calificación</p>
+				<p class="text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">Calificación</p>
 			</div>
 
-			<div v-if="resenas.length === 0" class="text-sm text-gray-500">Todavía no hay reseñas.</div>
+			<div v-if="resenas.length === 0" class="text-sm text-gray-500 dark:text-gray-400">Todavía no hay reseñas.</div>
 
 			<ul v-else class="space-y-4">
 				<li v-for="r in resenasOrdenadas" :key="r.id" class="border-t border-gray-100 pt-4 first:border-t-0 first:pt-0">
@@ -80,11 +80,11 @@
 								class="h-10 w-10 rounded-full object-cover" />
 							<div
 								v-else
-								class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-sm font-semibold text-gray-700">
+								class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-sm font-semibold text-gray-700 dark:border-gray-500 dark:text-gray-200">
 								{{ initials(r.autor) }}
 							</div>
 							<div>
-								<p class="text-sm font-semibold text-gray-900">{{ r.autor.nombre }} {{ r.autor.apellido }}</p>
+								<p class="text-sm font-semibold text-gray-900 dark:text-white">{{ r.autor.nombre }} {{ r.autor.apellido }}</p>
 								<StarRating :value="r.rating" class="text-sm" />
 							</div>
 						</div>
@@ -116,9 +116,9 @@
 						</div>
 					</div>
 
-					<div v-if="retractingId === r.id" class="mt-3 space-y-3 rounded-lg border border-gray-200 p-4">
-						<p class="text-sm text-gray-700">¿Retractar esta reseña? Esta acción no se puede deshacer.</p>
-						<label class="flex items-center gap-2 text-sm text-gray-700">
+					<div v-if="retractingId === r.id" class="mt-3 space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-600 dark:text-white">
+						<p class="text-sm text-gray-700 dark:text-gray-200">¿Retractar esta reseña? Esta acción no se puede deshacer.</p>
+						<label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
 							<input type="checkbox" v-model="bloquearAutor" />
 							También bloquear la cuenta de {{ r.autor.nombre }} {{ r.autor.apellido }}
 						</label>
@@ -127,17 +127,17 @@
 								:disabled="retractSubmitting"
 								type="button"
 								@click="handleRetract(r)"
-								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:bg-gray-400">
+								class="button-destructive px-4 py-2 text-sm font-semibold">
 								Confirmar
 							</button>
-							<button type="button" @click="retractingId = null" class="text-gray-600 hover:underline">Cancelar</button>
+							<button type="button" @click="retractingId = null" class="text-gray-600 hover:underline dark:text-gray-400">Cancelar</button>
 						</div>
 					</div>
 
 					<form
 						v-if="editingId === r.id"
 						@submit.prevent="handleEditSubmit(r)"
-						class="mt-3 space-y-3 rounded-lg border border-gray-200 p-4">
+						class="mt-3 space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-600 dark:text-white">
 						<div>
 							<label class="mb-1 block text-sm font-medium">Calificación</label>
 							<div class="flex gap-1" role="group" aria-label="Selecciona una calificación">
@@ -155,18 +155,18 @@
 						</div>
 						<div>
 							<label class="mb-1 block text-sm font-medium">Comentario (opcional)</label>
-							<textarea v-model="editComentario" rows="3" class="w-full rounded border px-3 py-2"></textarea>
+							<textarea v-model="editComentario" rows="3" class="w-full rounded border px-3 py-2 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
 						</div>
 						<div class="flex items-center gap-3">
 							<button
 								:disabled="editSubmitting"
-								class="bg-green-400 hover:bg-green-500 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+								class="button-primary px-4 py-2 font-semibold">
 								Guardar
 							</button>
-							<button type="button" @click="editingId = null" class="text-gray-600 hover:underline">Cancelar</button>
+							<button type="button" @click="editingId = null" class="text-gray-600 hover:underline dark:text-gray-400">Cancelar</button>
 						</div>
 					</form>
-					<p v-else-if="r.comentario" class="mt-2 text-sm text-gray-700">{{ r.comentario }}</p>
+					<p v-else-if="r.comentario" class="mt-2 text-sm text-gray-700 dark:text-gray-200">{{ r.comentario }}</p>
 				</li>
 			</ul>
 		</template>
