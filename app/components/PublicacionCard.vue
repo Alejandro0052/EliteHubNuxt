@@ -62,8 +62,27 @@
 			<p v-else class="mt-3 whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-200">{{ publicacion.texto }}</p>
 		</div>
 
-		<img v-if="!editing && publicacion.imagen" :src="publicacion.imagen" class="max-h-96 w-full object-cover" />
+		<img
+			v-if="!editing && publicacion.imagen"
+			:src="publicacion.imagen"
+			class="max-h-96 w-full cursor-zoom-in object-cover"
+			@click="showLightbox = true" />
 	</div>
+
+	<Teleport to="body">
+		<div
+			v-if="showLightbox"
+			class="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4"
+			@click="showLightbox = false">
+			<button
+				type="button"
+				class="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-800 shadow-lg"
+				@click.stop="showLightbox = false">
+				<Icon name="fa6-solid:xmark" />
+			</button>
+			<img :src="publicacion.imagen" class="max-h-[80vh] max-w-full rounded-lg object-contain" @click.stop />
+		</div>
+	</Teleport>
 </template>
 
 <script setup>
@@ -79,6 +98,7 @@ const { showToast } = useToast()
 const { askConfirm } = useConfirm()
 
 const eliminada = ref(false)
+const showLightbox = ref(false)
 const editing = ref(false)
 const editTexto = ref('')
 const editSubmitting = ref(false)

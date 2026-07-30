@@ -4,7 +4,7 @@ baseline_commit: 4d87b24ebd40d1d79c22f7bc25720e283d78fa7a
 
 # Story 7.2: Sistema de diseño y consolidación visual
 
-Status: review
+Status: done
 
 ## Story
 
@@ -178,6 +178,10 @@ Extended the same established pattern (full-bleed outer `w-full min-h-screen bg-
 
 Same recurring lesson as prior rounds (see `[[project-dark-mode-latent-bug]]` memory): adding a dark canvas is the easy 10% of the work; auditing every descendant's explicit text/border/background color is the other 90%, and it has to be done exhaustively per page/component, not assumed from a single top-level fix.
 
+### Post-review fixes, round 5 (user tested: Gestión de usuarios table hid names in dark mode)
+
+`admin/users/index.vue`'s table body cells (`nombre`/`apellido`/`correo`/`tipo`/`rol`) had **no text color class at all** — Task 3/5's original fix only touched this page's gradient, shell, and buttons, never the table content itself. With no explicit color and nothing in the ancestor chain setting one either, cells rendered browser-default black text on the new dark canvas — invisible, exactly as reported. Fixed: table header (`th`, `bg-gray-50`), every data cell, both divider colors (`divide-gray-200`/`divide-gray-100`), the "Creado" date column, and the "Editar perfil" link all given `dark:` counterparts. Left the Activo/Inactivo pastel badges (`bg-green-100 text-green-800` / `bg-red-100 text-red-800`) unchanged — they're self-contained light badges with dark text, still legible against a dark page background even without their own dark variant, and not part of what was reported broken.
+
 ### File List
 
 - app/assets/css/main.css (modified — `@theme` token block, 3 button-role classes)
@@ -219,3 +223,4 @@ Same recurring lesson as prior rounds (see `[[project-dark-mode-latent-bug]]` me
 - app/pages/profile/index.vue, profile/[id].vue (modified, post-review round 4 — dark: throughout)
 - app/components/ProfileEditForm.vue (modified, post-review round 4 — scoped CSS specificity fix + dark: on ~30 form fields)
 - app/pages/admin/reportes/index.vue, admin/mensajes-contacto/index.vue (modified, post-review round 4 — dark: throughout)
+- app/pages/admin/users/index.vue (modified, post-review round 5 — table body/header dark: text, names were invisible)

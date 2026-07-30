@@ -861,38 +861,6 @@ So that Elite Hub feels like one coherent product, not a patchwork.
 **When** verified
 **Then** existing responsive behavior across breakpoints is preserved unbroken (FR-34)
 
-### Story 7.3: Accesibilidad y responsividad como piso verificable
-
-As a user relying on assistive technology or a specific device size,
-I want every touched surface to meet a real accessibility and responsiveness floor,
-So that the visual refresh doesn't leave anyone behind.
-
-**Acceptance Criteria:**
-
-**Given** any interactive icon-only control
-**When** rendered
-**Then** it carries an `aria-label` in Spanish matching its visible-text equivalent elsewhere (UX-DR16)
-
-**Given** infinite-scroll loading and end-of-list states (Story 2.1 pattern)
-**When** they change
-**Then** they are announced via `aria-live="polite"` (UX-DR16)
-
-**Given** the focus-ring token
-**When** any interactive element receives focus
-**Then** the ring holds AA contrast against both light and dark canvases (UX-DR16)
-
-**Given** required vs. optional fields on any form
-**When** rendered
-**Then** they are marked in text, never by color alone (UX-DR16)
-
-**Given** `prefers-reduced-motion` is set
-**When** a user interacts with a card (hover-lift) or icon badge (invert)
-**Then** the transition reduces to an opacity/no-transform change (UX-DR16)
-
-**Given** every card grid, admin table, and the Reportes/Indicadores view
-**When** tested at `<md`, `md`, `lg`, and `xl`
-**Then** each matches the exact breakpoint behavior specified in EXPERIENCE.md's Responsive & Platform table (UX-DR17, FR-34) — the verification gate for every visual-refresh surface from Story 7.2 and every new surface built in Epics 2-6
-
 ## Epic 8: Migración de Almacenamiento de Archivos
 
 Uploaded files move off local disk onto Cloudflare R2, sequenced last so every upload-touching feature built in prior epics migrates once, not twice.

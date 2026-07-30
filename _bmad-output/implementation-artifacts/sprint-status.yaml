@@ -41,7 +41,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-24
-last_updated: 2026-07-27
+last_updated: 2026-07-29
 project: Elite_Hub
 project_key: NOKEY
 tracking_system: file-system
@@ -86,10 +86,9 @@ development_status:
   6-1-visualizacion-de-distribucion-de-usuarios: done
   epic-6-retrospective: optional
 
-  epic-7: in-progress
+  epic-7: done
   7-1-toggle-de-tema-claro-oscuro: done
-  7-2-sistema-de-diseno-y-consolidacion-visual: review
-  7-3-accesibilidad-y-responsividad-como-piso-verificable: backlog
+  7-2-sistema-de-diseno-y-consolidacion-visual: done
   epic-7-retrospective: optional
 
   epic-8: backlog
