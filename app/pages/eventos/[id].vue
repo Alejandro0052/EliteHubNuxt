@@ -5,7 +5,7 @@
       <Icon name="fa6-solid:arrow-left" />
       <span>Volver</span>
     </button>
-    <div v-if="loading">Cargando...</div>
+    <div v-if="loading" class="dark:text-gray-300">Cargando...</div>
     <div v-else>
       <div class="mb-4 flex items-center gap-3">
         <NuxtLink
@@ -21,11 +21,11 @@
           Eliminar
         </button>
       </div>
-      <h1 class="text-4xl font-bold mb-4">{{ evento.titulo }}</h1>
-      <div class="text-sm text-gray-500 mb-6">{{ formatDate(evento.fechaEvento || evento.createdAt) }}</div>
+      <h1 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">{{ evento.titulo }}</h1>
+      <div class="text-sm text-gray-500 mb-6 dark:text-gray-400">{{ formatDate(evento.fechaEvento || evento.createdAt) }}</div>
       <img v-if="evento.imagen" :src="evento.imagen" class="w-full rounded-lg mb-6" />
-      <div v-if="evento.ubicacion" class="mb-4"><strong>Ubicación:</strong> {{ evento.ubicacion }}</div>
-      <div v-html="evento.contenido" class="prose max-w-none"></div>
+      <div v-if="evento.ubicacion" class="mb-4 text-gray-900 dark:text-gray-200"><strong>Ubicación:</strong> {{ evento.ubicacion }}</div>
+      <div v-html="evento.contenido" class="prose max-w-none text-gray-900 dark:text-gray-200"></div>
     </div>
     </div>
   </div>

@@ -39,6 +39,55 @@
 				Estos totales coinciden con los contadores públicos de la página de Inicio — misma consulta agregada.
 			</p>
 		</div>
+
+		<div class="mt-8 rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-800">
+			<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Publicaciones por tipo de usuario</h2>
+			<p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+				Cantidad de publicaciones creadas por tipo de usuario autor, opcionalmente filtrada por rango de fechas.
+			</p>
+
+			<div class="mt-4 flex flex-wrap items-end gap-4">
+				<label class="flex flex-col text-sm text-gray-700 dark:text-gray-200">
+					Desde
+					<input
+						v-model="desde"
+						type="date"
+						class="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-neutral-700 dark:text-white"
+					/>
+				</label>
+				<label class="flex flex-col text-sm text-gray-700 dark:text-gray-200">
+					Hasta
+					<input
+						v-model="hasta"
+						type="date"
+						class="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-neutral-700 dark:text-white"
+					/>
+				</label>
+				<button
+					type="button"
+					class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-neutral-700"
+					@click="limpiarRango"
+				>
+					Limpiar rango
+				</button>
+			</div>
+
+			<p v-if="errorPublicaciones" class="mt-4 text-sm text-red-600 dark:text-red-400">{{ errorPublicaciones }}</p>
+
+			<div v-if="loadingPublicaciones" class="mt-6 text-gray-600 dark:text-gray-300">Cargando...</div>
+
+			<ul v-else class="mt-6 space-y-3">
+				<li v-for="item in itemsPublicaciones" :key="item.tipo" class="flex items-center gap-3">
+					<span class="h-3 w-3 shrink-0 rounded-full" :style="{ backgroundColor: item.color }"></span>
+					<span class="flex-1 text-sm text-gray-800 dark:text-gray-200">{{ item.tipo }}</span>
+					<span class="w-12 text-right text-sm font-semibold text-gray-900 dark:text-white">{{ item.count }}</span>
+				</li>
+			</ul>
+			<div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-600">
+				<span class="font-semibold text-gray-900 dark:text-white">Total de Publicaciones</span>
+				<span class="text-2xl font-bold text-green-700 dark:text-green-400">{{ totalPublicaciones }}</span>
+			</div>
+		</div>
 	</div>
 	</div>
 </template>
@@ -96,4 +145,43 @@ onMounted(async () => {
 		loading.value = false
 	}
 })
+
+const desde = ref('')
+const hasta = ref('')
+const loadingPublicaciones = ref(true)
+const errorPublicaciones = ref('')
+const totalPublicaciones = ref(0)
+const itemsPublicaciones = ref([])
+
+async function cargarPublicaciones() {
+	loadingPublicaciones.value = true
+	errorPublicaciones.value = ''
+	try {
+		const res = await $fetch('/api/admin/reportes/publicaciones', {
+			query: {
+				...(desde.value && { desde: desde.value }),
+				...(hasta.value && { hasta: hasta.value }),
+			},
+		})
+		totalPublicaciones.value = res.total
+		itemsPublicaciones.value = Object.entries(res.porTipo).map(([tipo, count], i) => ({
+			tipo,
+			count,
+			color: COLORES[i] || COLORES[COLORES.length - 1],
+		}))
+	} catch (err) {
+		errorPublicaciones.value = err?.data?.message || 'No se pudo cargar el reporte de publicaciones.'
+	} finally {
+		loadingPublicaciones.value = false
+	}
+}
+
+function limpiarRango() {
+	desde.value = ''
+	hasta.value = ''
+}
+
+watch([desde, hasta], cargarPublicaciones)
+
+onMounted(cargarPublicaciones)
 </script>

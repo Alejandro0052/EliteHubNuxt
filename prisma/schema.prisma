@@ -260,7 +260,7 @@ model Resena {
 model Publicacion {
   id        Int      @id @default(autoincrement())
   texto     String
-  imagen    String?
+  media     String[] @default([])
   autorId   Int
   autor     Usuario  @relation(fields: [autorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime @default(now())

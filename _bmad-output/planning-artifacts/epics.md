@@ -187,12 +187,12 @@ Authenticated users leave one rating+comment review per nutricionista; admin can
 **FRs covered:** FR-24, FR-25, FR-36, FR-37
 
 ### Epic 5: Publicaciones y Feed de Inicio
-Any authenticated user posts text+optional image to a shared, most-recent-first home feed, with author/admin moderation.
-**FRs covered:** FR-26, FR-27, FR-28
+Any authenticated user posts text+optional media (as of Story 5.3, a carousel of up to 10 mixed images/videos) to a shared, most-recent-first home feed, with author/admin moderation.
+**FRs covered:** FR-26, FR-27, FR-28, FR-44
 
 ### Epic 6: Reportes/Indicadores
-Admin sees a polished chart plus numeric counts of registered users by type, sharing its aggregate source with the homepage stats.
-**FRs covered:** FR-29, FR-30
+Admin sees a polished chart plus numeric counts of registered users by type, sharing its aggregate source with the homepage stats; Story 6.2 adds a second report sliced by publicación activity.
+**FRs covered:** FR-29, FR-30, FR-45
 
 ### Epic 7: Settings, Tema y Refresco Visual
 Users toggle light/dark theme (persisted via localStorage); the visual refresh (brand-chrome consolidation, retiring pastel gradients, sitewide hover micro-interaction) lands across every named surface without breaking responsiveness.
@@ -753,6 +753,38 @@ So that I control my content while abuse can still be moderated appropriately.
 **When** I attempt to EDIT another Usuario's Publicación
 **Then** the action is rejected — admin may delete but never edit another's post, per AD-1's asymmetric matrix for this resource, distinct from Eventos/Noticias and Catálogo's uniform matrix
 
+### Story 5.3: Carrusel de imágenes y videos en publicaciones
+
+As an authenticated user,
+I want to attach multiple photos and videos to my publicación as a carousel, freely mixed,
+So that I can share richer content than a single photo or clip.
+
+**Acceptance Criteria:**
+
+**Given** I am using the composer (or editing my own Publicación, per Story 5.2)
+**When** I attach up to 10 media items, in any mix of images and videos
+**Then** the upload succeeds and all items are stored as the Publicación's media carousel, in the order I added them (FR-44)
+
+**Given** I attempt to attach an 11th media item
+**When** I try to add it
+**Then** it is rejected before upload, with a clear message that 10 is the maximum
+
+**Given** any video among the attached items
+**When** its duration exceeds 2 minutes
+**Then** that item is rejected with a clear message before the Publicación is created/updated — each video is checked independently, images have no duration limit (FR-44)
+
+**Given** a Publicación with a media carousel
+**When** it renders in the feed or in its detail view
+**Then** items display one at a time with a way to move to the next/previous item; videos play inline with standard controls, images keep the existing click-to-zoom behavior
+
+**Given** I am editing a Publicación that already has a media carousel
+**When** I attach a new set of media files and save
+**Then** the entire carousel is replaced wholesale by the new set — there is no per-item add/remove on an existing carousel in this MVP (FR-44)
+
+**Given** the media files are uploaded
+**When** they're persisted
+**Then** they are stored on local disk via the existing upload pattern used for images — no early migration to Epic 8's Cloudflare R2 storage; these are expected to be test uploads that get deleted
+
 ## Epic 6: Reportes/Indicadores
 
 Admin sees a polished chart plus numeric counts of registered users by type, sharing its aggregate source with the homepage stats.
@@ -784,6 +816,30 @@ So that I can see community composition at a glance without querying the databas
 **Given** I am not admin
 **When** I attempt to access this view or its route
 **Then** access is denied
+
+### Story 6.2: Reporte de publicaciones por tipo de usuario con rango de fechas
+
+As an admin,
+I want to see how many publicaciones each type of user has created, filterable by date range,
+So that I can understand activity patterns across the community, not just its static composition.
+
+**Acceptance Criteria:**
+
+**Given** I am admin
+**When** I navigate to Reportes/Indicadores
+**Then** I see a second report showing the count of Publicaciones grouped by the author's TipoUsuario (FR-45)
+
+**Given** this report
+**When** no date range is selected
+**Then** it shows counts across all Publicaciones to date, grouped by the four TipoUsuario categories
+
+**Given** this report
+**When** I select a start and end date
+**Then** the counts update to reflect only Publicaciones created within that range (inclusive)
+
+**Given** I am not admin
+**When** I attempt to access this view or its route
+**Then** access is denied, same as Story 6.1
 
 ## Epic 7: Settings, Tema y Refresco Visual
 
