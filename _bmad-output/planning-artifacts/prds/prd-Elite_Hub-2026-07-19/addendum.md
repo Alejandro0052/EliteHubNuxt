@@ -29,11 +29,11 @@ Primary reason: `contactUs.vue`'s form serves a purpose unrelated to PQRS (compl
 
 Discovery example categories: ropa deportiva, equipamiento, suplementos, tecnología, accesorios — explicitly called "extensible." This was Open Question #4 in a prior PRD revision (admin-managed/dynamic vs. fixed enum for MVP); it has since been resolved by FR-39 in favor of a fixed enum for MVP, mirroring the Deporte fixed-list pattern already used, with admin-managed categories deferred as a post-MVP candidate (PRD §5.8 FR-39 Notes). Preserved here only as the source discovery list behind that enum's starting values.
 
-## FR-50 — Ciclismo Sport-Specific Fields (full verbatim capture, 2026-10-03/04 brainstorming)
+## FR-50 — Sport-Specific Fields per Focus Sport (full verbatim capture, 2026-10-03 through 10-05 brainstorming)
 
-Preserved here as the literal field lists behind PRD §5.1 FR-50's ciclismo branch — this is by far the most complex of the 4 focus sports, since ciclismo itself fans out into 5 modalidades, each with its own field set, and (uniquely among the 4 focus sports) a cyclist can hold more than one modalidad at once.
+Preserved here as the literal field lists behind PRD §5.1 FR-50's per-sport branches. **Important clarification confirmed during this session:** the universal identity/contact fields already in FR-2 (nombre/apellido, correo, fecha de nacimiento, género, nacionalidad, ciudad de residencia, biografía corta, teléfono, **altura**, **peso**) are NOT re-specified per sport below — they already apply to every Deportista regardless of sport. Likewise, redes sociales is covered once, universally, by FR-51 (§5.1), not repeated per sport. What follows per sport is only the *additional*, sport-conditional field set that FR-50 layers on top.
 
-**Structural rule specific to ciclismo:** after selecting Ciclismo as `deporte`, the Usuario selects one **or more** modalidades (multi-select) — not a single exclusive choice like the other 3 focus sports. Their profile displays the resulting fields sectioned by modalidad, one section per modalidad they hold. This multi-select/sectioned-profile behavior is **explicitly scoped to ciclismo only** for now — the user confirmed triatletas and other multi-discipline cases are a future priority, not part of this pass.
+**Ciclismo and Patinaje are the two complex cases:** both fan out into multiple modalidades, each with its own field set, and — unlike fútbol/boxeo/otro, which take a single uniform field set — a Usuario practicing either of these two sports can hold **more than one modalidad at once** (multi-select, not exclusive). Their profile displays the resulting fields sectioned by modalidad, one section per modalidad held. Fútbol and (pending) Boxeo stay single-modalidad: one `deporte` → one field set, no fan-out.
 
 **Ruta:**
 - Categoría/Nivel de competencia (Máster A/B/C, Élite, Sub-23)
@@ -76,13 +76,61 @@ Preserved here as the literal field lists behind PRD §5.1 FR-50's ciclismo bran
 - Configuración técnica: relación de desarrollo (plato/piñón, dientes), marca de bicicleta de pista (fijo), uso de ruedas lenticulares/bastones
 - Historial de competencias: posiciones en Campeonatos Nacionales, Departamentales/Provinciales, o Válidas de Pista oficiales
 
-**Form UX mechanism, confirmed 2026-10-04 (two phases, not one):**
-1. **Branching decisions → wizard.** deporte → modalidad selection → sub-modalidad where one exists (BMX's Race/Freestyle fork) are presented as a multi-step wizard with a visible back control or breadcrumb at every stage — these are genuine decision chains, each choice determines what's asked next.
-2. **Filling chosen modalidades' fields → tabs/accordion, not wizard.** Once modalidades are chosen, a strict linear step order adds friction without benefit, since the field sets are independent of each other. Each selected modalidad gets its own tab/accordion section instead, navigable in any order, each with a completion indicator (e.g. a checkmark once filled). This must support **any combination and count of modalidades, from exactly 1 up to all 5 simultaneously** — e.g. only BMX; or Pista + MTB; or Pista + MTB + Ruta; or all 5 at once. The same tab/accordion pattern is reused (read-only) on the profile view to display a multi-modalidad ciclista's fields sectioned by modalidad — one component serving both the fill and the display case.
+**Form UX mechanism, confirmed 2026-10-04 (two phases, not one — applies to both Ciclismo and Patinaje):**
+1. **Branching decisions → wizard.** deporte → modalidad selection → sub-modalidad where one exists (e.g. BMX's Race/Freestyle fork, or each Patinaje modalidad's own sub-type) are presented as a multi-step wizard with a visible back control or breadcrumb at every stage — these are genuine decision chains, each choice determines what's asked next.
+2. **Filling chosen modalidades' fields → tabs/accordion, not wizard.** Once modalidades are chosen, a strict linear step order adds friction without benefit, since the field sets are independent of each other. Each selected modalidad gets its own tab/accordion section instead, navigable in any order, each with a completion indicator (e.g. a checkmark once filled). This must support **any combination and count of modalidades, from exactly 1 up to all available simultaneously** — e.g. only BMX; or Pista + MTB; or Pista + MTB + Ruta; or all of them at once. The same tab/accordion pattern is reused (read-only) on the profile view to display a multi-modalidad Usuario's fields sectioned by modalidad — one component serving both the fill and the display case.
 
-This two-phase mechanism (wizard for branching decisions, tabs/accordion for filling) is specific to ciclismo's multi-modalidad case; fútbol/patinaje/boxeo (single modalidad, no fan-out) only need the simpler deporte → campos wizard step.
+Fútbol and (pending) Boxeo don't need this two-phase mechanism — single modalidad, no fan-out — so they only need the simpler deporte → campos wizard step.
 
-**Still open, not yet brainstormed as of 2026-10-04:** fútbol, patinaje, and boxeo's per-sport field lists, the generic "otro" fallback field list, and FR-49's additional Ítem de Catálogo fields — continuing in the next session (see `_bmad-output/brainstorming/brainstorm-deportes-catalogo-campos-2026-10-03/.memlog.md`).
+---
+
+### Fútbol (confirmed 2026-10-04/05)
+
+Single modalidad, no fan-out — one `deporte` selection reveals this one field set directly.
+
+- **Posición:** posición principal (Portero, Defensa central, Lateral, Mediocampista, Extremo, Delantero), posición secundaria (opcional)
+- **Pie dominante:** derecho, izquierdo, ambidiestro
+- **Club/nivel:** club o equipo actual; categoría/nivel de competencia (aficionado, semiprofesional, profesional, selección, ligas menores por edad)
+- **Datos físicos adicionales:** salto vertical (cm) — altura/peso are the already-generic FR-2 fields, not re-specified here (corrected 2026-10-05; an earlier pass had mistakenly duplicated them)
+- **Atributos destacados** (multi-select chips, reusing the existing `FilterChips.vue` component/pattern already built for the sport filter — 6-8 options max, plus one optional short free-text field "otras cualidades" for anything not covered): Visión de juego, Regate/1v1, Potencia física, Cobrador de tiros libres, Buen pie débil, Liderazgo/Capitán
+- **Historial y palmarés:** trayectoria de clubes/academias previas; logros y títulos (campeonatos, ascensos, torneos destacados); reconocimientos individuales (Goleador del torneo, MVP, Valla menos vencida, Selección regional/nacional); estadísticas de la última temporada (partidos jugados, minutos disputados, goles, asistencias, tarjetas); convocatorias/selecciones (locales, departamentales/estatales, nacionales juveniles)
+
+**Notes:** `[ASSUMPTION]` Position-dependent stat relevance (e.g. a goalkeeper's meaningful stat is clean sheets/goles recibidos, not goles anotados) is handled at **display** time, not by forking the field set further — the same uniform field list is collected for every posición, with position-irrelevant stats simply left blank/zero. This keeps fútbol at the simpler single-field-set tier rather than introducing a BMX-style fork; revisit if the user wants true per-position field sets later.
+
+### Patinaje (confirmed 2026-10-05)
+
+Uses the same two-phase, multi-modalidad mechanism as Ciclismo (see above) — a patinador can hold several modalidades at once, same as a ciclista.
+
+**Modalidades + sub-modalidad (required where listed) — confirmed final 2026-10-05, 4 modalidades:**
+- **Patinaje de Velocidad** → Pista, Ruta, Maratón, Relevos
+- **Patinaje Artístico** → Libre, Parejas, In-Line Artístico
+- **Freestyle/Slalom** → Classic, Speed Slalom, Battle, Jump/Salto
+- **Patinaje Agresivo/Street/Park** → Vert, Bowl, Street, Grinds
+
+`[Resolved 2026-10-05: the original 5th bucket "Roller Derby/Roller Dance" was dropped entirely — Roller Dance is a dance/choreography discipline (overlapped with Artístico's now-removed "Danza" sub-type) and Roller Derby is an unrelated team contact sport, neither fit the user's "solo velocidad, relevos, etc." criterion. "Relevos" (relay) was added as a Velocidad sub-modalidad instead, since team relay races are a real competitive speed-skating format.]`
+
+**Fields (shared across every modalidad — unlike Ciclismo, Patinaje's field set does NOT vary much by modalidad beyond the selection itself):**
+- Categoría/Nivel de competencia: Novatos, Transición, Prejuvenil, Juvenil, Mayores/Élite, Máster
+- Club, liga o escuela actual (nombre del club/liga departamental/estatal/equipo independiente)
+- Ranking y resultados en válidas (posición en Ranking Nacional/Departamental de la federación o liga)
+- Principales logros (podios, medallas, clasificaciones en Campeonatos Nacionales, Válidas de Categoría, Copas del Mundo, Maratones locales/internacionales)
+- Convocatorias (selección departamental, provincial, o Selección Nacional)
+- Calendario competitivo (torneos, válidas, eventos objetivo para la temporada actual)
+
+### Boxeo (confirmed 2026-10-05)
+
+Single modalidad, no fan-out — the user initially asked for an Amateur-vs-Profesional fork (mirroring BMX's Race/Freestyle) but reversed that decision: one shared field set covers both, with Amateur/Profesional kept as a plain descriptive field rather than a structural fork.
+
+- Categoría de peso (mosca, gallo, pluma, ligero, welter, mediano, pesado, etc. — fixed list, standard boxing weight classes)
+- Guardia: ortodoxa o zurda/southpaw
+- Gimnasio/club de entrenamiento y entrenador
+- Estilo de pelea: técnico, pegador, contragolpeador
+- Modalidad (descriptive only, does not fork the field set): Amateur, Profesional, o Ambos
+- Récord: peleas ganadas/perdidas/empatadas, nocauts/KOs
+- Federación/liga u organismo sancionador al que pertenece
+- Convocatorias/logros/rankings (selección departamental/nacional, títulos, posición en ranking)
+
+**Still open, not yet brainstormed as of 2026-10-05:** the generic "otro" fallback field list, and FR-49's additional Ítem de Catálogo fields — continuing in the next session (see `_bmad-output/brainstorming/brainstorm-deportes-catalogo-campos-2026-10-03/.memlog.md`).
 
 ## Reportes/Indicadores — Charting Approach Options
 
