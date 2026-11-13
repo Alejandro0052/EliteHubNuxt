@@ -1,5 +1,6 @@
 import { hash } from "bcrypt";
 import { GENEROS, PAISES } from "#shared/utils/fixedLists";
+import { DEPORTES_CON_CAMPOS_ESPECIFICOS } from "#shared/utils/camposDeporte";
 
 const TIPO_DEPORTISTA = "Deportista";
 const TIPO_MARCA = "Marca";
@@ -120,6 +121,7 @@ export default defineEventHandler(async (event) => {
 		if (!deporte) {
 			throw createError({ statusCode: 400, message: "El deporte seleccionado no es válido." });
 		}
+		validarCamposDeporte(deporte.nombre, body.camposEspecificos);
 	}
 
 	try {
@@ -207,6 +209,9 @@ export default defineEventHandler(async (event) => {
 						deporteId: deporte.id,
 						experiencia: Number(body.experiencia),
 						nivel: body.nivel,
+						camposEspecificos: (DEPORTES_CON_CAMPOS_ESPECIFICOS as readonly string[]).includes(deporte.nombre)
+							? (body.camposEspecificos ?? null)
+							: null,
 					},
 				});
 			}

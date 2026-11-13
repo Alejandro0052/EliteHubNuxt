@@ -72,7 +72,7 @@ Este documento describe el diseño de la base de datos utilizado por el proyecto
 - Ambos comparten campos similares: `titulo`, `slug` (único), `resumen`, `contenido`, `imagen`, `autorId` (FK a Usuario), `publicado` (Boolean), timestamps (`createdAt`, `updatedAt`).
 
 12) Enum `Nivel`
-- Valores: `PRINCIPIANTE`, `INTERMEDIO`, `AVANZADO`, `PROFESIONAL`.
+- Valores: `PRINCIPIANTE`, `INTERMEDIO`, `ELITE`, `PROFESIONAL`.
 
 ## Relaciones entre modelos (ER simplificado)
 - Usuario (1) — (N) Noticia  [autorId]

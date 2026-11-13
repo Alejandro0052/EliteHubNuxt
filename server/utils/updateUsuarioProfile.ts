@@ -1,10 +1,15 @@
+import { DEPORTES_ENFOCADOS } from "#shared/utils/fixedLists";
+import { DEPORTES_CON_CAMPOS_ESPECIFICOS } from "#shared/utils/camposDeporte";
+
 export async function updateUsuarioProfile(userId: number, body: Record<string, any>) {
 	const nombre = body.nombre || "";
 	const apellido = body.apellido || "";
 	const correo = body.correo || body.email || "";
 	let avatar = body.avatar || "";
 	const informacion: Record<string, any> = body.informacion ? { ...body.informacion } : {};
-	const deporte = body.deporte as { deporteId?: number; nivel?: string; experiencia?: number } | undefined;
+	const deporte = body.deporte as
+		| { deporteId?: number; nivel?: string; experiencia?: number; camposEspecificos?: Record<string, any> | null }
+		| undefined;
 	const redSocialUrl = body.redSocialUrl as string | undefined;
 
 	const updateData: Record<string, any> = { nombre, apellido };
@@ -75,13 +80,34 @@ export async function updateUsuarioProfile(userId: number, body: Record<string, 
 
 	if (deporte?.deporteId) {
 		const existingDeporte = await prisma.usuarioDeporte.findFirst({ where: { usuarioId: userId } });
+		const nuevoDeporteId = Number(deporte.deporteId);
+
+		const targetDeporte = await prisma.deporte.findUnique({ where: { id: nuevoDeporteId } });
+		if (!targetDeporte) {
+			throw createError({ statusCode: 400, message: "El deporte seleccionado no es válido." });
+		}
+
+		// Guardia de deportes legados: no se permite ASIGNAR (cambiar hacia) un deporte fuera de
+		// la lista enfocada. Un no-op (mantener el deporte legado actual) sigue permitido, así como
+		// cambiar DESDE un deporte legado HACIA uno de los 5 enfocados.
+		const esCambioDeDeporte = existingDeporte?.deporteId !== nuevoDeporteId;
+		if (esCambioDeDeporte && !(DEPORTES_ENFOCADOS as readonly string[]).includes(targetDeporte.nombre)) {
+			throw createError({ statusCode: 400, message: "Solo puedes seleccionar Fútbol, Ciclismo, Patinaje, Boxeo u Otros." });
+		}
+
+		validarCamposDeporte(targetDeporte.nombre, deporte.camposEspecificos);
+
 		// `nivel` es un enum no-nulleable con default (PRINCIPIANTE) — solo se envía si tiene un
 		// valor real; una cadena vacía rompería la validación de Prisma igual que con modalidadAtencion.
-		const deporteData: Record<string, any> = { deporteId: Number(deporte.deporteId) };
+		const deporteData: Record<string, any> = { deporteId: nuevoDeporteId };
 		if (deporte.nivel) deporteData.nivel = deporte.nivel;
 		if (deporte.experiencia !== undefined && deporte.experiencia !== ("" as any)) {
 			deporteData.experiencia = Number(deporte.experiencia);
 		}
+		deporteData.camposEspecificos = (DEPORTES_CON_CAMPOS_ESPECIFICOS as readonly string[]).includes(targetDeporte.nombre)
+			? (deporte.camposEspecificos ?? null)
+			: null;
+
 		if (existingDeporte) {
 			await prisma.usuarioDeporte.update({ where: { id: existingDeporte.id }, data: deporteData });
 		} else {
@@ -91,6 +117,7 @@ export async function updateUsuarioProfile(userId: number, body: Record<string, 
 					deporteId: deporteData.deporteId,
 					nivel: deporteData.nivel,
 					experiencia: deporteData.experiencia || 0,
+					camposEspecificos: deporteData.camposEspecificos,
 				},
 			});
 		}

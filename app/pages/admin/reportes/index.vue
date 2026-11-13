@@ -103,6 +103,18 @@ definePageMeta({
 })
 
 const COLORES = ['#166534', '#15803d', '#22c55e', '#86efac']
+// Color keyed by TipoUsuario itself (not by list position) so the same category
+// always gets the same swatch in both report cards, even though the first report
+// sorts its items by count (reordering positions) while the second doesn't.
+const COLOR_POR_TIPO = {
+	Deportista: COLORES[0],
+	Marca: COLORES[1],
+	Nutricionista: COLORES[2],
+	Patrocinador: COLORES[3],
+}
+function colorDeTipo(tipo) {
+	return COLOR_POR_TIPO[tipo] || COLORES[COLORES.length - 1]
+}
 
 const loading = ref(true)
 const total = ref(0)
@@ -134,10 +146,10 @@ onMounted(async () => {
 			.map(([tipo, count]) => ({ tipo, count }))
 			.sort((a, b) => b.count - a.count)
 
-		items.value = ordenado.map((item, i) => ({
+		items.value = ordenado.map((item) => ({
 			...item,
 			pct: total.value ? Math.round((item.count / total.value) * 1000) / 10 : 0,
-			color: COLORES[i] || COLORES[COLORES.length - 1],
+			color: colorDeTipo(item.tipo),
 		}))
 	} catch (err) {
 		console.error(err)
@@ -153,7 +165,14 @@ const errorPublicaciones = ref('')
 const totalPublicaciones = ref(0)
 const itemsPublicaciones = ref([])
 
+// Guards against out-of-order responses: if the user changes desde/hasta again
+// before an in-flight request resolves, only the response matching the LATEST
+// call is allowed to update the UI -- an older, slower response arriving late
+// is discarded instead of silently overwriting newer data.
+let requestIdPublicaciones = 0
+
 async function cargarPublicaciones() {
+	const thisRequestId = ++requestIdPublicaciones
 	loadingPublicaciones.value = true
 	errorPublicaciones.value = ''
 	try {
@@ -163,16 +182,26 @@ async function cargarPublicaciones() {
 				...(hasta.value && { hasta: hasta.value }),
 			},
 		})
+		if (thisRequestId !== requestIdPublicaciones) return
+
 		totalPublicaciones.value = res.total
-		itemsPublicaciones.value = Object.entries(res.porTipo).map(([tipo, count], i) => ({
+		itemsPublicaciones.value = Object.entries(res.porTipo).map(([tipo, count]) => ({
 			tipo,
 			count,
-			color: COLORES[i] || COLORES[COLORES.length - 1],
+			color: colorDeTipo(tipo),
 		}))
 	} catch (err) {
+		if (thisRequestId !== requestIdPublicaciones) return
+
+		// Clear stale counts so the error message isn't shown alongside a previous
+		// successful result that no longer corresponds to the current filter.
+		itemsPublicaciones.value = []
+		totalPublicaciones.value = 0
 		errorPublicaciones.value = err?.data?.message || 'No se pudo cargar el reporte de publicaciones.'
 	} finally {
-		loadingPublicaciones.value = false
+		if (thisRequestId === requestIdPublicaciones) {
+			loadingPublicaciones.value = false
+		}
 	}
 }
 

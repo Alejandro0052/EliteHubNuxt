@@ -2,14 +2,17 @@ export default defineEventHandler(async (event) => {
   await requireSession(event, { requireAdmin: true })
 
   const query = getQuery(event)
-  const desde = query.desde ? new Date(query.desde as string) : undefined
-  const hasta = query.hasta ? new Date(query.hasta as string) : undefined
+  let desde = query.desde ? new Date(query.desde as string) : undefined
+  let hasta = query.hasta ? new Date(query.hasta as string) : undefined
 
+  // An unparseable value is treated as absent, not rejected — per this story's own
+  // Task 3 spec ("treat an unparseable or missing value as absent"); only a genuine
+  // inverted range (both present, desde > hasta) is a real error (checked below).
   if (desde && isNaN(desde.getTime())) {
-    throw createError({ statusCode: 400, message: 'Parámetro "desde" inválido' })
+    desde = undefined
   }
   if (hasta && isNaN(hasta.getTime())) {
-    throw createError({ statusCode: 400, message: 'Parámetro "hasta" inválido' })
+    hasta = undefined
   }
   if (desde && hasta && desde > hasta) {
     throw createError({ statusCode: 400, message: 'El rango de fechas es inválido: "desde" debe ser anterior o igual a "hasta"' })

@@ -37,7 +37,7 @@ Support/complaints ticketing. `PQRS` has `imagenEvidencia (String[])`, belongs t
 ### Deporte / UsuarioDeporte
 Sports catalog + join table. `UsuarioDeporte` carries `experiencia (Int)`, `nivel (Nivel enum)`, `frecuenciaSemanal (Int)`; unique on `(usuarioId, deporteId)`.
 
-**Enum `Nivel`:** `PRINCIPIANTE | INTERMEDIO | AVANZADO | PROFESIONAL`
+**Enum `Nivel`:** `PRINCIPIANTE | INTERMEDIO | ELITE | PROFESIONAL`
 
 ### Content
 Lightweight CMS row: `page` (unique key), `title`, `subtitle`, `content` (HTML/Markdown), `metadata (Json)`. Powers the editable static pages via `/api/content/:page`.

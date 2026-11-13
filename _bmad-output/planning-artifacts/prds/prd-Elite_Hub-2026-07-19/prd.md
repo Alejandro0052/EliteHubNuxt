@@ -88,7 +88,7 @@ Delivery targets a functional checkpoint on 2026-08-08 — a soft checkpoint for
 
 - **Usuario** — A registered account. Has `correo`, `password`, `isAdmin` flag, and exactly one `TipoUsuario` once registration completes.
 - **TipoUsuario (Tipo de Usuario)** — The account category, chosen at registration and immutable thereafter: **Deportista**, **Marca**, **Nutricionista**, or **Patrocinador**. Drives which fields, directory, and capabilities apply to a Usuario.
-- **Deportista** — TipoUsuario for athletes. Associated with a **Deporte** (sport) from a fixed list, a **Nivel** (PRINCIPIANTE/INTERMEDIO/AVANZADO/PROFESIONAL), and athlete-specific fields (see FR-2).
+- **Deportista** — TipoUsuario for athletes. Associated with a **Deporte** (sport) from a fixed list, a **Nivel** (PRINCIPIANTE/INTERMEDIO/ELITE/PROFESIONAL), and athlete-specific fields (see FR-2).
 - **Marca** — TipoUsuario for brands. Only Marca accounts may create **Ítems de Catálogo**.
 - **Nutricionista** — TipoUsuario for nutrition professionals. The only type that receives **Reseñas**.
 - **Patrocinador** — TipoUsuario for individual sponsors/managers with resources to support other users.
@@ -182,8 +182,10 @@ The existing single `link redes sociales` field (FR-2, today collected once for 
 **Consequences (testable):**
 - A Usuario of any type can add more than one social media profile link, not just one.
 - This applies uniformly across all four TipoUsuario — it is not sport-specific and does not belong to FR-50's per-sport field sets.
+- Each entry is added via a platform picker (icon + name) followed by a URL field — not a bare list of free-text links. Fixed platform list: Instagram, Facebook, TikTok, X/Twitter, YouTube, WhatsApp, LinkedIn, plus "Otro" (free-text platform name + URL). `[Confirmed 2026-11-06]`
+- A Usuario can add at most one entry per platform from the fixed list (the already-added platform is removed/disabled from the picker); "Otro" has no such cap since its name is free text.
 
-**Notes:** Surfaced during FR-50's brainstorming (originally raised in the context of fútbol) but scoped as its own cross-cutting FR since it affects every Usuario type, not just Deportista.
+**Notes:** Surfaced during FR-50's brainstorming (originally raised in the context of fútbol) but scoped as its own cross-cutting FR since it affects every Usuario type, not just Deportista. Full field/UX detail in `addendum.md`.
 
 #### FR-3: Type immutability
 Once a Usuario's TipoUsuario is set at registration, it cannot be changed by the Usuario or, per this FR, by any in-app self-service action.

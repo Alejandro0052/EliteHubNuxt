@@ -132,6 +132,15 @@ Single modalidad, no fan-out — the user initially asked for an Amateur-vs-Prof
 
 **Still open, not yet brainstormed as of 2026-10-05:** the generic "otro" fallback field list, and FR-49's additional Ítem de Catálogo fields — continuing in the next session (see `_bmad-output/brainstorming/brainstorm-deportes-catalogo-campos-2026-10-03/.memlog.md`).
 
+## FR-51 — Multiple Social Media Profiles, UX Mechanism (confirmed 2026-11-06)
+
+Mechanism, not just "multiple links": each entry is added via a **platform picker (icon + name) → URL field** pair, not a bare free-text list.
+
+- **Fixed platform list (with icon each):** Instagram, Facebook, TikTok, X/Twitter, YouTube, WhatsApp, LinkedIn.
+- **"Otro" option:** free-text platform name + URL, for anything not in the fixed list.
+- **Cap:** at most one entry per platform from the fixed list — once added, that platform is removed/disabled from the picker so it can't be added twice. "Otro" has no cap (its name is free text, so duplicates are distinguishable by the user's own label).
+- Applies uniformly to all four TipoUsuario (Deportista, Marca, Nutricionista, Patrocinador), replacing each type's existing single `link redes sociales` / `URL de red social` field from FR-2.
+
 ## Reportes/Indicadores — Charting Approach Options
 
 No charting library currently exists in the stack. Options to evaluate at architecture time (not decided here):

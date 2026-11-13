@@ -4,7 +4,7 @@ baseline_commit: 0f45cdd
 
 # Story 6.2: Reporte de publicaciones por tipo de usuario con rango de fechas
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -107,8 +107,19 @@ Claude Sonnet 5
 - Frontend: second card added to the existing `/admin/reportes` page (no new route), reusing the first report's counts-list markup (swatch + label + count + total row) rather than a second chart — no AC requires one. Two native `<input type="date">` fields drive a `watch()` that refetches on change; `onMounted` does the initial no-range fetch (AC #2's default state). A "Limpiar rango" button resets both to `''`.
 - No automated tests written — established MVP convention (no test framework in this codebase). Manual verification steps are listed in Dev Notes; the most important ones to actually run are the inclusive-end-date check (a publicación created "today" must still count when `hasta` = today) and the non-admin denial check on both the page and the raw endpoint.
 
+### Post-review fix (2026-10-28)
+
+Code review surfaced 4 findings, all fixed in this same story per project convention (no new story spun up):
+
+1. **Stale counts shown under an error message** — `cargarPublicaciones()`'s catch block only set `errorPublicaciones`, leaving the previous successful result rendered underneath. Root cause: no reset of `itemsPublicaciones`/`totalPublicaciones` on failure. Fixed by clearing both to `[]`/`0` in the catch branch, so a failed fetch always shows a clean zero-state alongside the error, never leftover data from a prior range.
+2. **Race condition on rapid date-input changes** — `watch([desde, hasta], cargarPublicaciones)` fired a new `$fetch` per keystroke/change with no sequencing; a slower, older response could resolve after a newer one and silently overwrite it with stale counts. Root cause: no guard against out-of-order resolution. Fixed with a monotonic `requestIdPublicaciones` counter — each call captures its own id at invocation time, and the success/error/finally branches all bail out early if a newer call has since started, so only the response matching the latest filter state is ever applied to the UI.
+3. **400 on unparseable date contradicted the story's own spec** — Task 3 explicitly says an unparseable or missing `desde`/`hasta` should be treated as absent, but the implementation threw a 400 instead. Root cause: the `isNaN` check threw instead of falling back to `undefined`. Fixed in `publicaciones.get.ts` by reassigning `desde`/`hasta` to `undefined` when unparseable, before the `desde > hasta` inverted-range check (which still correctly 400s only when BOTH are valid and inverted).
+4. **Inconsistent swatch colors between the two report cards** — report 1 sorts by count before assigning `COLORES[i]`, report 2 didn't sort, so the same TipoUsuario could land on a different color index in each card. Root cause: color was assigned by array position, not by category identity. Fixed by introducing `COLOR_POR_TIPO` (a fixed tipo→color map) and a `colorDeTipo(tipo)` helper used by both reports, so a given TipoUsuario always gets the same color regardless of sort order.
+
+Verified by re-running `nuxt build` (production build, no test framework in this project) — compiled clean with no errors after all 4 fixes. No regression to Story 6.1's existing donut chart (untouched logic, only its color-assignment call site switched from `COLORES[i]` to the new shared `colorDeTipo()` helper, same colors in the same order).
+
 ### File List
 
 - server/utils/aggregates.ts (modified — added `getPublicacionesPorTipo`)
-- server/api/admin/reportes/publicaciones.get.ts (new)
-- app/pages/admin/reportes/index.vue (modified — added second report card, date-range inputs, fetch logic)
+- server/api/admin/reportes/publicaciones.get.ts (new; post-review fix — unparseable date now treated as absent instead of 400)
+- app/pages/admin/reportes/index.vue (modified — added second report card, date-range inputs, fetch logic; post-review fix — stale-state reset on error, request sequencing guard, stable per-tipo color mapping shared by both reports)

@@ -79,7 +79,7 @@
 					<label for="deporteId" class="text-sm font-medium text-gray-700 dark:text-gray-300">Deporte</label>
 					<select id="deporteId" v-model="form.deporte.deporteId" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
 						<option :value="null">Selecciona…</option>
-						<option v-for="d in deportes" :key="d.id" :value="d.id">{{ d.nombre }}</option>
+						<option v-for="d in deportesFocales" :key="d.id" :value="d.id">{{ d.nombre }}</option>
 					</select>
 				</div>
 				<div class="flex flex-col gap-1">
@@ -116,6 +116,133 @@
 				<div class="flex flex-col gap-1">
 					<label for="lesiones" class="text-sm font-medium text-gray-700 dark:text-gray-300">Lesiones</label>
 					<input id="lesiones" v-model="form.informacion.lesiones" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				</div>
+			</div>
+
+			<!-- Campos específicos de Fútbol (FR-50) -->
+			<div v-if="deporteSeleccionadoNombre === 'Fútbol'" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+				<div class="flex flex-col gap-1">
+					<label for="posicionPrincipal" class="text-sm font-medium text-gray-700 dark:text-gray-300">Posición principal</label>
+					<select id="posicionPrincipal" v-model="form.deporte.camposEspecificos.posicionPrincipal" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="p in FUTBOL_POSICIONES" :key="p" :value="p">{{ p }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="posicionSecundaria" class="text-sm font-medium text-gray-700 dark:text-gray-300">Posición secundaria (opcional)</label>
+					<select id="posicionSecundaria" v-model="form.deporte.camposEspecificos.posicionSecundaria" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="p in FUTBOL_POSICIONES" :key="p" :value="p">{{ p }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="pieDominante" class="text-sm font-medium text-gray-700 dark:text-gray-300">Pie dominante</label>
+					<select id="pieDominante" v-model="form.deporte.camposEspecificos.pieDominante" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="p in FUTBOL_PIE_DOMINANTE" :key="p" :value="p">{{ p }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="clubActual" class="text-sm font-medium text-gray-700 dark:text-gray-300">Club actual</label>
+					<input id="clubActual" v-model="form.deporte.camposEspecificos.clubActual" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="nivelCompetencia" class="text-sm font-medium text-gray-700 dark:text-gray-300">Categoría/nivel de competencia</label>
+					<select id="nivelCompetencia" v-model="form.deporte.camposEspecificos.nivelCompetencia" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="n in FUTBOL_NIVEL_COMPETENCIA" :key="n" :value="n">{{ n }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="saltoVertical" class="text-sm font-medium text-gray-700 dark:text-gray-300">Salto vertical (cm)</label>
+					<input id="saltoVertical" v-model="form.deporte.camposEspecificos.saltoVertical" type="number" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label class="text-sm font-medium text-gray-700 dark:text-gray-300">Atributos destacados</label>
+					<FilterChips
+						:options="FUTBOL_ATRIBUTOS.map((a) => ({ value: a, label: a }))"
+						v-model="form.deporte.camposEspecificos.atributosDestacados"
+						multiple />
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="otrasCualidades" class="text-sm font-medium text-gray-700 dark:text-gray-300">Otras cualidades (opcional)</label>
+					<input id="otrasCualidades" v-model="form.deporte.camposEspecificos.otrasCualidades" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="trayectoriaClubes" class="text-sm font-medium text-gray-700 dark:text-gray-300">Trayectoria de clubes</label>
+					<textarea id="trayectoriaClubes" v-model="form.deporte.camposEspecificos.trayectoriaClubes" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="logrosTitulos" class="text-sm font-medium text-gray-700 dark:text-gray-300">Logros y títulos</label>
+					<textarea id="logrosTitulos" v-model="form.deporte.camposEspecificos.logrosTitulos" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="reconocimientosIndividuales" class="text-sm font-medium text-gray-700 dark:text-gray-300">Reconocimientos individuales</label>
+					<textarea id="reconocimientosIndividuales" v-model="form.deporte.camposEspecificos.reconocimientosIndividuales" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="estadisticasUltimaTemporada" class="text-sm font-medium text-gray-700 dark:text-gray-300">Estadísticas de la última temporada</label>
+					<textarea id="estadisticasUltimaTemporada" v-model="form.deporte.camposEspecificos.estadisticasUltimaTemporada" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="convocatoriasSelecciones" class="text-sm font-medium text-gray-700 dark:text-gray-300">Convocatorias/selecciones</label>
+					<textarea id="convocatoriasSelecciones" v-model="form.deporte.camposEspecificos.convocatoriasSelecciones" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				</div>
+			</div>
+
+			<!-- Campos específicos de Boxeo (FR-50) -->
+			<div v-else-if="deporteSeleccionadoNombre === 'Boxeo'" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+				<div class="flex flex-col gap-1">
+					<label for="categoriaPeso" class="text-sm font-medium text-gray-700 dark:text-gray-300">Categoría de peso</label>
+					<select id="categoriaPeso" v-model="form.deporte.camposEspecificos.categoriaPeso" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="c in BOXEO_CATEGORIAS_PESO" :key="c" :value="c">{{ c }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="guardia" class="text-sm font-medium text-gray-700 dark:text-gray-300">Guardia</label>
+					<select id="guardia" v-model="form.deporte.camposEspecificos.guardia" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="g in BOXEO_GUARDIA" :key="g" :value="g">{{ g }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="gimnasioClubEntrenador" class="text-sm font-medium text-gray-700 dark:text-gray-300">Gimnasio/club y entrenador</label>
+					<input id="gimnasioClubEntrenador" v-model="form.deporte.camposEspecificos.gimnasioClubEntrenador" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="estiloPelea" class="text-sm font-medium text-gray-700 dark:text-gray-300">Estilo de pelea</label>
+					<select id="estiloPelea" v-model="form.deporte.camposEspecificos.estiloPelea" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="e in BOXEO_ESTILO" :key="e" :value="e">{{ e }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="modalidad" class="text-sm font-medium text-gray-700 dark:text-gray-300">Modalidad</label>
+					<select id="modalidad" v-model="form.deporte.camposEspecificos.modalidad" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+						<option value="">Selecciona…</option>
+						<option v-for="m in BOXEO_MODALIDAD" :key="m" :value="m">{{ m }}</option>
+					</select>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="record" class="text-sm font-medium text-gray-700 dark:text-gray-300">Récord</label>
+					<input id="record" v-model="form.deporte.camposEspecificos.record" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="federacionLiga" class="text-sm font-medium text-gray-700 dark:text-gray-300">Federación/liga u organismo sancionador</label>
+					<input id="federacionLiga" v-model="form.deporte.camposEspecificos.federacionLiga" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				</div>
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="convocatoriasLogrosRankings" class="text-sm font-medium text-gray-700 dark:text-gray-300">Convocatorias/logros/rankings</label>
+					<textarea id="convocatoriasLogrosRankings" v-model="form.deporte.camposEspecificos.convocatoriasLogrosRankings" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				</div>
+			</div>
+
+			<!-- Deporte "Otros": permite indicar cuál deporte practica (FR-50) -->
+			<div v-else-if="deporteSeleccionadoNombre === 'Otros'" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+				<div class="flex flex-col gap-1 sm:col-span-2">
+					<label for="nombreDeporte" class="text-sm font-medium text-gray-700 dark:text-gray-300">¿Qué deporte practicas? <span class="text-gray-400 dark:text-gray-500">(opcional)</span></label>
+					<input id="nombreDeporte" v-model="form.deporte.camposEspecificos.nombreDeporte" type="text" placeholder="Ej: Ajedrez, Tenis, Atletismo…" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
 				</div>
 			</div>
 		</template>
@@ -290,9 +417,19 @@
 </template>
 
 <script lang="ts" setup>
-import { GENEROS, PAISES } from "#shared/utils/fixedLists";
+import { GENEROS, PAISES, DEPORTES_ENFOCADOS } from "#shared/utils/fixedLists";
+import {
+	FUTBOL_POSICIONES,
+	FUTBOL_PIE_DOMINANTE,
+	FUTBOL_NIVEL_COMPETENCIA,
+	FUTBOL_ATRIBUTOS,
+	BOXEO_CATEGORIAS_PESO,
+	BOXEO_GUARDIA,
+	BOXEO_ESTILO,
+	BOXEO_MODALIDAD,
+} from "#shared/utils/camposDeporte";
 
-const NIVELES = ["PRINCIPIANTE", "INTERMEDIO", "AVANZADO", "PROFESIONAL"];
+const NIVELES = ["PRINCIPIANTE", "INTERMEDIO", "ELITE", "PROFESIONAL"];
 // NOTA: los valores reales del enum Prisma ModalidadAtencion son PRESENCIAL/VIRTUAL/HIBRIDO.
 // register.vue actualmente usa "VIRTUAL/PRESENCIAL" en vez de "HIBRIDO" (bug pre-existente de la
 // Historia 1.1, fuera de alcance aquí) — este formulario usa los valores correctos del enum.
@@ -315,6 +452,16 @@ onMounted(async () => {
 });
 
 const tipo = computed(() => props.usuario?.informacion?.tipoUsuario?.tipo || "");
+
+const legacyDeporteNombre = computed(() => props.usuario?.UsuarioDeporte?.[0]?.deporte?.nombre ?? null);
+const deportesFocales = computed(() => {
+	const focales = DEPORTES_ENFOCADOS.map((nombre) => deportes.value.find((d) => d.nombre === nombre)).filter(Boolean);
+	if (legacyDeporteNombre.value && !(DEPORTES_ENFOCADOS as readonly string[]).includes(legacyDeporteNombre.value)) {
+		const legacy = deportes.value.find((d) => d.nombre === legacyDeporteNombre.value);
+		if (legacy) focales.push(legacy);
+	}
+	return focales;
+});
 
 function toDateInput(d: string | null | undefined) {
 	return d ? new Date(d).toISOString().split("T")[0] : "";
@@ -362,12 +509,17 @@ function buildForm() {
 			deporteId: deporte?.deporteId ?? null,
 			nivel: deporte?.nivel || "",
 			experiencia: deporte?.experiencia ?? "",
+			camposEspecificos: deporte?.camposEspecificos ?? {},
 		},
 		redSocialUrl: redSocial?.url || "",
 	};
 }
 
 const form = reactive(buildForm());
+
+const deporteSeleccionadoNombre = computed(
+	() => deportes.value.find((d) => d.id === form.deporte.deporteId)?.nombre ?? null,
+);
 
 watch(
 	() => props.usuario,

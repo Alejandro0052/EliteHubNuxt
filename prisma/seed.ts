@@ -144,6 +144,7 @@ async function main() {
 		"Gimnasia",
 		"Boxeo",
 		"Natación",
+		"Patinaje",
 		"Otros",
 	];
 	for (const nombre of deportes) {

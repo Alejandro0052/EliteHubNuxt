@@ -70,7 +70,7 @@ function fetchPage(cursor) {
   })
 }
 
-// Load content on mount
+
 onMounted(async () => {
   try {
     const content = await getContent('deportistas')

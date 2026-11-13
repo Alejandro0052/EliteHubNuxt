@@ -21,12 +21,24 @@ export default defineNuxtConfig({
 		},
 	},
 	modules: [
-		"@nuxt/icon",
+		// @nuxt/icon is auto-registered by @nuxt/ui -- listing it again caused a
+		// duplicate-template build failure (NUXT_B1001 / UNLOADABLE_DEPENDENCY on
+		// nuxt-icon-client-bundle), so it's intentionally absent here now.
+		"@nuxt/ui",
 		"@nuxt/image",
 		"@sidebase/nuxt-auth",
 		"@hypernym/nuxt-anime",
 		"@pinia/nuxt",
 	],
+	ui: {
+		// Dark mode stays owned by useTheme.ts + the data-theme attribute set up in
+		// Story 7.1 (inline head script + localStorage). Nuxt UI's components use plain
+		// Tailwind `dark:` utility classes, so they already follow our existing
+		// @custom-variant dark definition in main.css without needing their own
+		// color-mode module -- enabling it would create two competing systems fighting
+		// over dark-mode state, the exact bug pattern already hit repeatedly post-Epic-7.
+		colorMode: false,
+	},
 	nitro: {
 		storage: {
 			public: {
