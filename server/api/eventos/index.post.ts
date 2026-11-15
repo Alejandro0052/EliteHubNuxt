@@ -1,6 +1,5 @@
 import { readMultipartFormData } from 'h3'
 import { extname } from 'path'
-import { getServerSession } from '#auth'
 
 function slugify(text: string) {
   return text
@@ -12,10 +11,7 @@ function slugify(text: string) {
 }
 
 export default defineEventHandler(async (event) => {
-  const session = await getServerSession(event)
-  if (!session?.user?.id || !session.user.isAdmin) {
-    throw createError({ statusCode: 403, message: 'No autorizado' })
-  }
+  const usuario = await requireSession(event)
 
   const form = await readMultipartFormData(event)
   const storage = useStorage('public')
@@ -59,7 +55,7 @@ export default defineEventHandler(async (event) => {
       imagen,
       ubicacion,
       fechaEvento: fechaEvento ? new Date(fechaEvento) : undefined,
-      autorId: parseInt(session.user.id as string),
+      autorId: usuario.id,
     },
   })
 

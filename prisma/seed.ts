@@ -144,10 +144,21 @@ async function main() {
 		"Gimnasia",
 		"Boxeo",
 		"Natación",
+		"Patinaje",
 		"Otros",
 	];
 	for (const nombre of deportes) {
 		await prisma.deporte.upsert({
+			where: { nombre },
+			update: {},
+			create: { nombre },
+		});
+	}
+
+	// Story 3.1: lista fija de categorías de catálogo (FR-39)
+	const categoriasCatalogo = ["Ropa Deportiva", "Equipamiento", "Suplementos", "Tecnología", "Accesorios"];
+	for (const nombre of categoriasCatalogo) {
+		await prisma.categoriaCatalogo.upsert({
 			where: { nombre },
 			update: {},
 			create: { nombre },

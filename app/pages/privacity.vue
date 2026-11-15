@@ -1,29 +1,15 @@
 <template>
-	<div class="mx-auto min-h-screen py-10">
-		<ContentEditor page="privacity" :initial-content="content" @updated="handleContentUpdate" />
+	<div class="min-h-screen w-full bg-surface-container dark:bg-surface-container-dark">
+		<div class="max-w-page-shell mx-auto px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+			<ContentEditor page="privacity" :initial-content="content" @updated="handleContentUpdate" />
 
-		<!-- Hero Section -->
-		<section class="relative bg-black px-4 py-16 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-4xl text-center">
-				<h1 class="mb-6 text-4xl font-bold text-white md:text-5xl">
-					{{ content.title || "Política de Privacidad" }}
-				</h1>
-				<p class="mb-8 text-lg text-gray-300 md:text-xl">
-					{{ content.subtitle || "Última actualización: Enero 2024" }}
-				</p>
-			</div>
-		</section>
+			<DirectoryHeader :title="content.title || 'Política de privacidad'" :subtitle="content.subtitle || 'Última actualización: enero de 2024'" />
 
-		<!-- Main Content -->
-		<section class="px-4 py-16 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-4xl rounded-xl bg-white p-8 text-gray-800 shadow-lg md:p-12">
-				<div v-if="content.content" class="prose max-w-none" v-html="content.content" />
-
-				<div v-else class="py-6 text-gray-600">
-					<p>La política de privacidad aún no ha sido publicada. Si usted es administrador puede editarla desde el panel de contenidos.</p>
-				</div>
-			</div>
-		</section>
+			<div v-if="content.content" class="rich-text mt-10" v-html="content.content" />
+			<p v-else class="mt-10 max-w-[65ch] text-lg text-on-surface-variant dark:text-on-surface-variant-dark">
+				La política de privacidad todavía no está publicada. Si eres administrador, puedes escribirla con el botón de editar.
+			</p>
+		</div>
 	</div>
 </template>
 
@@ -61,8 +47,3 @@ onMounted(async () => {
 	}
 })
 </script>
-
-<style scoped>
-/* Keep styling minimal to avoid affecting other pages */
-.prose img { max-width: 100%; }
-</style>

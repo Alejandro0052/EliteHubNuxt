@@ -1,5 +1,6 @@
 export const GENEROS = ["Femenino", "Masculino", "Otro", "Prefiero no decir"] as const;
 export const PAISES = ["Colombia", "Venezuela", "Ecuador", "Otro"] as const;
+export const DEPORTES_ENFOCADOS = ["Fútbol", "Ciclismo", "Patinaje", "Boxeo", "Otros"] as const;
 export const ASUNTOS_CONTACTO = [
 	"Consulta General",
 	"Soporte Técnico",

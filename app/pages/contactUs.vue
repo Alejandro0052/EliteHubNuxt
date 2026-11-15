@@ -1,41 +1,33 @@
 <template>
-	<div class="mx-auto min-h-screen py-10">
-		<!-- Hero Section -->
-		<section class="relative px-4 sm:px-6 lg:px-8">
-			<div class="text-center">
-				<h1 class="mb-6 text-4xl font-bold text-white md:text-6xl">
-					{{ pageContent.title || "Contáctanos" }}
-				</h1>
-				<p class="mx-auto mb-8 max-w-3xl text-xl text-gray-300 md:text-2xl">
-					{{
-						pageContent.subtitle ||
-						"Estamos aquí para ayudarte. Ponte en contacto con nuestro equipo"
-					}}
-				</p>
-			</div>
-		</section>
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
+	<div class="mx-auto max-w-page-shell pt-12 pb-16 md:pt-16">
+		<div class="px-4 sm:px-6 lg:px-8">
+			<DirectoryHeader
+				:title="pageContent.title || 'Contacto'"
+				:subtitle="pageContent.subtitle || 'Escríbenos y te respondemos en menos de 24 horas.'" />
+		</div>
 
 		<!-- Main Content -->
-		<section class="px-4 sm:px-6 lg:px-8">
+		<section class="mt-8 px-4 sm:px-6 lg:px-8">
 			<!-- Custom Content -->
-			<div v-if="pageContent.content" class="mb-16">
-				<div class="max-w-none" v-html="pageContent.content"></div>
+			<div v-if="pageContent.content" class="mb-10 max-w-[75ch] text-on-surface dark:text-on-surface-dark">
+				<div v-html="pageContent.content"></div>
 			</div>
 
 			<div class="grid grid-cols-1 gap-12 lg:grid-cols-2">
 				<!-- Contact Form -->
-				<div class="flex flex-col justify-center rounded-xl bg-white p-8 shadow-lg">
+				<div class="flex flex-col justify-center p-6 sm:p-8 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
 					<div v-if="submitted" class="py-8 text-center">
-						<Icon name="fa6-solid:circle-check" class="mb-4 text-5xl text-green-600" />
-						<p class="text-xl font-bold text-gray-900">Registro guardado con éxito</p>
+						<Icon name="fa6-solid:circle-check" class="mb-4 text-5xl text-primary dark:text-primary-dark" />
+						<p class="text-xl font-bold text-on-surface dark:text-on-surface-dark">Mensaje enviado. Te responderemos pronto.</p>
 					</div>
 
 					<template v-else>
-					<h2 class="mb-6 text-2xl font-bold text-gray-900">Envíanos un mensaje</h2>
+					<h2 class="mb-6 font-display text-4xl leading-none font-extrabold uppercase text-on-surface dark:text-on-surface-dark">Envíanos un mensaje</h2>
 					<form @submit.prevent="submitForm" class="space-y-6">
 						<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 							<div>
-								<label for="firstName" class="mb-2 block text-sm font-medium text-gray-700"
+								<label for="firstName" class="form-label mb-2 block"
 									>Nombre</label
 								>
 								<input
@@ -43,11 +35,11 @@
 									type="text"
 									id="firstName"
 									required
-									class="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors duration-300 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+									class="form-control w-full"
 									placeholder="Tu nombre" />
 							</div>
 							<div>
-								<label for="lastName" class="mb-2 block text-sm font-medium text-gray-700"
+								<label for="lastName" class="form-label mb-2 block"
 									>Apellido</label
 								>
 								<input
@@ -55,45 +47,45 @@
 									type="text"
 									id="lastName"
 									required
-									class="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors duration-300 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+									class="form-control w-full"
 									placeholder="Tu apellido" />
 							</div>
 						</div>
 
 						<div>
-							<label for="email" class="mb-2 block text-sm font-medium text-gray-700"
-								>Correo Electrónico</label
+							<label for="email" class="form-label mb-2 block"
+								>Correo electrónico</label
 							>
 							<input
 								v-model="form.email"
 								type="email"
 								id="email"
 								required
-								class="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors duration-300 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+								class="form-control w-full"
 								placeholder="tu@email.com" />
 						</div>
 
 						<div>
-							<label for="phone" class="mb-2 block text-sm font-medium text-gray-700"
+							<label for="phone" class="form-label mb-2 block"
 								>Teléfono (Opcional)</label
 							>
 							<input
 								v-model="form.phone"
 								type="tel"
 								id="phone"
-								class="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors duration-300 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+								class="form-control w-full"
 								placeholder="+57 300 123 4567" />
 						</div>
 
 						<div>
-							<label for="subject" class="mb-2 block text-sm font-medium text-gray-700"
+							<label for="subject" class="form-label mb-2 block"
 								>Asunto</label
 							>
 							<select
 								v-model="form.subject"
 								id="subject"
 								required
-								class="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors duration-300 focus:border-transparent focus:ring-2 focus:ring-blue-500">
+								class="form-control w-full">
 								<option value="">Selecciona un asunto</option>
 								<option value="Consulta General">Consulta General</option>
 								<option value="Soporte Técnico">Soporte Técnico</option>
@@ -105,7 +97,7 @@
 						</div>
 
 						<div>
-							<label for="message" class="mb-2 block text-sm font-medium text-gray-700"
+							<label for="message" class="form-label mb-2 block"
 								>Mensaje</label
 							>
 							<textarea
@@ -113,15 +105,15 @@
 								id="message"
 								rows="6"
 								required
-								class="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 transition-colors duration-300 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+								class="form-control w-full resize-none"
 								placeholder="Escribe tu mensaje aquí..."></textarea>
 						</div>
 
 						<button
 							type="submit"
 							:disabled="loading"
-							class="w-full rounded-lg bg-black px-6 py-4 font-bold text-white transition-all duration-300 focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-50">
-							{{ loading ? "Enviando..." : "Enviar Mensaje" }}
+							class="button-primary w-full px-6 py-3 font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+							{{ loading ? "Enviando..." : "Enviar mensaje" }}
 						</button>
 					</form>
 					</template>
@@ -132,18 +124,18 @@
 					<!-- Contact Cards -->
 					<div class="grid grid-cols-1 gap-6">
 						<div
-							class="rounded-xl bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+							class="p-6 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
 							<div class="flex items-start">
 								<div
 									class="mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-black text-white">
 									<Icon name="fa6-solid:inbox" />
 								</div>
 								<div>
-									<h3 class="mb-2 text-lg font-bold text-gray-900">Correo Electrónico</h3>
-									<p class="mb-2 text-gray-600">Respuesta en menos de 24 horas</p>
+									<h3 class="mb-2 text-lg font-bold text-on-surface dark:text-on-surface-dark">Correo electrónico</h3>
+									<p class="mb-2 text-on-surface-variant dark:text-on-surface-variant-dark">Respuesta en menos de 24 horas</p>
 									<a
 										href="mailto:info@elitehub.com"
-										class="font-medium text-black hover:text-gray-600"
+										class="font-semibold text-primary underline-offset-2 hover:underline dark:text-primary-dark"
 										>info@elitehub.com</a
 									>
 								</div>
@@ -151,16 +143,16 @@
 						</div>
 
 						<div
-							class="rounded-xl bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+							class="p-6 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
 							<div class="flex items-start">
 								<div
 									class="mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-black text-white">
 									<Icon name="fa6-solid:phone" />
 								</div>
 								<div>
-									<h3 class="mb-2 text-lg font-bold text-gray-900">Teléfono</h3>
-									<p class="mb-2 text-gray-600">Lunes a Viernes, 8:00 AM - 6:00 PM</p>
-									<a href="tel:+5712345678" class="font-medium text-black hover:text-gray-600"
+									<h3 class="mb-2 text-lg font-bold text-on-surface dark:text-on-surface-dark">Teléfono</h3>
+									<p class="mb-2 text-on-surface-variant dark:text-on-surface-variant-dark">Lunes a Viernes, 8:00 AM - 6:00 PM</p>
+									<a href="tel:+5712345678" class="font-semibold text-primary underline-offset-2 hover:underline dark:text-primary-dark"
 										>+57 (1) 234-5678</a
 									>
 								</div>
@@ -168,43 +160,43 @@
 						</div>
 
 						<div
-							class="rounded-xl bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+							class="p-6 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
 							<div class="flex items-start">
 								<div
 									class="mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-black text-white">
 									<Icon name="fa6-solid:location-dot" />
 								</div>
 								<div>
-									<h3 class="mb-2 text-lg font-bold text-gray-900">Oficina Principal</h3>
-									<p class="mb-2 text-gray-600">Visítanos en nuestras instalaciones</p>
-									<p class="font-medium text-black">Calle 123 #45-67<br />Cali, Colombia</p>
+									<h3 class="mb-2 text-lg font-bold text-on-surface dark:text-on-surface-dark">Oficina principal</h3>
+									<p class="mb-2 text-on-surface-variant dark:text-on-surface-variant-dark">Visítanos en nuestras instalaciones</p>
+									<p class="font-semibold text-on-surface dark:text-on-surface-dark">Calle 123 #45-67<br />Cali, Colombia</p>
 								</div>
 							</div>
 						</div>
 					</div>
 
 					<!-- Social Media -->
-					<div class="rounded-xl bg-white p-6 shadow-lg">
-						<h3 class="mb-4 text-lg font-bold text-gray-900">Síguenos en Redes Sociales</h3>
+					<div class="p-6 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+						<h3 class="mb-4 text-lg font-bold text-on-surface dark:text-on-surface-dark">Síguenos en redes sociales</h3>
 						<div class="flex space-x-4">
 							<a
 								href="#"
-								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-gray-600">
+								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-primary dark:bg-white dark:text-black dark:hover:bg-primary-dark">
 								<Icon name="fa-brands:facebook-f" />
 							</a>
 							<a
 								href="#"
-								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-gray-600">
+								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-primary dark:bg-white dark:text-black dark:hover:bg-primary-dark">
 								<Icon name="fa-brands:twitter" />
 							</a>
 							<a
 								href="#"
-								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-gray-600">
+								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-primary dark:bg-white dark:text-black dark:hover:bg-primary-dark">
 								<Icon name="fa-brands:tiktok" />
 							</a>
 							<a
 								href="#"
-								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-gray-600">
+								class="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors duration-300 hover:bg-primary dark:bg-white dark:text-black dark:hover:bg-primary-dark">
 								<Icon name="fa-brands:youtube" />
 							</a>
 						</div>
@@ -212,6 +204,7 @@
 				</div>
 			</div>
 		</section>
+	</div>
 	</div>
 </template>
 

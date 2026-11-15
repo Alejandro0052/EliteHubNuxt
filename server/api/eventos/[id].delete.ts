@@ -1,13 +1,15 @@
-import { getServerSession } from '#auth'
-
 export default defineEventHandler(async (event) => {
-  const session = await getServerSession(event)
-  if (!session?.user?.id || !session.user.isAdmin) {
-    throw createError({ statusCode: 403, message: 'No autorizado' })
-  }
+  const usuario = await requireSession(event)
 
   const id = event.context.params?.id
   if (!id) throw createError({ statusCode: 400, message: 'ID requerido' })
+
+  const existing = await prisma.evento.findUnique({ where: { id: parseInt(id) } })
+  if (!existing) throw createError({ statusCode: 404, message: 'Evento no encontrado' })
+
+  if (!authorOrAdmin('evento_noticia', 'delete', existing, usuario)) {
+    throw createError({ statusCode: 403, message: 'No autorizado' })
+  }
 
   await prisma.evento.delete({ where: { id: parseInt(id) } })
   return { success: true }

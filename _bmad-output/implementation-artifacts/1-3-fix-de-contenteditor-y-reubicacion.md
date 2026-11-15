@@ -4,7 +4,7 @@ baseline_commit: 15f62c9f4a914086df42e026d20a7a85f2196431
 
 # Story 1.3: Fix de ContentEditor y reubicación
 
-Status: review
+Status: done
 
 ## Story
 

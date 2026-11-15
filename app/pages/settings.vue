@@ -1,50 +1,113 @@
 
 <template>
+	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 	<div class="mx-auto w-full max-w-[120rem] px-4 py-6">
-		<div class="rounded-lg bg-white p-6 shadow-md">
-			<h1 class="mb-6 text-2xl font-bold text-gray-800">Ajustes</h1>
+		<button type="button" @click="router.back()" class="button-secondary mb-6 flex items-center gap-2 px-4 py-2 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+			<Icon name="fa6-solid:arrow-left" />
+			<span>Volver</span>
+		</button>
 
-			<div v-if="!isAdmin" class="text-gray-600">Las opciones actuales de perfil se movieron a Perfil.</div>
+		<div class="p-6 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark text-on-surface dark:text-on-surface-dark">
+			<h1 class="form-title">Ajustes</h1>
+
+			<section class="mb-6 flex items-center justify-between rounded-lg border border-border-hairline p-4 dark:border-border-hairline-dark">
+				<div>
+					<h2 class="text-lg font-semibold text-on-surface dark:text-on-surface-dark">Tema oscuro</h2>
+					<p class="form-hint">Cambia la apariencia de la aplicación entre modo claro y oscuro.</p>
+				</div>
+				<button
+					type="button"
+					role="switch"
+					:aria-checked="theme === 'dark'"
+					aria-label="Tema oscuro"
+					@click="toggleTheme"
+					class="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark"
+					:class="theme === 'dark' ? 'bg-primary-dark' : 'bg-gray-400'">
+					<span
+						class="inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform"
+						:class="theme === 'dark' ? 'translate-x-6' : 'translate-x-1'"></span>
+				</button>
+			</section>
+			<div class="sr-only" aria-live="polite">{{ announcement }}</div>
+
+			<div v-if="!isAdmin" class="text-on-surface-variant dark:text-on-surface-variant-dark">Las opciones actuales de perfil se movieron a Perfil.</div>
 
 			<div v-else>
-				<p class="mb-4 text-sm text-gray-600">Editor rápido de contenidos públicos. Solo administradores.</p>
+				<p class="mb-4 text-on-surface-variant dark:text-on-surface-variant-dark">Editor rápido de contenidos públicos. Solo administradores.</p>
 
 				<div class="space-y-6">
-					<section class="rounded-lg border p-4">
-						<h2 class="mb-2 text-lg font-semibold">Política de Privacidad</h2>
-						<input v-model="privacity.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1" />
-						<input v-model="privacity.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1" />
-						<textarea v-model="privacity.content" rows="6" class="w-full rounded border px-2 py-1" placeholder="Contenido HTML o texto"></textarea>
-						<div class="mt-2 flex items-center gap-2">
-							<button @click="saveContent('privacity')" :disabled="saving" class="rounded bg-green-600 px-3 py-1 text-white">Guardar</button>
-							<span v-if="saved.privacity" class="text-sm text-green-600">Guardado</span>
+					<section class="rounded-lg border border-border-hairline p-5 sm:p-6 dark:border-border-hairline-dark">
+						<h2 class="form-group-title mb-5">Política de privacidad</h2>
+						<div class="form-grid">
+							<div class="form-field">
+								<label for="privacity-title" class="form-label">Título</label>
+								<input id="privacity-title" v-model="privacity.title" class="form-control" />
+							</div>
+							<div class="form-field">
+								<label for="privacity-subtitle" class="form-label">Subtítulo</label>
+								<input id="privacity-subtitle" v-model="privacity.subtitle" class="form-control" />
+							</div>
+							<div class="form-field sm:col-span-2">
+								<label for="privacity-content" class="form-label">Contenido</label>
+								<textarea id="privacity-content" v-model="privacity.content" rows="6" class="form-control"></textarea>
+								<p class="form-hint">Texto o HTML.</p>
+							</div>
+						</div>
+						<div class="mt-4 flex items-center gap-3">
+							<button type="button" @click="saveContent('privacity')" :disabled="saving" class="button-primary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">Guardar cambios</button>
+							<span v-if="saved.privacity" role="status" class="inline-flex items-center gap-1.5 font-semibold text-primary dark:text-primary-dark"><Icon name="fa6-solid:circle-check" aria-hidden="true" />Guardado</span>
 						</div>
 					</section>
 
-					<section class="rounded-lg border p-4">
-						<h2 class="mb-2 text-lg font-semibold">Términos y Condiciones</h2>
-						<input v-model="terms.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1" />
-						<input v-model="terms.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1" />
-						<textarea v-model="terms.content" rows="6" class="w-full rounded border px-2 py-1" placeholder="Contenido HTML o texto"></textarea>
-						<div class="mt-2 flex items-center gap-2">
-							<button @click="saveContent('terms')" :disabled="saving" class="rounded bg-green-600 px-3 py-1 text-white">Guardar</button>
-							<span v-if="saved.terms" class="text-sm text-green-600">Guardado</span>
+					<section class="rounded-lg border border-border-hairline p-5 sm:p-6 dark:border-border-hairline-dark">
+						<h2 class="form-group-title mb-5">Términos y condiciones</h2>
+						<div class="form-grid">
+							<div class="form-field">
+								<label for="terms-title" class="form-label">Título</label>
+								<input id="terms-title" v-model="terms.title" class="form-control" />
+							</div>
+							<div class="form-field">
+								<label for="terms-subtitle" class="form-label">Subtítulo</label>
+								<input id="terms-subtitle" v-model="terms.subtitle" class="form-control" />
+							</div>
+							<div class="form-field sm:col-span-2">
+								<label for="terms-content" class="form-label">Contenido</label>
+								<textarea id="terms-content" v-model="terms.content" rows="6" class="form-control"></textarea>
+								<p class="form-hint">Texto o HTML.</p>
+							</div>
+						</div>
+						<div class="mt-4 flex items-center gap-3">
+							<button type="button" @click="saveContent('terms')" :disabled="saving" class="button-primary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">Guardar cambios</button>
+							<span v-if="saved.terms" role="status" class="inline-flex items-center gap-1.5 font-semibold text-primary dark:text-primary-dark"><Icon name="fa6-solid:circle-check" aria-hidden="true" />Guardado</span>
 						</div>
 					</section>
 
-					<section class="rounded-lg border p-4">
-						<h2 class="mb-2 text-lg font-semibold">Quiénes Somos</h2>
-						<input v-model="about.title" placeholder="Título" class="mb-2 w-full rounded border px-2 py-1" />
-						<input v-model="about.subtitle" placeholder="Subtítulo" class="mb-2 w-full rounded border px-2 py-1" />
-						<textarea v-model="about.content" rows="6" class="w-full rounded border px-2 py-1" placeholder="Contenido HTML o texto"></textarea>
-						<div class="mt-2 flex items-center gap-2">
-							<button @click="saveContent('about')" :disabled="saving" class="rounded bg-green-600 px-3 py-1 text-white">Guardar</button>
-							<span v-if="saved.about" class="text-sm text-green-600">Guardado</span>
+					<section class="rounded-lg border border-border-hairline p-5 sm:p-6 dark:border-border-hairline-dark">
+						<h2 class="form-group-title mb-5">Quiénes somos</h2>
+						<div class="form-grid">
+							<div class="form-field">
+								<label for="about-title" class="form-label">Título</label>
+								<input id="about-title" v-model="about.title" class="form-control" />
+							</div>
+							<div class="form-field">
+								<label for="about-subtitle" class="form-label">Subtítulo</label>
+								<input id="about-subtitle" v-model="about.subtitle" class="form-control" />
+							</div>
+							<div class="form-field sm:col-span-2">
+								<label for="about-content" class="form-label">Contenido</label>
+								<textarea id="about-content" v-model="about.content" rows="6" class="form-control"></textarea>
+								<p class="form-hint">Texto o HTML.</p>
+							</div>
+						</div>
+						<div class="mt-4 flex items-center gap-3">
+							<button type="button" @click="saveContent('about')" :disabled="saving" class="button-primary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">Guardar cambios</button>
+							<span v-if="saved.about" role="status" class="inline-flex items-center gap-1.5 font-semibold text-primary dark:text-primary-dark"><Icon name="fa6-solid:circle-check" aria-hidden="true" />Guardado</span>
 						</div>
 					</section>
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 </template>
 
@@ -54,9 +117,11 @@ import { useAuthStore } from '~/stores/auth'
 import { useContent } from '~/composables/useContent'
 
 const authStore = useAuthStore()
+const router = useRouter()
 const isAdmin = computed(() => !!authStore.user?.isAdmin)
 
 const { getContent, updateContent } = useContent()
+const { theme, announcement, toggleTheme } = useTheme()
 
 const privacity = ref({ page: 'privacity', title: '', subtitle: '', content: '', metadata: {} })
 const terms = ref({ page: 'terms', title: '', subtitle: '', content: '', metadata: {} })

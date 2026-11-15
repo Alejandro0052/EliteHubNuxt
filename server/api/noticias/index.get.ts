@@ -3,7 +3,7 @@ import { defineEventHandler } from 'h3'
 export default defineEventHandler(async (event) => {
   try {
     const noticias = await prisma.noticia.findMany({
-      where: { publicado: true },
+      where: { publicado: true, ...activeUserFilter('autor') },
       orderBy: { createdAt: 'desc' },
       take: 20,
       select: {

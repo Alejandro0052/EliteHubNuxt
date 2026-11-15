@@ -12,9 +12,10 @@ export default defineEventHandler(async (event) => {
 			where: { id: parseInt(session.user.id) },
 			include: {
 				informacion: {
-					include: { tipoUsuario: true },
+					include: { tipoUsuario: true, redesSociales: true },
 				},
 				rol: true,
+				UsuarioDeporte: { include: { deporte: true } },
 			},
 		});
 
@@ -32,6 +33,7 @@ export default defineEventHandler(async (event) => {
 			activo: user.activo,
 			rol: user.rol ? { id: user.rol.id, nombre: user.rol.nombre } : null,
 			informacion: user.informacion || null,
+			UsuarioDeporte: user.UsuarioDeporte || [],
 		};
 	} catch (error: any) {
 		if (error.statusCode) {

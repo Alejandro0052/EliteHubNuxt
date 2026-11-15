@@ -7,6 +7,8 @@ inputDocuments:
   - _bmad-output/planning-artifacts/architecture/architecture-Elite_Hub-2026-07-22/ARCHITECTURE-SPINE.md
   - _bmad-output/planning-artifacts/ux-designs/ux-Elite_Hub-2026-07-23/DESIGN.md
   - _bmad-output/planning-artifacts/ux-designs/ux-Elite_Hub-2026-07-23/EXPERIENCE.md
+  - _bmad-output/planning-artifacts/prds/prd-Elite_Hub-2026-07-19/prd.md
+  - _bmad-output/planning-artifacts/prds/prd-Elite_Hub-2026-07-19/addendum.md
 ---
 
 # Elite Hub - Epic Breakdown
@@ -167,32 +169,39 @@ FR-32: Epic 7 - Content-policy editing surfaced in Settings
 FR-33: Epic 7 - Visual refresh across named surfaces
 FR-34: Epic 7 - Preserve responsiveness
 FR-35: Epic 8 - Migrate uploaded file storage off local disk
+FR-46: Epic 5 - Comentarios en publicaciones
+FR-47: Epic 5 - Likes/reacciones en publicaciones
+FR-48: Epic 2 - Buscador por nombre en directorios
+FR-49: Epic 3 - Campos adicionales de Item de Catalogo + carrusel de imagenes
+FR-50: Epic 1 - Deportes enfocados + campos dinamicos por deporte/modalidad (registro); Epic 2 - tarjeta/perfil seccionado por modalidad
+FR-51: Epic 1 - Multiples perfiles de redes sociales (los 4 tipos de Usuario)
+FR-52: Epic 3 - Resenas/calificaciones en Items de Catalogo
 
 ## Epic List
 
 ### Epic 1: Fundamentos y Apertura de Contribución (Checkpoint 1)
-Registration correctly captures and locks user type; content editing works everywhere it should; the contact form persists messages with an admin inbox; homepage stats are real; posting eventos/noticias is open to all authenticated users with correct author/admin permissions. Delivers the complete, demoable 2026-08-08 checkpoint.
-**FRs covered:** FR-1, FR-2, FR-3, FR-4, FR-5, FR-38, FR-7, FR-8, FR-9, FR-10, FR-11, FR-41, FR-42, FR-12, FR-13, FR-14
+Registration correctly captures and locks user type; content editing works everywhere it should; the contact form persists messages with an admin inbox; homepage stats are real; posting eventos/noticias is open to all authenticated users with correct author/admin permissions. Delivers the complete, demoable 2026-08-08 checkpoint. As of Story 1.8/1.9 (2026-10-08 amendment), Deportista registration narrows to 4 focus sports with fully dynamic per-sport/modalidad fields, and every Usuario type can hold multiple social media profiles.
+**FRs covered:** FR-1, FR-2, FR-3, FR-4, FR-5, FR-38, FR-7, FR-8, FR-9, FR-10, FR-11, FR-41, FR-42, FR-12, FR-13, FR-14, FR-50, FR-51
 
 ### Epic 2: Directorios por Tipo y Perfiles
-Each of the four TipoUsuario gets a segmented, infinite-scroll directory with detail views; users manage their own profile with admin recovery override; Deportistas are filterable by sport; deactivated accounts' content is hidden across the app.
-**FRs covered:** FR-15, FR-16, FR-17, FR-18, FR-6, FR-40, FR-19
+Each of the four TipoUsuario gets a segmented, infinite-scroll directory with detail views; users manage their own profile with admin recovery override; Deportistas are filterable by sport; deactivated accounts' content is hidden across the app. As of Story 2.6/2.7 (2026-10-08 amendment), directories gain a name search box, and Deportista cards/profiles represent the sport-specific and multi-modalidad fields introduced by Epic 1's FR-50.
+**FRs covered:** FR-15, FR-16, FR-17, FR-18, FR-6, FR-40, FR-19, FR-48, FR-50
 
 ### Epic 3: Catálogo de Marcas
-Marca-typed users list contact-only products/services, browsable in an aggregate catálogo view by fixed category, with author/admin edit-delete.
-**FRs covered:** FR-20, FR-21, FR-22, FR-23, FR-39, FR-43
+Marca-typed users list contact-only products/services, browsable in an aggregate catálogo view by fixed category, with author/admin edit-delete. As of Story 3.4/3.5 (2026-10-08 amendment), catalog items gain descripción/precio de referencia/disponibilidad plus an image carousel, and a ratings-and-reviews capability mirroring Epic 4's Nutricionista reviews.
+**FRs covered:** FR-20, FR-21, FR-22, FR-23, FR-39, FR-43, FR-49, FR-52
 
 ### Epic 4: Reseñas de Nutricionistas y Moderación
 Authenticated users leave one rating+comment review per nutricionista; admin can retract bad-faith reviews and deactivate the offending account.
 **FRs covered:** FR-24, FR-25, FR-36, FR-37
 
 ### Epic 5: Publicaciones y Feed de Inicio
-Any authenticated user posts text+optional image to a shared, most-recent-first home feed, with author/admin moderation.
-**FRs covered:** FR-26, FR-27, FR-28
+Any authenticated user posts text+optional media (as of Story 5.3, a carousel of up to 10 mixed images/videos) to a shared, most-recent-first home feed, with author/admin moderation. As of Story 5.4/5.5 (2026-10-08 amendment), Usuarios can comment on and like/react to any Publicación.
+**FRs covered:** FR-26, FR-27, FR-28, FR-44, FR-46, FR-47
 
 ### Epic 6: Reportes/Indicadores
-Admin sees a polished chart plus numeric counts of registered users by type, sharing its aggregate source with the homepage stats.
-**FRs covered:** FR-29, FR-30
+Admin sees a polished chart plus numeric counts of registered users by type, sharing its aggregate source with the homepage stats; Story 6.2 adds a second report sliced by publicación activity.
+**FRs covered:** FR-29, FR-30, FR-45
 
 ### Epic 7: Settings, Tema y Refresco Visual
 Users toggle light/dark theme (persisted via localStorage); the visual refresh (brand-chrome consolidation, retiring pastel gradients, sitewide hover micro-interaction) lands across every named surface without breaking responsiveness.
@@ -421,6 +430,102 @@ So that content creation isn't bottlenecked on admin, while abuse is still moder
 **When** rendered client-side
 **Then** their visibility is driven by the shared `useResourcePermissions('evento_noticia', ...)` composable — first real usage of this primitive — never a bespoke `authStore.user?.isAdmin` check (UX-DR11)
 
+### Story 1.8: Lista de deportes enfocada y campos dinámicos para Fútbol, Boxeo y Otro `[Added 2026-10-08]`
+
+As a prospective or existing Deportista,
+I want to select from a focused list of 4 sports (or "otro"), with fields tailored to Fútbol or Boxeo when I pick one of those,
+So that the registration form asks me only what's relevant to my sport.
+
+**Acceptance Criteria:**
+
+**Given** I'm on the registration form or editing my profile as Deportista
+**When** I open the `deporte` selector
+**Then** I see exactly 5 options: fútbol, ciclismo, patinaje, boxeo, otro (FR-50) — replacing today's 10-sport list
+
+**Given** I select fútbol
+**When** the form reveals fields
+**Then** I see: posición principal, posición secundaria (opcional), pie dominante, club actual, categoría/nivel de competencia, salto vertical, atributos destacados (multi-select chips reusing `FilterChips.vue` + one optional free-text "otras cualidades"), trayectoria de clubes, logros y títulos, reconocimientos individuales, estadísticas de la última temporada, convocatorias/selecciones — per `addendum.md`'s Fútbol spec verbatim
+
+**Given** I select boxeo
+**When** the form reveals fields
+**Then** I see: categoría de peso, guardia, gimnasio/club y entrenador, estilo de pelea, modalidad (amateur/profesional/ambos — descriptive only), récord, federación/liga u organismo sancionador, convocatorias/logros/rankings — the same uniform set regardless of the modalidad value chosen (no fork, per the user's explicit reversal of the BMX-style split)
+
+**Given** I select otro
+**When** the form reveals fields
+**Then** I see the existing generic field set completely unchanged (nivel deportivo, años de experiencia, objetivos actuales, marcas personales opcional, lesiones opcional) — no new fields added or removed
+
+**Given** I select ciclismo or patinaje
+**When** the form responds
+**Then** control hands off to Story 1.9's multi-modalidad mechanism — this story does not implement that path
+
+**Given** altura, peso, nombre/apellido, fecha de nacimiento, and redes sociales (Story 1.10)
+**When** any sport is selected
+**Then** these remain the already-existing universal FR-2/FR-51 fields, never duplicated per sport
+
+**Given** this narrows the shared `deporte` fixed-list source
+**When** this story ships
+**Then** Story 2.5's filter chips and the Deportistas directory still reference the OLD 10-sport list until Story 2.7 updates them — flagged as a known, temporary inconsistency between this story and Story 2.7, not a blocker to this story's own acceptance
+
+### Story 1.9: Mecanismo multi-modalidad para Ciclismo y Patinaje `[Added 2026-10-08]`
+
+As a Deportista practicing ciclismo or patinaje,
+I want to select one or more modalidades and fill each one's own fields,
+So that my profile accurately reflects every discipline I compete in, not just one.
+
+**Acceptance Criteria:**
+
+**Given** I select ciclismo as my deporte
+**When** the form proceeds
+**Then** I see a modalidad multi-select: Ruta, Montaña/MTB, BMX, Downhill, Pista — I can check any number from 1 up to all 5 at once
+
+**Given** I select patinaje as my deporte
+**When** the form proceeds
+**Then** I see a modalidad multi-select: Velocidad, Artístico, Freestyle/Slalom, Agresivo/Street/Park — I can check any number from 1 up to all 4 at once
+
+**Given** I select BMX among my ciclismo modalidades
+**When** the form proceeds
+**Then** it requires choosing Race or Freestyle (sub-modalidad), each revealing its own distinct field subset — per `addendum.md`'s BMX spec (Freestyle's video/reel link is optional, not mandatory)
+
+**Given** I select any patinaje modalidad
+**When** the form proceeds
+**Then** it requires choosing that modalidad's own sub-modalidad (e.g. Velocidad → Pista/Ruta/Maratón/Relevos), which does NOT change the field set collected afterward — unlike BMX, patinaje's fields stay uniform across its sub-modalidades
+
+**Given** I have chosen my modalidad(es) and any required sub-modalidad
+**When** I move to filling fields
+**Then** each selected modalidad gets its own tab/accordion section, navigable in any order, each showing a completion indicator — not a forced linear wizard step
+
+**Given** I am filling or have already filled multiple modalidades
+**When** I view my own profile afterward
+**Then** the fields are displayed sectioned by modalidad, reusing the same tab/accordion component read-only
+
+**Given** the branching decisions (deporte → modalidad selection → sub-modalidad where required)
+**When** I navigate the form
+**Then** a visible back control or breadcrumb lets me return to any earlier stage without losing already-entered data
+
+**Given** the full field lists per modalidad (Ruta/MTB/BMX/Downhill/Pista for ciclismo; Velocidad/Artístico/Freestyle-Slalom/Agresivo for patinaje)
+**When** implementing this story
+**Then** they follow `addendum.md`'s "FR-50 — Sport-Specific Fields per Focus Sport" lists exactly, including the confirmed MTB disciplina list (XC/Marathon/Enduro/Trail, no Four Cross, no Downhill) and the confirmed patinaje modalidad list (no Danza, no Roller Derby/Dance, Relevos added under Velocidad)
+
+### Story 1.10: Múltiples perfiles de redes sociales `[Added 2026-10-08]`
+
+As any Usuario (Deportista, Marca, Nutricionista, or Patrocinador),
+I want to add more than one social media profile link,
+So that I can showcase all my active platforms, not just one.
+
+**Acceptance Criteria:**
+
+**Given** I am any Usuario type, registering or editing my profile
+**When** I look for the redes sociales field
+**Then** I can add multiple links (e.g. Instagram, Facebook, TikTok, X/Twitter, YouTube), not just the single link it is today (FR-51)
+
+**Given** I already have one or more redes sociales links saved
+**When** I view my own profile or another Usuario's detail view
+**Then** all saved links are shown, not just the first one
+
+**Given** this applies uniformly
+**When** any of the 4 TipoUsuario registers or edits their profile
+**Then** the same multi-link control is available — this is not sport/type-specific, unlike Story 1.8/1.9
+
 ## Epic 2: Directorios por Tipo y Perfiles
 
 Each of the four TipoUsuario gets a segmented, infinite-scroll directory with detail views; users manage their own profile with admin recovery override; Deportistas are filterable by sport; deactivated accounts' content is hidden across the app.
@@ -561,6 +666,46 @@ So that I can find athletes in the sport I care about without scrolling through 
 **When** this story ships
 **Then** it is retained/improved, not removed
 
+### Story 2.6: Buscador por nombre en los directorios `[Added 2026-10-08]`
+
+As an authenticated Usuario browsing a directory,
+I want to search by name,
+So that I can find a specific person or brand without scrolling through everyone.
+
+**Acceptance Criteria:**
+
+**Given** I am on any of the 4 directories (Deportistas, Marcas, Nutricionistas, Patrocinadores)
+**When** I type in the search box (magnifying-glass icon)
+**Then** the directory re-fetches its first cursor batch filtered to matches on nombre/apellido (or nombre de empresa for Marcas), case-insensitive (FR-48)
+
+**Given** I am on Deportistas
+**When** I have both a search term and a sport filter (FR-19/Story 2.5) active
+**Then** both apply together, not mutually exclusive
+
+**Given** I clear the search term
+**When** the directory re-fetches
+**Then** it returns to the unfiltered (or sport-filtered, if a sport chip is still active) listing
+
+### Story 2.7: Tarjeta de directorio y perfil de Deportista con campos por deporte/modalidad `[Added 2026-10-08]`
+
+As an authenticated Usuario viewing the Deportistas directory or a Deportista's profile,
+I want to see the sport-specific fields that matter for that athlete,
+So that I get a meaningful summary instead of a generic card that ignores Story 1.8/1.9's new fields.
+
+**Acceptance Criteria:**
+
+**Given** a Deportista with fútbol, boxeo, or otro as their sport
+**When** their directory card or detail view renders
+**Then** it surfaces that sport's own relevant summary fields (e.g. posición for fútbol, categoría de peso for boxeo)
+
+**Given** a Deportista with one or more ciclismo or patinaje modalidades
+**When** their directory card or detail view renders
+**Then** the card shows a summary (e.g. modalidad badges) and the detail view shows the full sectioned tab/accordion display (from Story 1.9) for every modalidad they hold
+
+**Given** the existing Deportistas sport filter chips (FR-19, Story 2.5) still reference the old 10-sport list after Story 1.8
+**When** this story ships
+**Then** the chip list is updated to the narrowed 5-option `deporte` list (fútbol, ciclismo, patinaje, boxeo, otro), resolving Story 1.8's flagged temporary inconsistency
+
 ## Epic 3: Catálogo de Marcas
 
 Marca-typed users list contact-only products/services, browsable in an aggregate catálogo view by fixed category, with author/admin edit-delete.
@@ -644,6 +789,66 @@ So that I can keep my listings accurate and abuse can still be removed.
 **Given** I am admin
 **When** I edit or delete any catalog item regardless of authorship
 **Then** the action succeeds
+
+### Story 3.4: Campos adicionales de Ítem de Catálogo `[Added 2026-10-08]`
+
+As a Marca,
+I want to add a description, reference price, and availability status to my catalog items,
+So that I can give buyers more context without needing a payment flow.
+
+**Acceptance Criteria:**
+
+**Given** I am creating or editing an Ítem de Catálogo
+**When** I fill the form
+**Then** I can additionally set descripción (free text), precio de referencia (numeric), and disponibilidad — fixed list: Disponible, Agotado, Por pedido (FR-49)
+
+**Given** precio de referencia is set
+**When** the item is displayed anywhere
+**Then** it is shown as informational only — no checkout, cart, or payment affordance appears (FR-23 still applies unchanged)
+
+**Given** disponibilidad is set
+**When** the item is displayed
+**Then** the status is visibly shown (e.g. a badge)
+
+### Story 3.5: Carrusel de imágenes en detalle de Ítem de Catálogo `[Added 2026-10-08]`
+
+As any authenticated Usuario viewing an Ítem de Catálogo's detail view,
+I want to browse its images as a carousel,
+So that I see one image at a time instead of a static grid.
+
+**Acceptance Criteria:**
+
+**Given** an Ítem de Catálogo with multiple images
+**When** I open its detail view
+**Then** images display one at a time with next/previous navigation, replacing today's static grid + click-to-zoom lightbox (FR-49)
+
+**Given** the carousel
+**When** compared to Publicación's existing media carousel (FR-44, Story 5.3)
+**Then** it follows the same interaction pattern for consistency
+
+### Story 3.6: Reseñas y calificaciones en Ítems de Catálogo `[Added 2026-10-08]`
+
+As an authenticated Usuario,
+I want to leave a rating and comment on a catalog item, and have admin moderate abuse,
+So that buyers get real reputation signals on products/services, just like they do on Nutricionistas.
+
+**Acceptance Criteria:**
+
+**Given** I am authenticated and viewing an Ítem de Catálogo's detail view
+**When** I submit a rating + comment
+**Then** a review is created and visible to anyone who can view that item (mirrors FR-24)
+
+**Given** I have already reviewed a specific Ítem de Catálogo
+**When** I attempt to submit a second review for it
+**Then** the server rejects the duplicate, mirroring FR-37's one-review-per-Usuario-per-target limit
+
+**Given** a review flagged as fake or bad-faith
+**When** admin retracts it
+**Then** it no longer appears on the item's detail view, and admin may additionally deactivate the reviewing Usuario, mirroring FR-36 exactly (same destructive-confirm step, same session-rejection cascade via Story 2.4)
+
+**Given** this is a new Prisma model
+**When** implemented
+**Then** it is a new model (e.g. `ResenaCatalogo`), not a reuse of the existing `Resena` model, which stays scoped to Nutricionista via its two named relations (FR-52)
 
 ## Epic 4: Reseñas de Nutricionistas y Moderación
 
@@ -753,6 +958,70 @@ So that I control my content while abuse can still be moderated appropriately.
 **When** I attempt to EDIT another Usuario's Publicación
 **Then** the action is rejected — admin may delete but never edit another's post, per AD-1's asymmetric matrix for this resource, distinct from Eventos/Noticias and Catálogo's uniform matrix
 
+### Story 5.3: Carrusel de imágenes y videos en publicaciones
+
+As an authenticated user,
+I want to attach multiple photos and videos to my publicación as a carousel, freely mixed,
+So that I can share richer content than a single photo or clip.
+
+**Acceptance Criteria:**
+
+**Given** I am using the composer (or editing my own Publicación, per Story 5.2)
+**When** I attach up to 10 media items, in any mix of images and videos
+**Then** the upload succeeds and all items are stored as the Publicación's media carousel, in the order I added them (FR-44)
+
+**Given** I attempt to attach an 11th media item
+**When** I try to add it
+**Then** it is rejected before upload, with a clear message that 10 is the maximum
+
+**Given** any video among the attached items
+**When** its duration exceeds 2 minutes
+**Then** that item is rejected with a clear message before the Publicación is created/updated — each video is checked independently, images have no duration limit (FR-44)
+
+**Given** a Publicación with a media carousel
+**When** it renders in the feed or in its detail view
+**Then** items display one at a time with a way to move to the next/previous item; videos play inline with standard controls, images keep the existing click-to-zoom behavior
+
+**Given** I am editing a Publicación that already has a media carousel
+**When** I attach a new set of media files and save
+**Then** the entire carousel is replaced wholesale by the new set — there is no per-item add/remove on an existing carousel in this MVP (FR-44)
+
+**Given** the media files are uploaded
+**When** they're persisted
+**Then** they are stored on local disk via the existing upload pattern used for images — no early migration to Epic 8's Cloudflare R2 storage; these are expected to be test uploads that get deleted
+
+### Story 5.4: Comentarios en publicaciones `[Added 2026-10-08]`
+
+As an authenticated Usuario,
+I want to comment on a Publicación,
+So that I can engage with what others post, not just view it.
+
+**Acceptance Criteria:**
+
+**Given** I am authenticated and viewing a Publicación (feed or detail view)
+**When** I submit a comment
+**Then** it is created and shown in a list on that Publicación, visible to anyone who can view it (FR-46)
+
+**Given** a Publicación is hidden by the deactivated-account cascade (FR-40, Story 2.4)
+**When** its author is deactivated
+**Then** its comments are hidden along with it
+
+### Story 5.5: Likes/reacciones en publicaciones `[Added 2026-10-08]`
+
+As an authenticated Usuario,
+I want to like a Publicación,
+So that I can show quick appreciation without writing a comment.
+
+**Acceptance Criteria:**
+
+**Given** I am authenticated and viewing a Publicación
+**When** I tap the like control
+**Then** it toggles on, incrementing the visible like count; tapping again toggles it off, decrementing it (FR-47)
+
+**Given** I have already liked a Publicación
+**When** I attempt to like it again without unliking first
+**Then** the server enforces at most one like per Usuario per Publicación
+
 ## Epic 6: Reportes/Indicadores
 
 Admin sees a polished chart plus numeric counts of registered users by type, sharing its aggregate source with the homepage stats.
@@ -784,6 +1053,30 @@ So that I can see community composition at a glance without querying the databas
 **Given** I am not admin
 **When** I attempt to access this view or its route
 **Then** access is denied
+
+### Story 6.2: Reporte de publicaciones por tipo de usuario con rango de fechas
+
+As an admin,
+I want to see how many publicaciones each type of user has created, filterable by date range,
+So that I can understand activity patterns across the community, not just its static composition.
+
+**Acceptance Criteria:**
+
+**Given** I am admin
+**When** I navigate to Reportes/Indicadores
+**Then** I see a second report showing the count of Publicaciones grouped by the author's TipoUsuario (FR-45)
+
+**Given** this report
+**When** no date range is selected
+**Then** it shows counts across all Publicaciones to date, grouped by the four TipoUsuario categories
+
+**Given** this report
+**When** I select a start and end date
+**Then** the counts update to reflect only Publicaciones created within that range (inclusive)
+
+**Given** I am not admin
+**When** I attempt to access this view or its route
+**Then** access is denied, same as Story 6.1
 
 ## Epic 7: Settings, Tema y Refresco Visual
 
@@ -860,38 +1153,6 @@ So that Elite Hub feels like one coherent product, not a patchwork.
 **Given** every visual change in this story
 **When** verified
 **Then** existing responsive behavior across breakpoints is preserved unbroken (FR-34)
-
-### Story 7.3: Accesibilidad y responsividad como piso verificable
-
-As a user relying on assistive technology or a specific device size,
-I want every touched surface to meet a real accessibility and responsiveness floor,
-So that the visual refresh doesn't leave anyone behind.
-
-**Acceptance Criteria:**
-
-**Given** any interactive icon-only control
-**When** rendered
-**Then** it carries an `aria-label` in Spanish matching its visible-text equivalent elsewhere (UX-DR16)
-
-**Given** infinite-scroll loading and end-of-list states (Story 2.1 pattern)
-**When** they change
-**Then** they are announced via `aria-live="polite"` (UX-DR16)
-
-**Given** the focus-ring token
-**When** any interactive element receives focus
-**Then** the ring holds AA contrast against both light and dark canvases (UX-DR16)
-
-**Given** required vs. optional fields on any form
-**When** rendered
-**Then** they are marked in text, never by color alone (UX-DR16)
-
-**Given** `prefers-reduced-motion` is set
-**When** a user interacts with a card (hover-lift) or icon badge (invert)
-**Then** the transition reduces to an opacity/no-transform change (UX-DR16)
-
-**Given** every card grid, admin table, and the Reportes/Indicadores view
-**When** tested at `<md`, `md`, `lg`, and `xl`
-**Then** each matches the exact breakpoint behavior specified in EXPERIENCE.md's Responsive & Platform table (UX-DR17, FR-34) — the verification gate for every visual-refresh surface from Story 7.2 and every new surface built in Epics 2-6
 
 ## Epic 8: Migración de Almacenamiento de Archivos
 

@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
         isAdmin: true,
         createdAt: true,
         updatedAt: true,
+        informacion: { select: { tipoUsuario: { select: { tipo: true } } } },
       },
     })
 

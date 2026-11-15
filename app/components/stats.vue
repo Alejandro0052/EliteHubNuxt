@@ -1,15 +1,10 @@
 <template>
-	<div class="relative flex flex-col items-center justify-center gap-4 rounded-2xl bg-white p-6">
-		<div class="flex items-center justify-end text-6xl font-semibold">
+	<div class="card-lift relative px-5 pt-4 pb-5 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+		<div class="flex items-baseline font-display text-7xl leading-[0.9] font-extrabold tabular-nums text-on-surface dark:text-on-surface-dark">
 			<count-up :start-val="startValue" :end-val="endValue" :duration="duration"></count-up>
-			<span>+</span>
 		</div>
-		<span class="text text-gray-600">{{ text }}</span>
-		<div
-			v-if="icon"
-			class="absolute top-1 right-1 flex items-center justify-center rounded-full bg-black p-2 text-white">
-			<Icon :name="icon" />
-		</div>
+		<span class="mt-1 block text-on-surface-variant dark:text-on-surface-variant-dark">{{ text }}</span>
+		<Icon v-if="icon" :name="icon" aria-hidden="true" class="absolute top-4 right-4 text-xl text-primary dark:text-primary-dark" />
 	</div>
 </template>
 

@@ -2,14 +2,14 @@
 title: Elite Hub — MVP PRD
 status: final
 created: 2026-07-19
-updated: 2026-07-21
+updated: 2026-10-05
 ---
 
 # PRD: Elite Hub — MVP
 
 ## 0. Document Purpose
 
-This PRD defines the MVP build-out for Elite Hub, a Nuxt 4 full-stack sports-community platform. It is written for the solo builder (product owner + developer, same person) and for whoever picks up downstream work — UX specs, architecture, epics/stories. It builds directly on `briefs/brief-Elite_Hub-2026-07-16/brief.md` and its `addendum.md`, which are not duplicated here but referenced where relevant; deeper implementation-leaning detail carried forward from that addendum (and new detail volunteered during this PRD's discovery) lives in this run's own `addendum.md`. Features are grouped, each with globally-numbered Functional Requirements (FR-1 through FR-43; IDs are stable and not renumbered when requirements are added, so a few clusters — e.g. FR-36–FR-43 — sit logically within earlier feature sections despite the gap); `[ASSUMPTION]` tags mark inferences made without explicit confirmation and are indexed in §12.
+This PRD defines the MVP build-out for Elite Hub, a Nuxt 4 full-stack sports-community platform. It is written for the solo builder (product owner + developer, same person) and for whoever picks up downstream work — UX specs, architecture, epics/stories. It builds directly on `briefs/brief-Elite_Hub-2026-07-16/brief.md` and its `addendum.md`, which are not duplicated here but referenced where relevant; deeper implementation-leaning detail carried forward from that addendum (and new detail volunteered during this PRD's discovery) lives in this run's own `addendum.md`. Features are grouped, each with globally-numbered Functional Requirements (FR-1 through FR-45; IDs are stable and not renumbered when requirements are added, so a few clusters — e.g. FR-36–FR-45 — sit logically within earlier feature sections despite the gap); `[ASSUMPTION]` tags mark inferences made without explicit confirmation and are indexed in §12. FR-44 and FR-45 (video attachments for Publicaciones; a Publicaciones-by-type report) were added 2026-08-01, after the rest of this PRD was finalized — new scope approved once the MVP timeline showed slack ahead of the 2026-08-08 checkpoint. FR-46 through FR-52 (comments and likes on Publicaciones; a name search on directories; additional Ítem de Catálogo fields plus ratings/reviews on them; a focused 4-sport list with fully dynamic sport-specific registration fields for Deportistas; multiple social media profiles for all Usuario types) were added 2026-10-03 through 2026-10-05, by which point Epics 1–7 were already built and Epic 8 remained the only not-yet-started epic (see `sprint-status.yaml`) — these seven are documented-only, explicitly not scheduled into any epic/story yet (§9.4), though as of 2026-10-05 all field-level TBDs within them are resolved.
 
 ## 1. Vision
 
@@ -88,12 +88,12 @@ Delivery targets a functional checkpoint on 2026-08-08 — a soft checkpoint for
 
 - **Usuario** — A registered account. Has `correo`, `password`, `isAdmin` flag, and exactly one `TipoUsuario` once registration completes.
 - **TipoUsuario (Tipo de Usuario)** — The account category, chosen at registration and immutable thereafter: **Deportista**, **Marca**, **Nutricionista**, or **Patrocinador**. Drives which fields, directory, and capabilities apply to a Usuario.
-- **Deportista** — TipoUsuario for athletes. Associated with a **Deporte** (sport) from a fixed list, a **Nivel** (PRINCIPIANTE/INTERMEDIO/AVANZADO/PROFESIONAL), and athlete-specific fields (see FR-2).
+- **Deportista** — TipoUsuario for athletes. Associated with a **Deporte** (sport) from a fixed list, a **Nivel** (PRINCIPIANTE/INTERMEDIO/ELITE/PROFESIONAL), and athlete-specific fields (see FR-2).
 - **Marca** — TipoUsuario for brands. Only Marca accounts may create **Ítems de Catálogo**.
-- **Nutricionista** — TipoUsuario for nutrition professionals. The only type that receives **Reseñas**.
+- **Nutricionista** — TipoUsuario for nutrition professionals. The only type that receives **Reseñas**. `[Pending FR-53, added 2026-11-13: slated to broaden into "Profesional de la Salud," with "profesión" becoming a fixed-list selector (Nutrición, Fisioterapia, Kinesiología, Psicología deportiva, Psicología, Otro) — not yet implemented.]`
 - **Patrocinador** — TipoUsuario for individual sponsors/managers with resources to support other users.
 - **Informacion** — The extended profile record attached to a Usuario, holding type-conditional fields (bio, contact details, professional/athletic details, etc.).
-- **Deporte** — A fixed-list sport category (fútbol, baloncesto, ciclismo, running, crossfit, voleibol, gimnasia, boxeo, natación, otros) used both as a Deportista's chosen sport and as a directory filter.
+- **Deporte** — A fixed-list sport category (fútbol, baloncesto, ciclismo, running, crossfit, voleibol, gimnasia, boxeo, natación, otros) used both as a Deportista's chosen sport and as a directory filter. `[Pending FR-50, added 2026-10-03: this list is slated to narrow to fútbol/ciclismo/patinaje/boxeo/otro, with otro's four siblings each gaining their own sport-specific field set — not yet implemented.]`
 - **Directorio** — The segmented, infinite-scroll listing view for a given TipoUsuario (one per type: Deportistas, Marcas, Nutricionistas, Patrocinadores).
 - **Ítem de Catálogo** — A product or service listed by a Marca, with `nombre`, `tipo` (servicio | físico), and optional image(s). Shown in the Marca's own catalog section and in the aggregate Catálogo view.
 - **Reseña** — A rating + comment left by an authenticated Usuario on a Nutricionista's profile.
@@ -156,6 +156,62 @@ Género and país fields (wherever they appear across the four registration form
 - Submitting a género or país value outside the fixed list is rejected by the form.
 
 **Notes:** The exact enumerated values for género and país are a UX/architecture-phase detail, not fixed by this PRD.
+
+#### FR-50: Focused sport list and sport-specific dynamic fields for Deportista `[Added 2026-10-03, fully specified for futbol/ciclismo/patinaje/boxeo 2026-10-05]`
+The Deportista `deporte` field (FR-2) is narrowed from the current 10-sport fixed list (§5.7 FR-19) down to exactly 4 focus sports — **fútbol**, **ciclismo**, **patinaje**, **boxeo** — plus a 5th generic catch-all, **otro**. Selecting one of the 4 focus sports dynamically reveals fields specific to that sport (replacing the sport-conditional portion of today's uniform Deportista field set — universal fields like nombre, correo, fecha de nacimiento, altura, peso, etc. still apply regardless of sport, per FR-2); selecting **otro** shows the existing generic/sport-agnostic field set instead.
+
+**Ciclismo and Patinaje are both multi-modalidad cases:** each fans out into multiple modalidades (Ciclismo: Ruta, Montaña/MTB, BMX, Downhill, Pista/Velódromo; Patinaje: Velocidad, Artístico, Freestyle/Slalom, Agresivo/Street/Park, Roller Derby/Dance), each modalidad with its own field set (full verbatim lists in `addendum.md`). Unlike Fútbol and (pending) Boxeo, a Usuario practicing Ciclismo or Patinaje can hold **more than one modalidad at once** (multi-select, not exclusive); their profile displays the resulting fields sectioned per modalidad held. Ciclismo's BMX modalidad further forks into a mandatory Race-vs-Freestyle choice, each with its own distinct field subset — Patinaje's modalidades each have a required sub-modalidad choice too, but (unlike BMX) the actual field set collected afterward stays the same across a given sport's sub-modalidades. This multi-modalidad/sectioned-profile mechanism is confirmed for Ciclismo and Patinaje only — other multi-discipline cases (e.g. triatlón) are a confirmed future priority, not addressed now.
+
+**Fútbol and Boxeo stay single-modalidad:** one `deporte` selection reveals one field set directly, no fan-out (full lists in `addendum.md`). For Boxeo, Amateur-vs-Profesional was considered as a BMX-style fork but the user decided against it — Amateur/Profesional/Ambos stays a plain descriptive field, not a structural branch.
+
+**Consequences (testable):**
+- The registration (and profile-edit) `deporte` dropdown offers exactly 5 options: fútbol, ciclismo, patinaje, boxeo, otro.
+- Selecting fútbol or boxeo reveals that sport's own single field set.
+- Boxeo's field set applies uniformly regardless of the Amateur/Profesional/Ambos value selected — that field does not change which other fields appear.
+- Selecting ciclismo or patinaje reveals a modalidad multi-select specific to that sport; each modalidad selected contributes its own field section to the form and, afterward, to the profile view. Selecting Ciclismo's BMX modalidad additionally requires choosing Race or Freestyle, each revealing a distinct field subset.
+- Selecting otro reveals the generic field set (today's uniform Deportista fields, minus whatever becomes sport-specific).
+- A Deportista cannot submit fields belonging to a sport/modalidad they did not select.
+- The branching decisions (deporte → modalidad selection → sub-modalidad, where one exists) are presented as a multi-step wizard with a visible back control or breadcrumb at every stage, letting the Usuario return to any earlier stage without losing already-entered data.
+- For Ciclismo/Patinaje, once modalidades are chosen, filling their field sets is **not** part of that wizard: each selected modalidad gets its own tab/accordion section, navigable in any order (no forced sequence), each showing a completion indicator. A Usuario may hold any number of modalidades from 1 up to all available for that sport at once. The same tab/accordion pattern is reused, read-only, on the profile view to display a multi-modalidad Usuario's fields sectioned by modalidad.
+
+**Notes:** `[Confirmed 2026-10-05: "otro" intentionally keeps today's existing generic field set unchanged — nivel deportivo, años de experiencia, objetivos actuales, marcas personales (opcional), lesiones (opcional) — gaining nothing new; it only loses the sport-specific fields that fútbol/ciclismo/patinaje/boxeo now gain. No open TBDs remain on this FR.]` Full field lists per sport/modalidad are captured verbatim in `addendum.md`. This narrows and supersedes FR-19's sport filter chip list (§5.7) and the uniform `deporte`-conditional portion of FR-2's Deportista field list once implemented — both will need to be updated in lockstep with whatever per-sport fields are eventually defined, including the shared fixed-list source (`deporte` enum) and Story 2.5's filter chips. The Deportistas directory card view (FR-16) will also need rework to surface whatever sport-specific summary fields apply once defined, and — for Ciclismo/Patinaje specifically — to represent a Usuario with multiple modalidades. Both are flagged as known downstream dependencies, not specced in this pass.
+
+#### FR-51: Multiple social media profiles for all Usuario types `[Added 2026-10-05]`
+The existing single `link redes sociales` field (FR-2, today collected once for every Usuario type — Deportista, Marca, Nutricionista, Patrocinador) is expanded into **multiple** social media profile links per Usuario (e.g. Instagram, Facebook, TikTok, X/Twitter, YouTube).
+
+**Consequences (testable):**
+- A Usuario of any type can add more than one social media profile link, not just one.
+- This applies uniformly across all four TipoUsuario — it is not sport-specific and does not belong to FR-50's per-sport field sets.
+- Each entry is added via a platform picker (icon + name) followed by a URL field — not a bare list of free-text links. Fixed platform list: Instagram, Facebook, TikTok, X/Twitter, YouTube, WhatsApp, LinkedIn, plus "Otro" (free-text platform name + URL). `[Confirmed 2026-11-06]`
+- A Usuario can add at most one entry per platform from the fixed list (the already-added platform is removed/disabled from the picker); "Otro" has no such cap since its name is free text.
+
+**Notes:** Surfaced during FR-50's brainstorming (originally raised in the context of fútbol) but scoped as its own cross-cutting FR since it affects every Usuario type, not just Deportista. Full field/UX detail in `addendum.md`.
+
+#### FR-53: Generalize Nutricionista into "Profesional de la Salud" `[Added 2026-11-13]`
+The `Nutricionista` TipoUsuario (FR-1/FR-2) is renamed and broadened to **Profesional de la Salud**, since health-adjacent roles beyond nutrition (fisioterapeutas, kinesiólogos, psicólogos deportivos, etc.) fit the same pattern — a professional with contact info and a Reseña-based reputation — but today have no way to register as what they actually are. The free-text `profesión` field (FR-2) is replaced by a fixed-list selector — the same fixed-list pattern already used for `deporte` (FR-19/FR-50) — with values: **Nutrición, Fisioterapia, Kinesiología, Psicología deportiva, Psicología, Otro** (free-text name required when Otro is picked). `especialidad` (FR-25) stays free text, now read as the sub-specialty within whichever profession is selected (e.g. "deportiva" within Nutrición), not a synonym for the profession itself.
+
+**Consequences (testable):**
+- The TipoUsuario label and the 4th segmented directory (FR-15) are renamed from "Nutricionista(s)" to "Profesional(es) de la Salud" everywhere user-facing: registration, directory listing, detail view, admin panel.
+- At registration (and profile edit), `profesión` becomes a fixed-list dropdown with the six values above, instead of free text.
+- The "Profesionales de la Salud" directory gains a profession filter, mirroring FR-19's sport-filter mechanism on Deportistas — filtering the listing by one of the fixed profession values.
+- The existing Reseña system (FR-24, FR-36, FR-37) and `especialidad` field (FR-25) carry over unchanged — a review is left on a Profesional de la Salud's profile the same way regardless of which profession they practice; nothing about the rating/moderation mechanism becomes profession-specific.
+- No profession-specific field sets are introduced in this pass (unlike FR-50's per-sport fields for Deportista) — this FR covers only the type rename, the profession selector, and the directory filter.
+
+**Notes:** This is a renaming/generalization pass, not a field-expansion pass. Downstream impact flagged but deliberately left unresolved here, for whoever schedules this: the `Resena` Prisma model's `nutricionista`-named relation, the `TipoUsuario` seed value `"Nutricionista"`, every FR/UJ/glossary reference to "Nutricionista" (FR-2, FR-15, FR-24, FR-25, FR-36, FR-37, FR-48, UJ-3), and a migration path for already-registered Nutricionista accounts' existing free-text `profesión` value onto the new fixed list (most likely auto-mapping to "Nutrición," but not decided here). Full profession list and rationale captured in `addendum.md`.
+
+#### FR-54: No "Entrenador" (coach/trainer) account type exists `[Added 2026-11-13, identified gap — not designed]`
+No TipoUsuario, directory, profile, or capability exists today for sports coaches/trainers as account holders. "Entrenador" currently only appears as a free-text sub-field inside Boxeo's sport-specific fields (`gimnasioClubEntrenador`, FR-50) — the athlete's own coach's name as a data point on the athlete's profile, not a person with their own account.
+
+**Consequences (testable):** None yet — this FR documents a gap, not a requirement. No UI/API behavior changes result from it alone.
+
+**Notes:** Surfaced while discussing FR-53 — a coach/trainer is a distinct role from a health professional (nutrición/fisioterapia/kinesiología/psicología/psicología deportiva), so this is deliberately kept as its own backlog item rather than folded into FR-53's profession list. Fully `[TBD]`: whether this becomes its own 5th/6th TipoUsuario, what fields/directory/Reseña behavior it would have, and how (or whether) it relates to FR-53 are all undecided — raised here only so the gap isn't lost before any design work has happened.
+
+#### FR-55: Real password recovery flow `[Added 2026-11-14, identified gap — not designed]`
+The "Recuperar contraseña" link on `/login` has never been wired to a real flow — it was a placeholder pointing at `/` (home), which looked to the user like clicking it just silently bounces them back to the start. As of this FR, the link is removed from the login page entirely (rather than left pointing nowhere) until the real feature exists — no dead UI should ship.
+
+**Consequences (testable):** None yet — this FR documents a gap, not a requirement. No "recuperar contraseña" entry point exists anywhere in the app until this is scheduled and built.
+
+**Notes:** Confirmed: there is no reset-token model/column on `Usuario`, no `server/api` endpoint, no dedicated page, and no email-sending service configured anywhere in the stack today (checked `prisma/schema.prisma`, `server/api/auth/`, and dependencies — nothing beyond `next-auth`'s credentials-based login exists). Building this for real requires, at minimum: (1) a password-reset-token field/model with an expiry, (2) a "request reset" page + endpoint that issues a token, (3) an email-delivery mechanism to actually send the reset link (no provider chosen yet — this blocks implementation until decided), and (4) a "set new password" page + endpoint that consumes the token. None of this is designed here — raised only so the gap isn't lost, mirroring FR-54's treatment.
 
 #### FR-3: Type immutability
 Once a Usuario's TipoUsuario is set at registration, it cannot be changed by the Usuario or, per this FR, by any in-app self-service action.
@@ -309,6 +365,16 @@ While a Usuario's account is deactivated (`activo = false`), their content — P
 - Their Ítems de Catálogo no longer appear in the Catálogo view while deactivated.
 - Reactivating the account (`activo = true`) restores all of the above without requiring the content to be re-created.
 
+#### FR-48: Name search on directories `[Added 2026-10-03]`
+Each of the four segmented directories (Deportistas, Marcas, Nutricionistas, Patrocinadores) offers a name search box (magnifying-glass icon) alongside its existing listing, letting a Usuario type a name/razón social to find a specific person or brand.
+
+**Consequences (testable):**
+- Typing a search term re-fetches the directory's first cursor batch filtered to Usuarios whose nombre/apellido (or nombre de empresa, for Marcas) matches — not client-side filtering of already-loaded data.
+- On Deportistas, the search term and the existing sport filter (FR-19) compose together (both apply at once), rather than being mutually exclusive.
+- Clearing the search term returns to the unfiltered directory.
+
+**Notes:** `[ASSUMPTION: match is case-insensitive substring matching on name fields — not explicitly confirmed, standard UX expectation.]`
+
 ---
 
 ### 5.7 Deportista Sport Filters
@@ -320,6 +386,8 @@ While a Usuario's account is deactivated (`activo = false`), their content — P
 
 #### FR-19: Sport category filter
 The Deportistas directory offers filters for: fútbol, baloncesto, ciclismo, running, crossfit, voleibol, gimnasia, boxeo, natación, otros. No filter selected shows all Deportistas.
+
+**Notes:** `[Pending FR-50, added 2026-10-03]` This chip list is slated to be narrowed to fútbol/ciclismo/patinaje/boxeo/otro once FR-50 (§5.1) ships — not yet implemented, documented here so the two FRs are updated together rather than drifting apart.
 
 ---
 
@@ -357,6 +425,27 @@ The Usuario who created an Ítem de Catálogo can edit or delete it; an admin ca
 **Consequences (testable):**
 - A Marca attempting to edit/delete another Marca's Ítem de Catálogo is rejected.
 - Admin edit/delete succeeds on any Ítem de Catálogo, own or not.
+
+#### FR-49: Additional Ítem de Catálogo fields and detail-view image carousel `[Added 2026-10-03, fields confirmed 2026-10-05]`
+The Ítem de Catálogo field set (FR-21: nombre, tipo, imágenes) is expanded with **descripción**, **precio de referencia**, and **disponibilidad**; its detail view gains a proper image carousel (replacing today's static image grid with click-to-zoom).
+
+**Consequences (testable):**
+- Creating/editing an Ítem de Catálogo additionally captures a free-text descripción, a reference price, and an availability status.
+- `precio de referencia` is purely informational — it does not enable checkout, cart, or any payment flow; FR-23 (contact-only, no payment processing) still applies unchanged.
+- `disponibilidad` is selected from a fixed list. `[ASSUMPTION: Disponible, Agotado, Por pedido — exact values not explicitly confirmed by the user, following the project's fixed-list convention (NFR-12).]`
+- The detail view's image carousel behaves like the Publicación media carousel (FR-44): one item at a time, next/previous navigation, replacing the current static grid + click-to-zoom lightbox.
+
+**Notes:** No checkout/payment implication — FR-23 still applies regardless of field count. See also FR-52 (§5.8) for the new ratings/reviews capability added to Ítems de Catálogo in the same pass.
+
+#### FR-52: Ratings and reviews on Ítems de Catálogo `[Added 2026-10-05]`
+Ítems de Catálogo gain the same rating-and-review package already built for Nutricionistas (§5.9 FR-24/FR-36/FR-37) — a star rating (1-5) plus a comment, one review per Usuario per Ítem de Catálogo, with admin able to retract a review and block the offending Usuario.
+
+**Consequences (testable):**
+- Any authenticated Usuario can leave a rating + comment on an Ítem de Catálogo they don't own; it's visible on the item's detail view, mirroring FR-24.
+- A Usuario who already reviewed a given Ítem de Catálogo cannot submit a second review for it, mirroring FR-37's one-review-per-nutricionista limit.
+- Admin can retract a fake/bad-faith review and deactivate (block) the reviewing Usuario, mirroring FR-36 exactly — same destructive-confirm step, same consequence (the blocked Usuario's session is rejected on their next request per the existing cascade, Story 2.4).
+
+**Notes:** This is a new model (e.g. `ResenaCatalogo`), not a reuse of the existing `Resena` model — `Resena` is scoped to Nutricionista by its two named relations (`autor`, `nutricionista`); a second, structurally identical model targeting `ItemCatalogo` keeps the schema consistent with the one-model-per-target-type pattern already established, rather than introducing a polymorphic relation.
 
 ---
 
@@ -401,7 +490,7 @@ Admin can remove (retract) any Reseña, and can deactivate (block) the Usuario w
 **Functional Requirements:**
 
 #### FR-26: Create a publicación
-Any authenticated Usuario can create a Publicación consisting of text and an optional single image. Realizes UJ-4.
+Any authenticated Usuario can create a Publicación consisting of text and an optional media carousel of up to 10 items — images and videos freely mixed (FR-44). Realizes UJ-4.
 
 #### FR-27: Home feed
 Publicaciones from all Usuarios appear on the app's home feed, most-recent-first. `[ASSUMPTION: ordering — most-recent-first — not explicitly specified.]`
@@ -412,6 +501,33 @@ The authoring Usuario can edit or delete their own Publicación; an admin can de
 **Consequences (testable):**
 - A non-admin Usuario attempting to edit/delete another Usuario's Publicación is rejected.
 - Admin delete succeeds on any Publicación.
+
+#### FR-44: Media carousel for publicaciones (images and video)
+A Publicación may include a carousel of up to 10 media items, freely mixing images and videos in any combination and order. Each video in the carousel is individually capped at 2 minutes in duration; images carry no such limit.
+
+**Consequences (testable):**
+- Uploading between 0 and 10 media items (any mix of images/videos) succeeds; attempting to attach an 11th item is rejected.
+- Each video in the set is independently checked against the 2-minute cap; a submission containing any video over 2:00 is rejected with a clear message before the Publicación is created/updated.
+- The carousel renders in the feed and in the publicación's detail view, showing one item at a time (image or video) with a way to move to the next/previous item; videos are playable inline via standard controls.
+- Editing a Publicación's media replaces the entire carousel wholesale when new files are provided (matching this app's existing single-attachment replace policy, generalized to a set) — there is no per-item add/remove on an existing published carousel in this MVP. `[ASSUMPTION: edit-time media replacement is all-or-nothing, not per-item — not explicitly confirmed, follows the existing replace-wholesale convention used elsewhere in this PRD (e.g. profile photo, catalog item images).]`
+
+**Notes:** Supersedes this FR's original 2026-08-01 single-image-OR-single-video design — redesigned the same day, before the first version was user-tested, once the user reconsidered scope. Per user decision, media files stay on local disk for now, same as before — these are test uploads expected to be deleted, not production content. This does not change §5.14's sequencing: the Cloudflare R2 migration (FR-35) still lands last and will cover these files when it does.
+
+#### FR-46: Comentarios en Publicaciones `[Added 2026-10-03]`
+Any authenticated Usuario can leave a comment on a Publicación visible to them; comments are shown as a list on the Publicación (feed card and/or detail view).
+
+**Consequences (testable):**
+- Submitting a comment on a Publicación creates a durable record, shown to anyone who can view that Publicación.
+- A Publicación's comments are hidden/shown following the same deactivated-account cascade as the Publicación itself (FR-40).
+
+**Notes:** `[TBD — whether a commenting Usuario can edit/delete their own comment, and whether admin can moderate comments independently of the parent Publicación, are not yet decided; deferred to a follow-up elicitation pass before this is built.]`
+
+#### FR-47: Likes/reacciones en Publicaciones `[Added 2026-10-03]`
+Any authenticated Usuario can like a Publicación visible to them; liking is a toggle (like/unlike), capped at one like per Usuario per Publicación, with a visible count on the Publicación.
+
+**Consequences (testable):**
+- Liking a Publicación a Usuario has not yet liked increments the visible count; unliking decrements it.
+- A Usuario cannot register a second simultaneous like on the same Publicación (enforced server-side, mirroring the one-Reseña-per-Nutricionista uniqueness pattern, FR-37).
 
 ---
 
@@ -432,6 +548,15 @@ The Reportes/Indicadores view displays a chart (donut or bar) breaking down regi
 The Reportes/Indicadores view also displays the underlying numeric counts per TipoUsuario (not chart-only), so the exact figures are readable without interpreting the visualization.
 
 **Notes:** The specific charting library/approach is a technical decision deferred to architecture (see `addendum.md`). This is a first slice — additional metrics are expected post-MVP and this view should not be built in a way that assumes it's the final shape. `[NOTE FOR PM]`
+
+#### FR-45: Publicaciones-by-type report with date range filter
+The Reportes/Indicadores view gains a second report: the count of Publicaciones grouped by the authoring Usuario's TipoUsuario, filterable by a date range on the publicación's creation date.
+
+**Consequences (testable):**
+- With no date range selected, the report shows counts across all Publicaciones to date, grouped by the four TipoUsuario categories.
+- Selecting a date range updates the counts to reflect only Publicaciones created within that range.
+
+**Notes:** This is the second slice of the Reportes/Indicadores surface (after FR-29/FR-30); confirms the view is meant to grow, per the existing `[NOTE FOR PM]` above.
 
 ---
 
@@ -538,8 +663,8 @@ The main feature build-out — the actual core loop.
 - §5.7 Deportista Sport Filters (FR-19)
 - §5.8 Marca Product/Service Catalog (FR-20–FR-23, FR-39, FR-43)
 - §5.9 Nutricionista Ratings & Reviews (FR-24–FR-25, FR-36–FR-37)
-- §5.10 Publicaciones / Home Feed (FR-26–FR-28)
-- §5.11 Reportes/Indicadores (FR-29–FR-30)
+- §5.10 Publicaciones / Home Feed (FR-26–FR-28, FR-44)
+- §5.11 Reportes/Indicadores (FR-29–FR-30, FR-45)
 - §5.12 Settings & Theme Toggle (FR-31–FR-32)
 - §5.13 Visual/UI Overhaul (FR-33–FR-34)
 - §5.14 File Storage Migration (FR-35) — sequenced last, immediately before deploy-readiness
@@ -550,13 +675,28 @@ The main feature build-out — the actual core loop.
 
 Not tiered Must/Should because it isn't gated on any individual FR's delivery — it runs alongside the feature work for the whole MVP window, from now through Aug 22. E2E tests are being progressively rewritten in TypeScript (Playwright), replacing the existing Python/pytest suite (currently 4 public-page navigation flows). This is explicitly a real, tracked part of the MVP effort, not deferred to post-MVP maintenance — distinct from the formal unit/component test suite and CI/CD pipeline, both of which *are* out of scope for this MVP (§8).
 
+### 9.4 Post-MVP Documented Backlog (added 2026-10-03, not yet scheduled)
+
+By this date, Epics 1–7 were already built and Epic 8 (file storage migration, FR-35) was the only remaining planned epic (see `sprint-status.yaml`). The five FRs below were explicitly requested as documentation-only — written up so the requirement is captured precisely, but **not** assigned to any epic/story and **not** to be implemented yet. They sit outside the original Aug 8/Aug 22 Must/Should tiers (§9.1/§9.2), which this addendum does not reopen.
+
+- §5.10 Publicaciones — FR-46 (comentarios), FR-47 (likes/reacciones)
+- §5.6 Per-Type Directory & Profile System — FR-48 (buscador por nombre)
+- §5.8 Marca Product/Service Catalog — FR-49 (campos adicionales de Ítem de Catálogo + carrusel de imágenes, confirmed 2026-10-05), FR-52 (reseñas en Ítems de Catálogo, same package as Nutricionista reviews, added 2026-10-05)
+- §5.1 / §5.7 Registration & Deportista Sport Filters — FR-50 (deportes enfocados + campos dinámicos por deporte; fútbol/ciclismo/patinaje/boxeo resolved 2026-10-05, only "otro" fallback still `[TBD]`)
+- §5.1 Registration — FR-51 (múltiples perfiles de redes sociales, aplica a los 4 tipos de Usuario)
+- §5.9 Nutricionista Ratings & Reviews — FR-53 (generalización de Nutricionista a "Profesional de la Salud", lista fija de profesiones + filtro de directorio, added 2026-11-13)
+- §2.1 Registration — FR-54 (vacío identificado: no existe tipo de cuenta "Entrenador"/coach — gap documentado, sin diseñar, added 2026-11-13)
+- §2.1 Registration/Login — FR-55 (recuperación de contraseña real — el enlace "Recuperar contraseña" no llevaba a ningún flujo funcional y fue retirado del login mientras tanto; gap documentado, sin diseñar, added 2026-11-14)
+
+**When the user is ready to schedule any of these:** run `bmad-create-epics-and-stories` (or amend an existing epic — FR-46/FR-47 extend Epic 5, FR-48 extends Epic 2, FR-49/FR-52 extend Epic 3 (FR-52 mirrors Epic 4's Resena pattern on a new target), FR-50/FR-51 extend Epic 1 and 2, FR-53 extends Epic 4 (and touches Epic 1's registration + Epic 2's directory), FR-54/FR-55 have no epic yet since neither is designed) followed by the usual `bmad-create-story` / `bmad-dev-story` loop. As of 2026-10-05, FR-46 through FR-52 were fully specified — no field-level TBDs remained. FR-53 (added 2026-11-13) is also fully specified (fixed profession list + directory-rename/filter mechanics confirmed) modulo the downstream-impact items called out in its own Notes. FR-54 and FR-55 (added 2026-11-13/14) are explicitly **not** specified — both are documented gaps only, and each needs its own discovery/scoping pass before it can be scheduled (FR-55 in particular is blocked on choosing an email-delivery provider).
+
 ## 10. Success Metrics
 
 Given the pre-launch, evaluation-driven context, success here is primarily functional-completion and quality-of-execution, not traffic/engagement (no real user base exists yet). Forward-looking metrics are included given the user's confirmed intent to build toward real future deployment (§1, §6) rather than treat this as a one-off classroom exercise.
 
 **Primary**
 - **SM-1:** 100% of Must-tier FRs (FR-1–FR-14, FR-38, FR-41–FR-42) demonstrably working by 2026-08-08. Validates §9.1.
-- **SM-2:** 100% of Should-tier FRs (FR-15–FR-37, FR-39–FR-40, FR-43) demonstrably working by 2026-08-22. Validates §9.2.
+- **SM-2:** 100% of Should-tier FRs (FR-15–FR-37, FR-39–FR-40, FR-43–FR-45) demonstrably working by 2026-08-22. Validates §9.2.
 - **SM-3:** Registration completion rate — % of started registrations that reach a created account, tracked once real users exist. Validates FR-1, FR-2.
 
 **Secondary**
@@ -569,7 +709,13 @@ Given the pre-launch, evaluation-driven context, success here is primarily funct
 
 ## 11. Open Questions
 
-The seven open questions raised in the prior revision of this PRD were resolved by the user during discovery (see `.memlog.md` for the full decision trail) and are now reflected as confirmed decisions in FR-38, FR-39, FR-40, FR-41, FR-36, FR-37, and §2.2/§7. No open questions remain as of this revision (2026-07-19).
+The seven open questions raised in the prior revision of this PRD were resolved by the user during discovery (see `.memlog.md` for the full decision trail) and are now reflected as confirmed decisions in FR-38, FR-39, FR-40, FR-41, FR-36, FR-37, and §2.2/§7. No open questions remain as of the 2026-07-19 revision.
+
+**2026-08-01 addendum to this section:** FR-44 (video attachments for Publicaciones) and FR-45 (Publicaciones-by-type report) were added as new scope once the timeline showed slack ahead of the Aug 8 checkpoint (see `.memlog.md`). No new open questions were raised — the one new inference (media-attachment mutual exclusivity) is tracked in §12.
+
+**2026-10-03 addendum to this section:** FR-46 through FR-50 (§9.4) were added as documented-only backlog, not scheduled for implementation. Two of the five carried genuinely open, unresolved questions rather than mere inferences: FR-49's exact additional Ítem de Catálogo fields, and FR-50's exact per-sport field lists (fútbol/ciclismo/patinaje/boxeo) plus the generic field list for "otro" — both explicitly deferred by the user to a future elicitation pass, not something this revision guessed at. A smaller open question also surfaced on FR-46: whether comment edit/delete and independent comment moderation exist, or whether comments inherit the parent Publicación's moderation only — left undecided for the same future pass.
+
+**2026-10-03 through 2026-10-05 resolution:** that future elicitation pass happened (a dedicated brainstorming session, `_bmad-output/brainstorming/brainstorm-deportes-catalogo-campos-2026-10-03/.memlog.md`). FR-50 is now fully specified for all 4 focus sports plus "otro" (confirmed unchanged). FR-49 is fully specified (descripción, precio de referencia, disponibilidad). A new FR-51 (multiple social media profiles, all Usuario types) and FR-52 (ratings/reviews on Ítems de Catálogo, mirroring Nutricionista reviews) were discovered along the way and added. FR-46's comment-moderation question remains open — the only unresolved item left across FR-46–FR-52.
 
 **Deferred, reviewed edge cases:** An edge-case review (`review-edge-case-hunter.md`) surfaced additional gaps — e.g., no guard against deactivating the last admin account, no defined admin account creation/promotion path, a deactivated Usuario's Reseñas staying visible, a retracted Reseña not freeing the one-review-per-nutricionista limit unless the author is also blocked, no self-service edit on one's own Reseña, self-review not excluded on Nutricionista profiles, and whether deactivated Usuarios count toward homepage/Reportes aggregates. These were reviewed with the user and consciously deferred — not fixed in this MVP revision — beyond the two adopted directly into FRs (FR-43 catalog item CRUD; FR-3 Notes on legacy accounts). Worth a pass before or during architecture if any prove cheap to close.
 
@@ -580,4 +726,7 @@ Remaining unconfirmed inferences — everything else from the prior revision has
 - §2.3 UJ-1 — Abandoning registration mid-form creates no partial account.
 - §5.6 FR-17 — Directory scroll position is preserved on back-navigation from a detail view.
 - §5.10 FR-27 — Home feed orders publicaciones most-recent-first.
+- §5.10 FR-44 — Editing a publicación's media carousel replaces the whole set wholesale (no per-item add/remove on an existing carousel).
 - §5.12 FR-31 — Theme choice persists across sessions.
+- §5.6 FR-48 — Name search matches case-insensitively on name/razón social fields (added 2026-10-03).
+- §5.8 FR-49 — `disponibilidad` fixed-list values are Disponible/Agotado/Por pedido (added 2026-10-05, not explicitly confirmed by the user).

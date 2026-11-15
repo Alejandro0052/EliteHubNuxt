@@ -1,6 +1,5 @@
 import { readMultipartFormData } from 'h3'
 import { extname } from 'path'
-import { getServerSession } from '#auth'
 
 function slugify(text: string) {
   return text
@@ -12,13 +11,17 @@ function slugify(text: string) {
 }
 
 export default defineEventHandler(async (event) => {
-  const session = await getServerSession(event)
-  if (!session?.user?.id || !session.user.isAdmin) {
-    throw createError({ statusCode: 403, message: 'No autorizado' })
-  }
+  const usuario = await requireSession(event)
 
   const id = event.context.params?.id
   if (!id) throw createError({ statusCode: 400, message: 'ID requerido' })
+
+  const existing = await prisma.noticia.findUnique({ where: { id: parseInt(id) } })
+  if (!existing) throw createError({ statusCode: 404, message: 'Noticia no encontrada' })
+
+  if (!authorOrAdmin('evento_noticia', 'edit', existing, usuario)) {
+    throw createError({ statusCode: 403, message: 'No autorizado' })
+  }
 
   const form = await readMultipartFormData(event)
   const storage = useStorage('public')

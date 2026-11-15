@@ -3,7 +3,7 @@ import { defineEventHandler } from 'h3'
 export default defineEventHandler(async (event) => {
   try {
     const eventos = await prisma.evento.findMany({
-      where: { publicado: true },
+      where: { publicado: true, ...activeUserFilter('autor') },
       orderBy: { fechaEvento: 'desc' },
       take: 20,
       select: {

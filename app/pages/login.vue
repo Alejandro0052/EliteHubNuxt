@@ -1,16 +1,10 @@
 <template>
 	<div class="mx-auto h-full max-w-[120rem] p-6">
-		<div class="flex min-h-[600px] flex-col overflow-hidden rounded-xl shadow-xl lg:flex-row">
-			<div class="h-48 w-full lg:h-auto lg:w-1/3">
-				<img
-					class="h-full w-full object-cover"
-					src="/Jugador.jpeg"
-					alt="Imagen jugador de futbol" />
-			</div>
+		<div class="flex min-h-[600px] flex-col overflow-hidden rounded-lg lg:flex-row">
+			<AuthBrandPanel class="min-h-48 w-full lg:w-2/5" />
 			<div
-				class="flex w-full flex-col items-center justify-center gap-4 bg-black px-4 py-8 lg:w-2/3">
-				<h2 class="text-4xl font-bold text-white">Elite Hub</h2>
-				<p class="text-white">Inicia sesión</p>
+				class="flex w-full flex-col items-center justify-center gap-4 bg-black px-4 py-10 lg:w-3/5">
+				<h1 class="mb-2 font-display text-6xl leading-[0.9] font-extrabold text-white uppercase">Inicia sesión</h1>
 				<form class="flex w-full max-w-md flex-col gap-4 px-4" @submit.prevent="handleLogin">
 					<div class="text-white">
 						<label for="email" class="sr-only">Usuario:</label>
@@ -19,7 +13,7 @@
 							id="email"
 							v-model="form.correo"
 							placeholder="Correo"
-							class="w-full border-0 border-b-2 bg-transparent focus:border-white focus:ring-0"
+							class="w-full border-0 border-b-2 border-neutral-500 bg-transparent text-white placeholder:text-neutral-400 focus:border-primary-dark focus:ring-0"
 							required />
 					</div>
 					<div class="text-white">
@@ -29,7 +23,7 @@
 							id="password"
 							v-model="form.password"
 							placeholder="Contraseña"
-							class="w-full border-0 border-b-2 bg-transparent focus:border-white focus:ring-0"
+							class="w-full border-0 border-b-2 border-neutral-500 bg-transparent text-white placeholder:text-neutral-400 focus:border-primary-dark focus:ring-0"
 							required />
 					</div>
 					<div class="flex items-center gap-2">
@@ -39,15 +33,15 @@
 							id="remember-me"
 							v-model="form.remember"
 							checked />
-						<label for="remember-me" class="text-sm text-gray-400">Recuérdame</label>
+						<label for="remember-me" class="text-sm text-neutral-300">Recuérdame</label>
 					</div>
-					<div v-if="authStore.error" class="text-center text-sm text-red-500">
+					<div v-if="authStore.error" role="alert" class="text-center text-sm text-destructive-dark">
 						{{ authStore.error }}
 					</div>
 					<button
 						type="submit"
 						:disabled="authStore.isLoading"
-						class="block w-full rounded-lg bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-700/80 focus:ring-2 focus:ring-white focus:outline-none">
+						class="button-primary block w-full px-5 py-2.5 text-center font-semibold focus:ring-2 focus:ring-white focus:outline-none">
 						<span v-if="!authStore.isLoading"> Iniciar sesión </span>
 						<div v-else class="flex items-center justify-center gap-4">
 							<div class="animate-spin">
@@ -57,13 +51,10 @@
 						</div>
 					</button>
 				</form>
-				<NuxtLink to="/" class="text-center text-sm text-green-600 hover:underline"
-					>Recuperar contraseña
-				</NuxtLink>
 				<span class="text-center text-sm text-white"
 					>¿No tienes una cuenta?
-					<NuxtLink to="/register" class="font-semibold text-green-600 hover:underline"
-						>Regístrate ahora mismo</NuxtLink
+					<NuxtLink to="/register" class="font-semibold text-primary-dark hover:underline"
+						>Crea tu cuenta</NuxtLink
 					></span
 				>
 			</div>
