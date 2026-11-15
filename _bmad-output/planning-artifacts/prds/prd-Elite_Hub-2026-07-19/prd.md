@@ -90,7 +90,7 @@ Delivery targets a functional checkpoint on 2026-08-08 — a soft checkpoint for
 - **TipoUsuario (Tipo de Usuario)** — The account category, chosen at registration and immutable thereafter: **Deportista**, **Marca**, **Nutricionista**, or **Patrocinador**. Drives which fields, directory, and capabilities apply to a Usuario.
 - **Deportista** — TipoUsuario for athletes. Associated with a **Deporte** (sport) from a fixed list, a **Nivel** (PRINCIPIANTE/INTERMEDIO/ELITE/PROFESIONAL), and athlete-specific fields (see FR-2).
 - **Marca** — TipoUsuario for brands. Only Marca accounts may create **Ítems de Catálogo**.
-- **Nutricionista** — TipoUsuario for nutrition professionals. The only type that receives **Reseñas**.
+- **Nutricionista** — TipoUsuario for nutrition professionals. The only type that receives **Reseñas**. `[Pending FR-53, added 2026-11-13: slated to broaden into "Profesional de la Salud," with "profesión" becoming a fixed-list selector (Nutrición, Fisioterapia, Kinesiología, Psicología deportiva, Psicología, Otro) — not yet implemented.]`
 - **Patrocinador** — TipoUsuario for individual sponsors/managers with resources to support other users.
 - **Informacion** — The extended profile record attached to a Usuario, holding type-conditional fields (bio, contact details, professional/athletic details, etc.).
 - **Deporte** — A fixed-list sport category (fútbol, baloncesto, ciclismo, running, crossfit, voleibol, gimnasia, boxeo, natación, otros) used both as a Deportista's chosen sport and as a directory filter. `[Pending FR-50, added 2026-10-03: this list is slated to narrow to fútbol/ciclismo/patinaje/boxeo/otro, with otro's four siblings each gaining their own sport-specific field set — not yet implemented.]`
@@ -186,6 +186,32 @@ The existing single `link redes sociales` field (FR-2, today collected once for 
 - A Usuario can add at most one entry per platform from the fixed list (the already-added platform is removed/disabled from the picker); "Otro" has no such cap since its name is free text.
 
 **Notes:** Surfaced during FR-50's brainstorming (originally raised in the context of fútbol) but scoped as its own cross-cutting FR since it affects every Usuario type, not just Deportista. Full field/UX detail in `addendum.md`.
+
+#### FR-53: Generalize Nutricionista into "Profesional de la Salud" `[Added 2026-11-13]`
+The `Nutricionista` TipoUsuario (FR-1/FR-2) is renamed and broadened to **Profesional de la Salud**, since health-adjacent roles beyond nutrition (fisioterapeutas, kinesiólogos, psicólogos deportivos, etc.) fit the same pattern — a professional with contact info and a Reseña-based reputation — but today have no way to register as what they actually are. The free-text `profesión` field (FR-2) is replaced by a fixed-list selector — the same fixed-list pattern already used for `deporte` (FR-19/FR-50) — with values: **Nutrición, Fisioterapia, Kinesiología, Psicología deportiva, Psicología, Otro** (free-text name required when Otro is picked). `especialidad` (FR-25) stays free text, now read as the sub-specialty within whichever profession is selected (e.g. "deportiva" within Nutrición), not a synonym for the profession itself.
+
+**Consequences (testable):**
+- The TipoUsuario label and the 4th segmented directory (FR-15) are renamed from "Nutricionista(s)" to "Profesional(es) de la Salud" everywhere user-facing: registration, directory listing, detail view, admin panel.
+- At registration (and profile edit), `profesión` becomes a fixed-list dropdown with the six values above, instead of free text.
+- The "Profesionales de la Salud" directory gains a profession filter, mirroring FR-19's sport-filter mechanism on Deportistas — filtering the listing by one of the fixed profession values.
+- The existing Reseña system (FR-24, FR-36, FR-37) and `especialidad` field (FR-25) carry over unchanged — a review is left on a Profesional de la Salud's profile the same way regardless of which profession they practice; nothing about the rating/moderation mechanism becomes profession-specific.
+- No profession-specific field sets are introduced in this pass (unlike FR-50's per-sport fields for Deportista) — this FR covers only the type rename, the profession selector, and the directory filter.
+
+**Notes:** This is a renaming/generalization pass, not a field-expansion pass. Downstream impact flagged but deliberately left unresolved here, for whoever schedules this: the `Resena` Prisma model's `nutricionista`-named relation, the `TipoUsuario` seed value `"Nutricionista"`, every FR/UJ/glossary reference to "Nutricionista" (FR-2, FR-15, FR-24, FR-25, FR-36, FR-37, FR-48, UJ-3), and a migration path for already-registered Nutricionista accounts' existing free-text `profesión` value onto the new fixed list (most likely auto-mapping to "Nutrición," but not decided here). Full profession list and rationale captured in `addendum.md`.
+
+#### FR-54: No "Entrenador" (coach/trainer) account type exists `[Added 2026-11-13, identified gap — not designed]`
+No TipoUsuario, directory, profile, or capability exists today for sports coaches/trainers as account holders. "Entrenador" currently only appears as a free-text sub-field inside Boxeo's sport-specific fields (`gimnasioClubEntrenador`, FR-50) — the athlete's own coach's name as a data point on the athlete's profile, not a person with their own account.
+
+**Consequences (testable):** None yet — this FR documents a gap, not a requirement. No UI/API behavior changes result from it alone.
+
+**Notes:** Surfaced while discussing FR-53 — a coach/trainer is a distinct role from a health professional (nutrición/fisioterapia/kinesiología/psicología/psicología deportiva), so this is deliberately kept as its own backlog item rather than folded into FR-53's profession list. Fully `[TBD]`: whether this becomes its own 5th/6th TipoUsuario, what fields/directory/Reseña behavior it would have, and how (or whether) it relates to FR-53 are all undecided — raised here only so the gap isn't lost before any design work has happened.
+
+#### FR-55: Real password recovery flow `[Added 2026-11-14, identified gap — not designed]`
+The "Recuperar contraseña" link on `/login` has never been wired to a real flow — it was a placeholder pointing at `/` (home), which looked to the user like clicking it just silently bounces them back to the start. As of this FR, the link is removed from the login page entirely (rather than left pointing nowhere) until the real feature exists — no dead UI should ship.
+
+**Consequences (testable):** None yet — this FR documents a gap, not a requirement. No "recuperar contraseña" entry point exists anywhere in the app until this is scheduled and built.
+
+**Notes:** Confirmed: there is no reset-token model/column on `Usuario`, no `server/api` endpoint, no dedicated page, and no email-sending service configured anywhere in the stack today (checked `prisma/schema.prisma`, `server/api/auth/`, and dependencies — nothing beyond `next-auth`'s credentials-based login exists). Building this for real requires, at minimum: (1) a password-reset-token field/model with an expiry, (2) a "request reset" page + endpoint that issues a token, (3) an email-delivery mechanism to actually send the reset link (no provider chosen yet — this blocks implementation until decided), and (4) a "set new password" page + endpoint that consumes the token. None of this is designed here — raised only so the gap isn't lost, mirroring FR-54's treatment.
 
 #### FR-3: Type immutability
 Once a Usuario's TipoUsuario is set at registration, it cannot be changed by the Usuario or, per this FR, by any in-app self-service action.
@@ -658,8 +684,11 @@ By this date, Epics 1–7 were already built and Epic 8 (file storage migration,
 - §5.8 Marca Product/Service Catalog — FR-49 (campos adicionales de Ítem de Catálogo + carrusel de imágenes, confirmed 2026-10-05), FR-52 (reseñas en Ítems de Catálogo, same package as Nutricionista reviews, added 2026-10-05)
 - §5.1 / §5.7 Registration & Deportista Sport Filters — FR-50 (deportes enfocados + campos dinámicos por deporte; fútbol/ciclismo/patinaje/boxeo resolved 2026-10-05, only "otro" fallback still `[TBD]`)
 - §5.1 Registration — FR-51 (múltiples perfiles de redes sociales, aplica a los 4 tipos de Usuario)
+- §5.9 Nutricionista Ratings & Reviews — FR-53 (generalización de Nutricionista a "Profesional de la Salud", lista fija de profesiones + filtro de directorio, added 2026-11-13)
+- §2.1 Registration — FR-54 (vacío identificado: no existe tipo de cuenta "Entrenador"/coach — gap documentado, sin diseñar, added 2026-11-13)
+- §2.1 Registration/Login — FR-55 (recuperación de contraseña real — el enlace "Recuperar contraseña" no llevaba a ningún flujo funcional y fue retirado del login mientras tanto; gap documentado, sin diseñar, added 2026-11-14)
 
-**When the user is ready to schedule any of these:** run `bmad-create-epics-and-stories` (or amend an existing epic — FR-46/FR-47 extend Epic 5, FR-48 extends Epic 2, FR-49/FR-52 extend Epic 3 (FR-52 mirrors Epic 4's Resena pattern on a new target), FR-50/FR-51 extend Epic 1 and 2) followed by the usual `bmad-create-story` / `bmad-dev-story` loop. As of 2026-10-05, all seven FRs (FR-46 through FR-52) are fully specified — no field-level TBDs remain — so this backlog is ready to schedule whenever the user decides to.
+**When the user is ready to schedule any of these:** run `bmad-create-epics-and-stories` (or amend an existing epic — FR-46/FR-47 extend Epic 5, FR-48 extends Epic 2, FR-49/FR-52 extend Epic 3 (FR-52 mirrors Epic 4's Resena pattern on a new target), FR-50/FR-51 extend Epic 1 and 2, FR-53 extends Epic 4 (and touches Epic 1's registration + Epic 2's directory), FR-54/FR-55 have no epic yet since neither is designed) followed by the usual `bmad-create-story` / `bmad-dev-story` loop. As of 2026-10-05, FR-46 through FR-52 were fully specified — no field-level TBDs remained. FR-53 (added 2026-11-13) is also fully specified (fixed profession list + directory-rename/filter mechanics confirmed) modulo the downstream-impact items called out in its own Notes. FR-54 and FR-55 (added 2026-11-13/14) are explicitly **not** specified — both are documented gaps only, and each needs its own discovery/scoping pass before it can be scheduled (FR-55 in particular is blocked on choosing an email-delivery provider).
 
 ## 10. Success Metrics
 

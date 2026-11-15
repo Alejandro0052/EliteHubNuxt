@@ -1,56 +1,81 @@
 <template>
-  <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
-    <div class="max-w-page-shell mx-auto py-12 px-4">
-    <div class="max-w-3xl mx-auto dark:text-white">
-    <h1 class="text-2xl font-bold mb-6">Crear Usuario</h1>
+	<div class="min-h-screen w-full bg-surface-container dark:bg-surface-container-dark">
+		<div class="mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+			<h1 class="form-title !mb-3">Crear usuario</h1>
+			<p class="mb-8 max-w-[60ch] text-lg text-on-surface-variant dark:text-on-surface-variant-dark">Crea una cuenta en nombre de otra persona.</p>
 
-    <div v-if="!authStore.user?.isAdmin" class="p-6 bg-yellow-50 rounded dark:text-gray-900">Solo administradores pueden crear usuarios.</div>
+			<p v-if="!authStore.user?.isAdmin" class="form-notice">
+				<Icon name="fa6-solid:lock" aria-hidden="true" class="mt-1 shrink-0" />
+				Solo los administradores pueden crear usuarios.
+			</p>
+			<form v-else class="form-sheet" @submit.prevent="handleSubmit">
+				<p class="form-hint pt-6">Los campos con <span class="text-destructive dark:text-destructive-dark">*</span> son obligatorios.</p>
+				<section class="form-section">
+					<div>
+						<h2 class="form-section-title">La cuenta</h2>
+						<p class="form-hint mt-2">Con el correo y la contraseña la persona podrá iniciar sesión.</p>
+					</div>
+					<div class="form-grid">
+						<div class="form-field">
+							<label for="nombre" class="form-label">Nombre</label>
+							<input id="nombre" v-model="nombre" type="text" class="form-control" required autocomplete="off" />
+						</div>
+						<div class="form-field">
+							<label for="apellido" class="form-label">Apellido</label>
+							<input id="apellido" v-model="apellido" type="text" class="form-control" required autocomplete="off" />
+						</div>
+						<div class="form-field">
+							<label for="correo" class="form-label">Correo</label>
+							<input id="correo" v-model="correo" type="email" class="form-control" required autocomplete="off" />
+						</div>
+						<div class="form-field">
+							<label for="password" class="form-label">Contraseña</label>
+							<input id="password" v-model="password" type="password" class="form-control" required autocomplete="new-password" />
+						</div>
+					</div>
+				</section>
 
-    <form v-else @submit.prevent="handleSubmit" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium mb-1">Nombre</label>
-        <input v-model="nombre" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" required />
-      </div>
+				<section class="form-section">
+					<div>
+						<h2 class="form-section-title">Permisos</h2>
+						<p class="form-hint mt-2">Qué puede hacer la cuenta.</p>
+					</div>
+					<div class="form-grid">
+						<div class="form-field">
+							<label for="isAdmin" class="form-label">Rol</label>
+							<select id="isAdmin" v-model="isAdmin" class="form-control">
+								<option :value="false">Usuario</option>
+								<option :value="true">Administrador</option>
+							</select>
+						</div>
+						<div class="form-field">
+							<span class="form-label">Estado</span>
+							<label for="activo" class="form-check">
+								<input id="activo" v-model="activo" type="checkbox" class="mt-0.5 h-5 w-5 rounded text-primary focus:ring-primary" />
+								<span class="text-on-surface dark:text-on-surface-dark">Cuenta activa</span>
+							</label>
+						</div>
+					</div>
+				</section>
 
-      <div>
-        <label class="block text-sm font-medium mb-1">Apellido</label>
-        <input v-model="apellido" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" required />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-1">Correo</label>
-        <input v-model="correo" type="email" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" required />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-1">Contraseña</label>
-        <input v-model="password" type="password" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" required />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-1">Rol</label>
-        <select v-model="isAdmin" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700">
-          <option :value="false">Usuario</option>
-          <option :value="true">Administrador</option>
-        </select>
-      </div>
-
-          <div class="flex items-center gap-3">
-            <input id="activo" type="checkbox" v-model="activo" class="w-4 h-4" />
-            <label for="activo" class="text-sm">Activo</label>
-          </div>
-
-      <div class="flex items-center gap-4">
-        <button :disabled="loading" class="button-primary px-6 py-2 font-semibold">Crear</button>
-        <NuxtLink to="/admin/users" class="button-secondary px-6 py-2 font-semibold inline-block">Cancelar</NuxtLink>
-      </div>
-
-      <div v-if="error" class="text-red-600">{{ error }}</div>
-      <div v-if="success" class="text-green-600">Usuario creado correctamente.</div>
-    </form>
-    </div>
-    </div>
-  </div>
+				<div class="form-actions">
+					<p v-if="error" role="alert" class="form-alert form-alert-error mr-auto">
+						<Icon name="fa6-solid:circle-exclamation" aria-hidden="true" class="mt-1 shrink-0 text-destructive dark:text-destructive-dark" />
+						{{ error }}
+					</p>
+					<p v-if="success" role="status" class="form-alert form-alert-success mr-auto">
+						<Icon name="fa6-solid:circle-check" aria-hidden="true" class="mt-1 shrink-0 text-primary dark:text-primary-dark" />
+						Usuario creado.
+					</p>
+					<NuxtLink to="/admin/users" class="button-secondary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">Cancelar</NuxtLink>
+					<button type="submit" :disabled="loading" class="button-primary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+						<Icon v-if="loading" name="fa6-solid:spinner" aria-hidden="true" class="animate-spin motion-reduce:animate-none" />
+						{{ loading ? "Creando…" : "Crear usuario" }}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">

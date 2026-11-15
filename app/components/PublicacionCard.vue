@@ -1,23 +1,23 @@
 <template>
-	<div v-if="!eliminada" class="overflow-hidden rounded-xl bg-white shadow-lg transition-transform duration-300 hover:scale-105 dark:bg-neutral-800">
+	<div v-if="!eliminada" :class="{ 'card-lift': !editing }" class="overflow-hidden rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
 		<div class="p-4">
 			<div class="flex items-start justify-between gap-3">
 				<div class="flex items-center gap-3">
 					<img
 						v-if="publicacion.autor.avatar"
 						:src="publicacion.autor.avatar"
-						class="h-10 w-10 rounded-full object-cover" />
+						alt="" class="h-11 w-11 rounded-full object-cover" />
 					<div
 						v-else
-						class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-sm font-semibold text-gray-700 dark:border-gray-500 dark:text-gray-200">
+						class="flex h-11 w-11 items-center justify-center rounded-full bg-black font-display text-xl font-extrabold text-white">
 						{{ initials }}
 					</div>
 					<div>
-						<p class="text-sm font-semibold text-gray-900 dark:text-white">
+						<p class="font-semibold text-on-surface dark:text-on-surface-dark">
 							{{ publicacion.autor.nombre }} {{ publicacion.autor.apellido }}
 						</p>
-						<p class="text-xs text-gray-500 dark:text-gray-400">
-							<span v-if="tipo">{{ tipo }} · </span>{{ relativeTime }}
+						<p class="text-sm text-on-surface-variant dark:text-on-surface-variant-dark">
+							<span v-if="tipo" class="font-semibold text-primary dark:text-primary-dark">{{ tipo }}</span><span v-if="tipo">, </span>{{ relativeTime }}
 						</p>
 					</div>
 				</div>
@@ -27,52 +27,97 @@
 						v-if="canEdit && !editing"
 						type="button"
 						@click="startEdit"
-						class="text-sm text-blue-600 hover:underline">
+						class="text-sm font-semibold text-primary hover:underline dark:text-primary-dark">
 						Editar
 					</button>
 					<button
 						v-if="canDelete"
 						type="button"
 						@click="handleDelete"
-						class="text-sm text-red-600 hover:underline">
+						class="text-sm font-semibold text-destructive hover:underline dark:text-destructive-dark">
 						Eliminar
 					</button>
 				</div>
 			</div>
 
-			<form v-if="editing" @submit.prevent="handleEditSubmit" class="mt-3 space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-600">
-				<div>
-					<label class="mb-1 block text-sm font-medium">Texto</label>
-					<textarea v-model="editTexto" rows="3" class="w-full rounded border px-3 py-2 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" required></textarea>
-				</div>
-				<div>
-					<label class="mb-1 block text-sm font-medium">Fotos y videos nuevos (opcional, máximo 10; cada video máx. 2 minutos)</label>
-					<input ref="mediaInput" type="file" multiple accept="image/*,video/*" @change="onFilesSelected" />
-					<p v-if="publicacion.media?.length" class="mt-1 text-xs text-gray-500 dark:text-gray-400">Deja vacío para conservar el carrusel actual.</p>
+			<form
+				v-if="editing"
+				class="mt-4 rounded-lg border border-border-hairline dark:border-border-hairline-dark"
+				@submit.prevent="handleEditSubmit">
+				<div class="px-4 pt-4 sm:px-5">
+					<h3 class="font-display text-3xl leading-none font-extrabold text-on-surface uppercase dark:text-on-surface-dark">Editar publicación</h3>
 
-					<div v-if="editMediaItems.length" class="mt-2 flex flex-wrap gap-2">
-						<div v-for="(item, index) in editMediaItems" :key="item.previewUrl" class="relative h-20 w-20 overflow-hidden rounded border border-gray-300 dark:border-gray-600">
-							<video v-if="item.type === 'video'" :src="item.previewUrl" muted class="h-full w-full object-cover" />
-							<img v-else :src="item.previewUrl" class="h-full w-full object-cover" />
-							<button
-								type="button"
-								class="absolute top-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-xs text-white"
-								@click="removeEditMediaItem(index)">
-								<Icon name="fa6-solid:xmark" />
-							</button>
+					<div class="form-field mt-4">
+						<label :for="`publicacion-texto-${publicacion.id}`" class="form-label">Texto</label>
+						<textarea :id="`publicacion-texto-${publicacion.id}`" v-model="editTexto" rows="4" class="form-control" required></textarea>
+					</div>
+
+					<div class="form-field mt-5">
+						<div class="flex items-baseline justify-between gap-3">
+							<label :for="`publicacion-media-${publicacion.id}`" class="form-label">Fotos y videos nuevos</label>
+							<span class="form-hint tabular-nums">{{ editMediaItems.length }} de {{ MAX_ITEMS }}</span>
 						</div>
+
+						<div
+							v-if="editMediaItems.length < MAX_ITEMS"
+							class="form-drop !py-6"
+							:class="{ 'form-drop-active': dragging }"
+							@dragenter="dragging = true"
+							@dragleave="dragging = false"
+							@drop="dragging = false">
+							<Icon name="fa6-solid:photo-film" aria-hidden="true" class="text-2xl text-on-surface-variant dark:text-on-surface-variant-dark" />
+							<p class="text-on-surface dark:text-on-surface-dark">
+								<span class="font-semibold text-primary dark:text-primary-dark">Elige fotos o videos</span>
+								o arrástralos hasta aquí
+							</p>
+							<p class="form-hint">
+								{{ publicacion.media?.length ? "Si no eliges nada, se conservan los actuales." : "Opcional." }}
+								Hasta {{ MAX_ITEMS }} archivos; cada video, máximo 2 minutos.
+							</p>
+							<input
+								:id="`publicacion-media-${publicacion.id}`"
+								ref="mediaInput"
+								type="file"
+								multiple
+								accept="image/*,video/*"
+								class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+								@change="onFilesSelected" />
+						</div>
+
+						<ul v-if="editMediaItems.length" class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
+							<li
+								v-for="(item, index) in editMediaItems"
+								:key="item.previewUrl"
+								class="relative aspect-square overflow-hidden rounded-md bg-black">
+								<video v-if="item.type === 'video'" :src="item.previewUrl" muted class="h-full w-full object-cover" />
+								<img v-else :src="item.previewUrl" alt="" class="h-full w-full object-cover" />
+								<span
+									v-if="item.type === 'video'"
+									class="absolute bottom-1 left-1 flex items-center gap-1 rounded-sm bg-black/75 px-1.5 py-0.5 text-xs font-semibold text-white">
+									<Icon name="fa6-solid:video" aria-hidden="true" />
+									Video
+								</span>
+								<button
+									type="button"
+									:aria-label="`Quitar archivo ${index + 1}`"
+									class="absolute top-1 right-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/75 text-sm text-white transition hover:scale-110 hover:bg-black focus-visible:outline-2 focus-visible:outline-white motion-reduce:transition-none motion-reduce:hover:transform-none"
+									@click="removeEditMediaItem(index)">
+									<Icon name="fa6-solid:xmark" />
+								</button>
+							</li>
+						</ul>
 					</div>
 				</div>
-				<div class="flex items-center gap-3">
-					<button
-						:disabled="editSubmitting"
-						class="button-primary px-4 py-2 text-sm font-semibold">
-						Guardar
+
+				<div class="mt-5 flex flex-wrap items-center justify-end gap-3 border-t border-border-hairline px-4 py-4 sm:px-5 dark:border-border-hairline-dark">
+					<button type="button" :disabled="editSubmitting" class="button-secondary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark" @click="cancelEdit">Cancelar</button>
+					<button type="submit" :disabled="editSubmitting" class="button-primary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+						<Icon v-if="editSubmitting" name="fa6-solid:spinner" aria-hidden="true" class="animate-spin motion-reduce:animate-none" />
+						{{ editSubmitting ? "Guardando…" : "Guardar cambios" }}
 					</button>
-					<button type="button" @click="cancelEdit" class="text-gray-600 hover:underline dark:text-gray-400">Cancelar</button>
 				</div>
 			</form>
-			<p v-else class="mt-3 whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-200">{{ publicacion.texto }}</p>
+			<p v-else class="mt-3 whitespace-pre-wrap text-on-surface dark:text-on-surface-dark">{{ publicacion.texto }}</p>
 		</div>
 
 		<div v-if="!editing && publicacion.media?.length" class="relative">
@@ -144,6 +189,8 @@ const editTexto = ref('')
 const editSubmitting = ref(false)
 const mediaInput = ref(null)
 const editMediaItems = ref([])
+const dragging = ref(false)
+const MAX_ITEMS = 10
 
 const tipo = computed(() => props.publicacion.autor.informacion?.tipoUsuario?.tipo || '')
 
@@ -219,6 +266,11 @@ function probeVideoDuration(file) {
 				resolve({ duration: probe.duration, previewUrl: url })
 			}
 		}
+		probe.onerror = () => {
+			URL.revokeObjectURL(url)
+			showToast(`No se pudo leer el video "${file.name}"`, 'error')
+			resolve(null)
+		}
 		probe.src = url
 	})
 }
@@ -227,8 +279,8 @@ async function onFilesSelected(e) {
 	const files = Array.from(e.target.files || [])
 
 	for (const file of files) {
-		if (editMediaItems.value.length >= 10) {
-			showToast('Máximo 10 archivos por publicación', 'error')
+		if (editMediaItems.value.length >= MAX_ITEMS) {
+			showToast(`Máximo ${MAX_ITEMS} archivos por publicación`, 'error')
 			break
 		}
 

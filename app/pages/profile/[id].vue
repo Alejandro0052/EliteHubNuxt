@@ -1,7 +1,7 @@
 <template>
 	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 	<div class="mx-auto w-full max-w-[120rem] px-4 py-6">
-		<div class="rounded-lg bg-white p-6 shadow-md dark:bg-neutral-800 dark:text-white">
+		<div class="p-6 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark dark:text-white">
 			<div v-if="!authStore.user?.isAdmin" class="rounded bg-yellow-50 p-6 dark:text-gray-900">No autorizado.</div>
 
 			<template v-else>

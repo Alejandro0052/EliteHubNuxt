@@ -141,6 +141,25 @@ Mechanism, not just "multiple links": each entry is added via a **platform picke
 - **Cap:** at most one entry per platform from the fixed list — once added, that platform is removed/disabled from the picker so it can't be added twice. "Otro" has no cap (its name is free text, so duplicates are distinguishable by the user's own label).
 - Applies uniformly to all four TipoUsuario (Deportista, Marca, Nutricionista, Patrocinador), replacing each type's existing single `link redes sociales` / `URL de red social` field from FR-2.
 
+## FR-53 — Profesional de la Salud, Fixed Profession List + Rationale (confirmed 2026-11-13)
+
+Replaces the Nutricionista TipoUsuario's free-text `profesión` field with a fixed-list selector, same pattern as `deporte` (FR-19/FR-50) and `género`/`país` (FR-38).
+
+- **Fixed profession list:** Nutrición, Fisioterapia, Kinesiología, Psicología deportiva, Psicología, Otro.
+- **"Otro" option:** free-text profession name required when picked — same fallback pattern as `deporte`'s "otro" and FR-51's "Otro" platform.
+- **`especialidad` reinterpreted, not replaced:** the existing free-text `especialidad` field (FR-25) is NOT the profession selector — it stays free text, now scoped as the sub-specialty *within* whichever profession is chosen (e.g. a Nutrición professional might enter "deportiva" or "clínica" as their especialidad; a Fisioterapia professional might enter "deportiva" or "neurológica"). This avoids conflating "what profession are you" (now fixed-list) with "what's your angle within that profession" (still free text).
+- **Directory filter:** the renamed "Profesionales de la Salud" directory gains a profession filter using this same fixed list, mirroring Story 2.5's sport-filter chips on Deportistas (reuses `FilterChips.vue`'s existing single-select mode — no `multiple` needed here since a Usuario has exactly one profession, unlike Fútbol's multi-select atributos from FR-50).
+- **Reused mechanism, not rebuilt:** the Reseña (rating + comment), moderation (FR-36), and one-review-per-target (FR-37) mechanics are completely unchanged — they already operate on "the Usuario being reviewed," not on anything Nutricionista-specific in their own logic, so broadening the TipoUsuario's label and profession set doesn't require touching that code path. The only coupling to verify at implementation time is the `Resena` Prisma model's relation name (`nutricionista`), which is a naming cleanup, not a behavior change.
+- **Naming scope — what renames, what doesn't:** "Nutricionista" as a *profession value* still exists (it's the first entry in the new fixed list) — only the *TipoUsuario* and *directory* labels broaden to "Profesional de la Salud." A Usuario who is a nutritionist still ends up with profession = "Nutrición"; what changes is that a fisioterapeuta or psicólogo deportivo can now register truthfully too, under the same TipoUsuario.
+
+## FR-54 — "Entrenador" Gap, Scoping Notes for Later (confirmed as a gap 2026-11-13, not designed)
+
+This is intentionally thin — the point of this entry is to preserve the question, not answer it:
+
+- Raised directly against FR-53's profession list: an entrenador/coach is explicitly **not** one of the six profession values above, because coaching is a performance/training role, not a health profession — conflating them would misrepresent both.
+- Known open questions for whenever this gets scoped: Is it a 5th/6th `TipoUsuario`, or a role/flag on an existing type (e.g. a Deportista who is also a coach)? Does it get its own directory, or live inside an existing one? Does the Reseña mechanism apply to coaches the way it does to Profesionales de la Salud (FR-24/36/37) or Ítems de Catálogo (FR-52)? What fields would matter — certifications, sport(s) coached, gimnasio/club affiliation (today just a free-text sub-field of Boxeo's `camposEspecificos.gimnasioClubEntrenador`, FR-50)?
+- None of these are answered here. This section exists so the next person scoping it starts from "here's what was asked" instead of rediscovering the gap.
+
 ## Reportes/Indicadores — Charting Approach Options
 
 No charting library currently exists in the stack. Options to evaluate at architecture time (not decided here):

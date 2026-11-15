@@ -1,94 +1,79 @@
 <template>
-	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
-	<div class="mx-auto max-w-[120rem] px-4 py-10 sm:px-6 lg:px-8">
-		<h1 class="text-4xl font-bold text-gray-900 dark:text-white">Reportes</h1>
-		<p class="mt-2 text-gray-600 dark:text-gray-300">
-			Distribución de Usuarios registrados por tipo de usuario, calculada en tiempo real sobre la base de datos.
-		</p>
+	<div class="min-h-screen w-full bg-surface-container dark:bg-surface-container-dark">
+		<div class="max-w-page-shell mx-auto px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+			<h1 class="form-title">Reportes</h1>
 
-		<div v-if="loading" class="mt-8 text-gray-600 dark:text-gray-300">Cargando...</div>
+			<p v-if="loading" class="text-on-surface-variant dark:text-on-surface-variant-dark">Cargando reportes…</p>
 
-		<div v-else-if="items.length" class="mt-8 rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-800">
-			<div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center">
-				<div class="relative mx-auto aspect-square w-full max-w-sm">
-					<Doughnut :data="chartData" :options="chartOptions" />
-					<div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-						<span class="text-4xl font-bold text-gray-900 dark:text-white">{{ total }}</span>
-						<span class="text-sm text-gray-500 dark:text-gray-400">usuarios registrados</span>
+			<section v-else-if="items.length" class="p-6 sm:p-8 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+				<h2 class="font-display text-4xl leading-none font-extrabold uppercase text-on-surface dark:text-on-surface-dark">Usuarios por tipo</h2>
+				<p class="mt-2 max-w-[65ch] text-on-surface-variant dark:text-on-surface-variant-dark">Usuarios registrados según su tipo de perfil, calculados en tiempo real.</p>
+
+				<div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-center">
+					<div class="relative mx-auto aspect-square w-full max-w-sm">
+						<Doughnut :data="chartData" :options="chartOptions" />
+						<div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+							<span class="font-display text-7xl leading-[0.9] font-extrabold tabular-nums text-on-surface dark:text-on-surface-dark">{{ total }}</span>
+							<span class="text-sm text-on-surface-variant dark:text-on-surface-variant-dark">usuarios registrados</span>
+						</div>
 					</div>
-				</div>
 
-				<div>
-					<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Conteo por tipo de usuario</h2>
-					<ul class="mt-4 space-y-3">
-						<li v-for="item in items" :key="item.tipo" class="flex items-center gap-3">
+					<div>
+						<ul>
+						<li v-for="item in items" :key="item.tipo" class="flex items-center gap-3 border-b border-border-hairline py-2.5 dark:border-border-hairline-dark">
 							<span class="h-3 w-3 shrink-0 rounded-full" :style="{ backgroundColor: item.color }"></span>
-							<span class="flex-1 text-sm text-gray-800 dark:text-gray-200">{{ item.tipo }}</span>
-							<span class="text-sm text-gray-500 dark:text-gray-400">{{ item.pct }}%</span>
-							<span class="w-12 text-right text-sm font-semibold text-gray-900 dark:text-white">{{ item.count }}</span>
+							<span class="flex-1 text-on-surface dark:text-on-surface-dark">{{ item.tipo }}</span>
+							<span class="text-sm tabular-nums text-on-surface-variant dark:text-on-surface-variant-dark">{{ item.pct }}%</span>
+							<span class="w-12 text-right font-semibold tabular-nums text-on-surface dark:text-on-surface-dark">{{ item.count }}</span>
 						</li>
-					</ul>
-					<div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-600">
-						<span class="font-semibold text-gray-900 dark:text-white">Total de Usuarios registrados</span>
-						<span class="text-2xl font-bold text-green-700 dark:text-green-400">{{ total }}</span>
+						</ul>
+						<div class="mt-4 flex items-end justify-between gap-4">
+							<span class="font-semibold text-on-surface dark:text-on-surface-dark">Total de usuarios registrados</span>
+							<span class="font-display text-5xl leading-none font-extrabold tabular-nums text-primary dark:text-primary-dark">{{ total }}</span>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<p class="mt-6 border-l-4 border-green-700 bg-green-50 p-4 text-sm text-gray-700 dark:border-green-500 dark:bg-neutral-700 dark:text-gray-200">
-				Estos totales coinciden con los contadores públicos de la página de Inicio — misma consulta agregada.
-			</p>
+				<p class="mt-6 border-l-4 border-primary pl-4 text-sm dark:border-primary-dark text-on-surface-variant dark:text-on-surface-variant-dark">
+					Estos totales salen de la misma consulta que los contadores públicos del inicio, así que siempre coinciden.
+				</p>
+			</section>
+
+			<section class="mt-8 p-6 sm:p-8 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+				<h2 class="font-display text-4xl leading-none font-extrabold uppercase text-on-surface dark:text-on-surface-dark">Publicaciones por tipo</h2>
+				<p class="mt-2 max-w-[65ch] text-on-surface-variant dark:text-on-surface-variant-dark">Publicaciones creadas según el tipo de usuario del autor. Puedes limitar el conteo a un rango de fechas.</p>
+
+				<div class="mt-5 flex flex-wrap items-end gap-4">
+					<label class="form-label flex flex-col gap-1">
+						Desde
+						<input v-model="desde" type="date" class="form-control font-normal" />
+					</label>
+					<label class="form-label flex flex-col gap-1">
+						Hasta
+						<input v-model="hasta" type="date" class="form-control font-normal" />
+					</label>
+					<button type="button" class="button-secondary px-4 py-2 font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark" @click="limpiarRango">
+						Limpiar rango
+					</button>
+				</div>
+
+				<p v-if="errorPublicaciones" role="alert" class="mt-4 text-sm text-destructive dark:text-destructive-dark">{{ errorPublicaciones }}</p>
+
+				<p v-if="loadingPublicaciones" class="mt-6 text-on-surface-variant dark:text-on-surface-variant-dark">Cargando publicaciones…</p>
+
+				<ul v-else class="mt-6">
+						<li v-for="item in itemsPublicaciones" :key="item.tipo" class="flex items-center gap-3 border-b border-border-hairline py-2.5 dark:border-border-hairline-dark">
+							<span class="h-3 w-3 shrink-0 rounded-full" :style="{ backgroundColor: item.color }"></span>
+							<span class="flex-1 text-on-surface dark:text-on-surface-dark">{{ item.tipo }}</span>
+							<span class="w-12 text-right font-semibold tabular-nums text-on-surface dark:text-on-surface-dark">{{ item.count }}</span>
+						</li>
+				</ul>
+				<div class="mt-4 flex items-end justify-between gap-4">
+					<span class="font-semibold text-on-surface dark:text-on-surface-dark">Total de publicaciones</span>
+					<span class="font-display text-5xl leading-none font-extrabold tabular-nums text-primary dark:text-primary-dark">{{ totalPublicaciones }}</span>
+				</div>
+			</section>
 		</div>
-
-		<div class="mt-8 rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-800">
-			<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Publicaciones por tipo de usuario</h2>
-			<p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-				Cantidad de publicaciones creadas por tipo de usuario autor, opcionalmente filtrada por rango de fechas.
-			</p>
-
-			<div class="mt-4 flex flex-wrap items-end gap-4">
-				<label class="flex flex-col text-sm text-gray-700 dark:text-gray-200">
-					Desde
-					<input
-						v-model="desde"
-						type="date"
-						class="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-neutral-700 dark:text-white"
-					/>
-				</label>
-				<label class="flex flex-col text-sm text-gray-700 dark:text-gray-200">
-					Hasta
-					<input
-						v-model="hasta"
-						type="date"
-						class="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-neutral-700 dark:text-white"
-					/>
-				</label>
-				<button
-					type="button"
-					class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-neutral-700"
-					@click="limpiarRango"
-				>
-					Limpiar rango
-				</button>
-			</div>
-
-			<p v-if="errorPublicaciones" class="mt-4 text-sm text-red-600 dark:text-red-400">{{ errorPublicaciones }}</p>
-
-			<div v-if="loadingPublicaciones" class="mt-6 text-gray-600 dark:text-gray-300">Cargando...</div>
-
-			<ul v-else class="mt-6 space-y-3">
-				<li v-for="item in itemsPublicaciones" :key="item.tipo" class="flex items-center gap-3">
-					<span class="h-3 w-3 shrink-0 rounded-full" :style="{ backgroundColor: item.color }"></span>
-					<span class="flex-1 text-sm text-gray-800 dark:text-gray-200">{{ item.tipo }}</span>
-					<span class="w-12 text-right text-sm font-semibold text-gray-900 dark:text-white">{{ item.count }}</span>
-				</li>
-			</ul>
-			<div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-600">
-				<span class="font-semibold text-gray-900 dark:text-white">Total de Publicaciones</span>
-				<span class="text-2xl font-bold text-green-700 dark:text-green-400">{{ totalPublicaciones }}</span>
-			</div>
-		</div>
-	</div>
 	</div>
 </template>
 

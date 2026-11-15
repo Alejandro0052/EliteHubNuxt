@@ -1,27 +1,41 @@
 <template>
 	<NuxtLink
 		:to="`/catalogo/${item.id}`"
-		class="block overflow-hidden rounded-xl bg-white shadow-lg transition-transform duration-300 hover:scale-105 dark:bg-neutral-800">
-		<img
-			v-if="item.imagenes?.[0]"
-			:src="item.imagenes[0]"
-			class="h-40 w-full cursor-zoom-in object-cover"
-			@click.stop.prevent="showLightbox = true" />
-		<div v-else class="flex h-40 w-full items-center justify-center bg-gray-100 text-gray-400 dark:bg-neutral-700">
-			<Icon name="fa6-solid:image" class="text-3xl" />
+		class="card-lift group block overflow-hidden rounded-lg border border-border-hairline bg-surface focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:border-border-hairline-dark dark:bg-surface-container-dark dark:focus-visible:outline-primary-dark">
+		<!-- Misma ficha que los directorios: imagen a sangre sobre negro en ambos temas. -->
+		<div class="relative flex aspect-[4/5] items-center justify-center bg-black text-white">
+			<img
+				v-if="item.imagenes?.[0]"
+				:src="item.imagenes[0]"
+				:alt="item.nombre"
+				class="absolute inset-0 h-full w-full object-cover" />
+			<Icon v-else name="fa6-solid:image" aria-hidden="true" class="text-5xl opacity-40" />
+
+			<span class="absolute top-3 left-4 rounded-sm bg-white px-2 py-0.5 text-[0.8125rem] font-semibold text-black">
+				{{ item.tipoItem === "SERVICIO" ? "Servicio" : "Producto" }}
+			</span>
+
+			<button
+				v-if="item.imagenes?.[0]"
+				type="button"
+				aria-label="Ampliar imagen"
+				class="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-white"
+				@click.stop.prevent="showLightbox = true">
+				<Icon name="fa6-solid:magnifying-glass-plus" />
+			</button>
 		</div>
 
-		<div class="p-4">
-			<h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">{{ item.nombre }}</h3>
-			<p class="mb-2 text-sm text-gray-600 dark:text-gray-300">{{ item.usuario?.nombre }} {{ item.usuario?.apellido }}</p>
-			<div class="flex items-center gap-2">
-				<span class="rounded-full bg-black px-3 py-1 text-xs font-medium text-white">
-					{{ item.tipoItem === "SERVICIO" ? "Servicio" : "Físico" }}
-				</span>
-				<span v-if="item.categoria" class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-neutral-700 dark:text-gray-200">
-					{{ item.categoria.nombre }}
-				</span>
-			</div>
+		<div
+			class="border-t-4 border-transparent px-4 pt-3.5 pb-4 transition-colors duration-150 group-hover:border-primary group-focus-visible:border-primary motion-reduce:transition-none dark:group-hover:border-primary-dark dark:group-focus-visible:border-primary-dark">
+			<h3 class="font-display text-[1.75rem] leading-[0.95] font-extrabold text-on-surface uppercase dark:text-on-surface-dark">
+				{{ item.nombre }}
+			</h3>
+			<p v-if="item.usuario" class="mt-1.5 truncate font-semibold text-primary dark:text-primary-dark">
+				{{ item.usuario.nombre }} {{ item.usuario.apellido }}
+			</p>
+			<p v-if="item.categoria" class="mt-1 truncate text-sm text-on-surface-variant dark:text-on-surface-variant-dark">
+				{{ item.categoria.nombre }}
+			</p>
 		</div>
 	</NuxtLink>
 
@@ -32,11 +46,12 @@
 			@click="showLightbox = false">
 			<button
 				type="button"
+				aria-label="Cerrar imagen"
 				class="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-800 shadow-lg"
 				@click.stop="showLightbox = false">
 				<Icon name="fa6-solid:xmark" />
 			</button>
-			<img :src="item.imagenes?.[0]" class="max-h-[80vh] max-w-full rounded-lg object-contain" @click.stop />
+			<img :src="item.imagenes?.[0]" :alt="item.nombre" class="max-h-[80vh] max-w-full rounded-lg object-contain" @click.stop />
 		</div>
 	</Teleport>
 </template>

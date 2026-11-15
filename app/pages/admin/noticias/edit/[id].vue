@@ -1,45 +1,75 @@
 <template>
-  <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
-    <div class="max-w-page-shell mx-auto py-12 px-4">
-    <div class="max-w-3xl mx-auto dark:text-white">
-    <h1 class="text-2xl font-bold mb-6">Editar Noticia</h1>
+	<div class="min-h-screen w-full bg-surface-container dark:bg-surface-container-dark">
+		<div class="mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+			<h1 class="form-title !mb-3">Editar noticia</h1>
+			<p class="mb-8 max-w-[60ch] text-lg text-on-surface-variant dark:text-on-surface-variant-dark">Cambia los datos de la noticia. Lo que no toques queda igual.</p>
 
-    <div v-if="loading">Cargando...</div>
+			<p v-if="loading" class="text-on-surface-variant dark:text-on-surface-variant-dark">Cargando…</p>
+			<p v-else-if="!canEdit" class="form-notice">
+				<Icon name="fa6-solid:lock" aria-hidden="true" class="mt-1 shrink-0" />
+				No tienes permiso para editar esta noticia.
+			</p>
+			<form v-else class="form-sheet" @submit.prevent="handleSubmit">
+				<p class="form-hint pt-6">Los campos con <span class="text-destructive dark:text-destructive-dark">*</span> son obligatorios.</p>
+				<section class="form-section">
+					<div>
+						<h2 class="form-section-title">La noticia</h2>
+						<p class="form-hint mt-2">El título y el resumen son lo que se ve en la tarjeta.</p>
+					</div>
+					<div class="form-grid">
+						<div class="form-field sm:col-span-2">
+							<label for="titulo" class="form-label">Título</label>
+							<input id="titulo" v-model="titulo" type="text" class="form-control" required />
+						</div>
+						<div class="form-field sm:col-span-2">
+							<label for="resumen" class="form-label">Resumen</label>
+							<input id="resumen" v-model="resumen" type="text" class="form-control" />
+							<p class="form-hint">Una o dos frases.</p>
+						</div>
+					</div>
+				</section>
 
-    <div v-else-if="!canEdit" class="p-6 bg-yellow-50 rounded dark:text-gray-900">No tienes permiso para editar esta noticia.</div>
+				<section class="form-section">
+					<div>
+						<h2 class="form-section-title">Contenido</h2>
+						<p class="form-hint mt-2">El texto completo de la noticia.</p>
+					</div>
+					<div class="form-field">
+						<label for="contenido" class="form-label">Contenido</label>
+						<textarea id="contenido" v-model="contenido" rows="10" class="form-control"></textarea>
+						<p class="form-hint">Puedes usar etiquetas HTML para dar formato.</p>
+					</div>
+				</section>
 
-    <form v-else @submit.prevent="handleSubmit" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium mb-1">Título</label>
-        <input v-model="titulo" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" required />
-      </div>
+				<section class="form-section">
+					<div>
+						<h2 class="form-section-title">Imagen</h2>
+						<p class="form-hint mt-2">Se muestra en la tarjeta y al abrir la noticia.</p>
+					</div>
+					<div class="form-field">
+						<label for="imagen" class="form-label">Imagen de la noticia</label>
+						<ImageDrop id="imagen" ref="fileInput" hint="Si no eliges nada, se conserva la actual." :current="noticia?.imagen" />
+					</div>
+				</section>
 
-      <div>
-        <label class="block text-sm font-medium mb-1">Resumen</label>
-        <input v-model="resumen" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700" />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-1">Contenido (HTML permitido)</label>
-        <textarea v-model="contenido" rows="8" class="w-full border rounded px-3 py-2 dark:border-gray-600 dark:bg-neutral-700"></textarea>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-1">Imagen</label>
-        <input ref="fileInput" type="file" accept="image/*" />
-      </div>
-
-      <div class="flex items-center gap-4">
-        <button :disabled="saving" class="button-primary px-6 py-2 font-semibold">Guardar</button>
-        <NuxtLink :to="`/noticias/${route.params.id}`" replace class="button-secondary px-6 py-2 font-semibold inline-block">Cancelar</NuxtLink>
-      </div>
-
-      <div v-if="error" class="text-red-600">{{ error }}</div>
-      <div v-if="success" class="text-green-600">Noticia actualizada correctamente.</div>
-    </form>
-    </div>
-    </div>
-  </div>
+				<div class="form-actions">
+					<p v-if="error" role="alert" class="form-alert form-alert-error mr-auto">
+						<Icon name="fa6-solid:circle-exclamation" aria-hidden="true" class="mt-1 shrink-0 text-destructive dark:text-destructive-dark" />
+						{{ error }}
+					</p>
+					<p v-if="success" role="status" class="form-alert form-alert-success mr-auto">
+						<Icon name="fa6-solid:circle-check" aria-hidden="true" class="mt-1 shrink-0 text-primary dark:text-primary-dark" />
+						Cambios guardados.
+					</p>
+					<NuxtLink :to="`/noticias/${route.params.id}`" replace class="button-secondary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">Cancelar</NuxtLink>
+					<button type="submit" :disabled="saving" class="button-primary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+						<Icon v-if="saving" name="fa6-solid:spinner" aria-hidden="true" class="animate-spin motion-reduce:animate-none" />
+						{{ saving ? "Guardando…" : "Guardar cambios" }}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">

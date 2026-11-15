@@ -1,50 +1,45 @@
 <template>
   <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
-    <!-- Hero Section -->
-    <section class="relative py-20 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-page-shell mx-auto">
-        <div class="text-center">
-          <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-            {{ pageContent.title || 'Deportistas Elite' }}
-          </h1>
-          <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            {{ pageContent.subtitle || 'Conecta con los mejores atletas y lleva tu rendimiento al siguiente nivel' }}
+    <div class="max-w-page-shell mx-auto px-4 pt-12 pb-16 sm:px-6 md:pt-16 lg:px-8">
+      <!-- Encabezado -->
+      <DirectoryHeader
+        :title="pageContent.title || 'Deportistas'"
+        :subtitle="pageContent.subtitle || 'Atletas de fútbol, ciclismo, patinaje y boxeo que buscan marcas, nutricionistas y patrocinadores.'" />
+
+      <!-- Filtro por deporte -->
+      <nav aria-label="Filtrar por deporte" class="mt-4 mb-8">
+        <FilterChips v-model="selectedDeporteId" :options="deporteOptions" variant="tabs" />
+      </nav>
+
+      <!-- Contenido editable desde el admin -->
+      <div
+        v-if="pageContent.content"
+        class="mb-10 max-w-[75ch] text-on-surface dark:text-on-surface-dark"
+        v-html="pageContent.content"></div>
+
+      <!-- Directorio de deportistas -->
+      <InfiniteScrollList
+        :key="selectedDeporteId ?? 'all'"
+        :fetch-page="fetchPage"
+        grid-class="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+        skeleton-class="aspect-[4/6]">
+        <template #default="{ item }">
+          <UsuarioDirectoryCard :usuario="item" />
+        </template>
+        <template #empty>
+          <p class="text-on-surface-variant dark:text-on-surface-variant-dark">
+            {{ selectedDeporteId ? 'Todavía no hay deportistas registrados en este deporte. Prueba con otro o mira todos.' : 'Todavía no hay deportistas registrados.' }}
           </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Main Content -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-page-shell mx-auto">
-        <!-- Custom Content -->
-        <div v-if="pageContent.content" class="mb-16">
-          <div v-html="pageContent.content"></div>
-        </div>
-
-        <!-- Filtro por deporte -->
-        <div class="mb-6">
-          <FilterChips v-model="selectedDeporteId" :options="deporteOptions" />
-        </div>
-
-        <!-- Directorio de Deportistas -->
-        <InfiniteScrollList :key="selectedDeporteId ?? 'all'" :fetch-page="fetchPage">
-          <template #default="{ item }">
-            <UsuarioDirectoryCard :usuario="item" />
-          </template>
-          <template #empty>
-            <p class="text-center text-gray-600 dark:text-gray-400">Todavía no hay deportistas registrados.</p>
-          </template>
-        </InfiniteScrollList>
-      </div>
-    </section>
+        </template>
+      </InfiniteScrollList>
+    </div>
   </div>
 </template>
 
 <script setup>
 definePageMeta({
-  title: 'Deportistas Elite - EliteHub',
-  description: 'Conecta con los mejores atletas y lleva tu rendimiento al siguiente nivel',
+  title: 'Deportistas - EliteHub',
+  description: 'Atletas de fútbol, ciclismo, patinaje y boxeo que buscan marcas, nutricionistas y patrocinadores.',
   keepalive: true
 })
 

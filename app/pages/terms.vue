@@ -1,39 +1,18 @@
 <template>
-	<div class="mx-auto min-h-screen py-10">
-		<!-- Content Editor for Admins -->
-		<ContentEditor page="terms" :initial-content="pageContent" @updated="handleContentUpdate" />
+	<div class="min-h-screen w-full bg-surface-container dark:bg-surface-container-dark">
+		<div class="max-w-page-shell mx-auto px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+			<ContentEditor page="terms" :initial-content="pageContent" @updated="handleContentUpdate" />
 
-		<!-- Hero Section -->
-		<section class="relative bg-black px-4 py-16 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-4xl text-center">
-				<h1 class="mb-6 text-4xl font-bold text-white md:text-5xl">
-					{{ pageContent.title || "Términos y Condiciones" }}
-				</h1>
-				<p class="mb-8 text-lg text-gray-300 md:text-xl">
-					{{ pageContent.subtitle || "Última actualización: " + lastUpdated }}
-				</p>
-			</div>
-		</section>
+			<DirectoryHeader :title="pageContent.title || 'Términos y condiciones'" :subtitle="pageContent.subtitle || 'Última actualización: ' + lastUpdated" />
 
-		<!-- Main Content -->
-		<section class="px-4 py-16 sm:px-6 lg:px-8">
-			<!-- Custom Content -->
-			<div
-				v-if="pageContent.content"
-				class="mx-auto max-w-4xl rounded-xl bg-white p-8 text-gray-800 shadow-lg md:p-12">
-				<div class="prose max-w-none" v-html="pageContent.content"></div>
-			</div>
-
-			<!-- Default Terms Content -->
-			<div v-else class="mx-auto max-w-4xl rounded-xl bg-white p-8 text-gray-800 shadow-lg md:p-12">
-				<div class="max-w-none">
+			<div v-if="pageContent.content" class="rich-text mt-10" v-html="pageContent.content"></div>
+			<div v-else class="rich-text mt-10">
 					<h2>1. Aceptación de los Términos</h2>
 					<p>
 						Al acceder y utilizar EliteHub, usted acepta estar sujeto a estos términos y condiciones
 						de uso. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar
 						nuestro servicio.
 					</p>
-					<br />
 
 					<h2>2. Descripción del Servicio</h2>
 					<p>
@@ -41,7 +20,6 @@
 						deportivas y nutricionistas especializados. Facilitamos el intercambio de servicios,
 						productos y conocimientos en el ámbito deportivo.
 					</p>
-					<br />
 
 					<h2>3. Registro de Usuario</h2>
 					<p>
@@ -54,7 +32,6 @@
 						<li>Notificar inmediatamente cualquier uso no autorizado de su cuenta</li>
 						<li>Ser responsable de todas las actividades que ocurran bajo su cuenta</li>
 					</ul>
-					<br />
 
 					<h2>4. Uso Aceptable</h2>
 					<p>Al utilizar EliteHub, usted se compromete a:</p>
@@ -65,7 +42,6 @@
 						<li>No interferir con el funcionamiento del servicio</li>
 						<li>Respetar los derechos de propiedad intelectual</li>
 					</ul>
-					<br />
 
 					<h2>5. Contenido del Usuario</h2>
 					<p>
@@ -73,14 +49,12 @@
 						embargo, al publicar contenido, nos otorga una licencia no exclusiva para usar, mostrar
 						y distribuir dicho contenido en nuestra plataforma.
 					</p>
-					<br />
 
 					<h2>6. Privacidad y Protección de Datos</h2>
 					<p>
 					 	Su privacidad es importante para nosotros. El uso de sus datos personales se rige por
 						nuestra Política de Privacidad, que forma parte integral de estos términos.
 					</p>
-					<br />
 
 					<h2>7. Servicios de Terceros</h2>
 					<p>
@@ -88,7 +62,6 @@
 						responsables del contenido, políticas de privacidad o prácticas de estos sitios
 						externos.
 					</p>
-					<br />
 
 					<h2>8. Limitación de Responsabilidad</h2>
 					<p>
@@ -96,21 +69,18 @@
 						responsables de daños directos, indirectos, incidentales o consecuentes que resulten del
 						uso de nuestro servicio.
 					</p>
-					<br />
 
 					<h2>9. Modificaciones del Servicio</h2>
 					<p>
 						Nos reservamos el derecho de modificar, suspender o discontinuar cualquier parte del
 						servicio en cualquier momento, con o sin previo aviso.
 					</p>
-					<br />
 
 					<h2>10. Terminación</h2>
 					<p>
 						Podemos terminar o suspender su cuenta inmediatamente, sin previo aviso, por cualquier
 						motivo, incluyendo la violación de estos términos.
 					</p>
-					<br />
 
 					<h2>11. Ley Aplicable</h2>
 					<p>
@@ -123,7 +93,6 @@
 						Nos reservamos el derecho de actualizar estos términos en cualquier momento. Los cambios
 						entrarán en vigor inmediatamente después de su publicación en esta página.
 					</p>
-					<br />
 
 					<h2>13. Contacto</h2>
 					<p>
@@ -134,9 +103,8 @@
 						<li>Teléfono: +57 (1) 234-5678</li>
 						<li>Dirección: Calle 123 #45-67, Bogotá, Colombia</li>
 					</ul>
-				</div>
 			</div>
-		</section>
+		</div>
 	</div>
 </template>
 
@@ -156,7 +124,7 @@
 		metadata: {},
 	});
 
-	const lastUpdated = ref("Enero 2024");
+	const lastUpdated = ref("enero de 2024");
 
 	const handleContentUpdate = (updatedContent) => {
 		pageContent.value = updatedContent;

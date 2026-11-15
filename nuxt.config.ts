@@ -39,6 +39,14 @@ export default defineNuxtConfig({
 		// over dark-mode state, the exact bug pattern already hit repeatedly post-Epic-7.
 		colorMode: false,
 	},
+	fonts: {
+		// `global: true` always emits the @font-face rules, so the families are available
+		// even where they are only referenced through the --font-* theme variables.
+		families: [
+			{ name: "Sofia Sans", provider: "google", weights: [400, 600, 700], global: true },
+			{ name: "Sofia Sans Extra Condensed", provider: "google", weights: [800], global: true },
+		],
+	},
 	nitro: {
 		storage: {
 			public: {

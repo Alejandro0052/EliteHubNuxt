@@ -1,8 +1,8 @@
 <template>
 	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
 	<div class="mx-auto w-full max-w-[120rem] px-4 py-6">
-		<div class="rounded-lg bg-white p-6 shadow-md dark:bg-neutral-800">
-			<h1 class="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Mi Perfil</h1>
+		<div class="p-6 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+			<h1 class="mb-6 border-b-2 border-on-surface pb-4 font-display text-5xl leading-[0.9] font-extrabold text-on-surface uppercase sm:text-6xl dark:border-on-surface-dark dark:text-on-surface-dark">Mi perfil</h1>
 
 			<!-- Admin quick link -->
 			<div v-if="authStore.user?.isAdmin" class="mb-6">

@@ -1,73 +1,73 @@
 <template>
-  <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
-    <div class="max-w-page-shell mx-auto py-12 px-4">
-    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <h1 class="text-3xl font-bold text-on-surface dark:text-on-surface-dark">Usuarios</h1>
-      <div class="flex items-center gap-3">
-        <NuxtLink to="/profile" class="button-secondary inline-flex items-center gap-2 px-3 py-2 text-sm font-medium">
-          <Icon name="fa6-solid:arrow-left" />
-          Volver
-        </NuxtLink>
-        <NuxtLink to="/admin/users/create" class="button-primary inline-flex items-center gap-2 px-3 py-2 text-sm font-medium">
-          <Icon name="fa6-solid:user-plus" />
-          Crear Usuario
-        </NuxtLink>
-      </div>
-    </div>
+	<div class="min-h-screen w-full bg-surface-container dark:bg-surface-container-dark">
+		<div class="max-w-page-shell mx-auto px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+			<div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b-2 border-on-surface pb-4 dark:border-on-surface-dark">
+				<h1 class="font-display text-5xl leading-[0.9] font-extrabold uppercase sm:text-6xl text-on-surface dark:text-on-surface-dark">Usuarios</h1>
+				<div class="flex items-center gap-3">
+					<NuxtLink to="/profile" class="button-secondary inline-flex items-center gap-2 px-4 py-2 font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+						<Icon name="fa6-solid:arrow-left" />
+						Volver
+					</NuxtLink>
+					<NuxtLink to="/admin/users/create" class="button-primary inline-flex items-center gap-2 px-5 py-2.5 font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+						<Icon name="fa6-solid:user-plus" />
+						Crear usuario
+					</NuxtLink>
+				</div>
+			</div>
 
-    <div v-if="loading" class="dark:text-gray-300">Cargando...</div>
-    <div v-else>
-      <table class="min-w-full table-auto divide-y divide-gray-200 dark:divide-gray-600">
-        <thead>
-          <tr class="bg-gray-50 dark:bg-neutral-700">
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Nombre</th>
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Apellido</th>
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Correo</th>
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Tipo de usuario</th>
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Rol</th>
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Activo</th>
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Creado</th>
-            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-          <tr v-for="u in users" :key="u.id">
-            <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ u.nombre }}</td>
-            <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ u.apellido }}</td>
-            <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ u.correo }}</td>
-            <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ u.informacion?.tipoUsuario?.tipo || 'Sin tipo' }}</td>
-            <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ u.isAdmin ? 'Administrador' : 'Usuario' }}</td>
-            <td class="px-4 py-3">
-              <button
-                v-if="authStore.user?.isAdmin && u.id !== authStore.user.id"
-                @click="toggleActivo(u)"
-                :class="u.activo ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-red-100 text-red-800 hover:bg-red-200'"
-                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-colors border border-gray-300"
-              >
-                <Icon :name="u.activo ? 'fa6-solid:toggle-on' : 'fa6-solid:toggle-off'" class="mr-1" />
-                {{ u.activo ? 'Activo' : 'Inactivo' }}
-              </button>
-              <span v-else>
-                <span v-if="u.activo" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Sí</span>
-                <span v-else class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">No</span>
-              </span>
-            </td>
-            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ formatDate(u.createdAt) }}</td>
-            <td class="px-4 py-3">
-              <NuxtLink
-                :to="`/profile/${u.id}`"
-                class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-neutral-700"
-                title="Editar perfil (recuperación admin)">
-                <Icon name="fa6-solid:pen" />
-                Editar perfil
-              </NuxtLink>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    </div>
-  </div>
+			<p v-if="loading" class="text-on-surface-variant dark:text-on-surface-variant-dark">Cargando usuarios…</p>
+			<p v-else-if="users.length === 0" class="text-on-surface-variant dark:text-on-surface-variant-dark">Todavía no hay usuarios registrados.</p>
+			<div v-else class="overflow-x-auto rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+				<table class="data-table">
+					<thead>
+						<tr>
+							<th>Nombre</th>
+							<th>Correo</th>
+							<th>Tipo de usuario</th>
+							<th>Rol</th>
+							<th>Estado</th>
+							<th>Creado</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="u in users" :key="u.id">
+							<td class="font-semibold">{{ u.nombre }} {{ u.apellido }}</td>
+							<td>{{ u.correo }}</td>
+							<td>{{ u.informacion?.tipoUsuario?.tipo || "Sin tipo" }}</td>
+							<td>{{ u.isAdmin ? "Administrador" : "Usuario" }}</td>
+							<td>
+								<button
+									v-if="authStore.user?.isAdmin && u.id !== authStore.user.id"
+									type="button"
+									:aria-pressed="u.activo"
+									:title="u.activo ? 'Desactivar usuario' : 'Activar usuario'"
+									class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark"
+									:class="estadoClass(u.activo)"
+									@click="toggleActivo(u)">
+									<Icon :name="u.activo ? 'fa6-solid:toggle-on' : 'fa6-solid:toggle-off'" />
+									{{ u.activo ? "Activo" : "Inactivo" }}
+								</button>
+								<span v-else class="inline-flex rounded-full border px-3 py-1 text-sm font-semibold" :class="estadoClass(u.activo)">
+									{{ u.activo ? "Activo" : "Inactivo" }}
+								</span>
+							</td>
+							<td class="text-sm whitespace-nowrap tabular-nums text-on-surface-variant dark:text-on-surface-variant-dark">{{ formatDate(u.createdAt) }}</td>
+							<td>
+								<NuxtLink
+									:to="`/profile/${u.id}`"
+									class="inline-flex items-center gap-1.5 rounded text-sm font-semibold whitespace-nowrap text-primary underline-offset-2 hover:underline dark:text-primary-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark"
+									title="Editar perfil (recuperación admin)">
+									<Icon name="fa6-solid:pen" />
+									Editar perfil
+								</NuxtLink>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -80,7 +80,13 @@ const users = ref<any[]>([])
 const loading = ref(true)
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleString()
+  return new Date(d).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+function estadoClass(activo: boolean) {
+  return activo
+    ? 'border-primary text-primary dark:border-primary-dark dark:text-primary-dark'
+    : 'border-destructive text-destructive dark:border-destructive-dark dark:text-destructive-dark'
 }
 
 async function toggleActivo(user: any) {

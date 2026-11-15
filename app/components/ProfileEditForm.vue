@@ -1,416 +1,429 @@
 <template>
-	<form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-			<div class="flex flex-col gap-1">
-				<label class="text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de usuario</label>
-				<p class="rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:border-gray-600 dark:bg-neutral-700 dark:text-gray-200">
+	<form class="flex flex-col gap-6" @submit.prevent="handleSubmit">
+		<div class="form-grid">
+			<h3 class="form-group-title">Tu cuenta</h3>
+			<div class="form-field">
+				<span class="form-label">Tipo de usuario</span>
+				<p class="rounded-md border border-border-hairline bg-surface-container-high px-3.5 py-2.5 text-on-surface dark:text-on-surface-dark dark:border-border-hairline-dark dark:bg-surface-container-high-dark">
 					{{ tipo || "Sin tipo asignado" }}
 				</p>
+				<p class="form-hint">El tipo de usuario no se puede cambiar.</p>
 			</div>
-			<div class="flex flex-col gap-1">
-				<label for="correo" class="text-sm font-medium text-gray-700 dark:text-gray-300">Correo</label>
-				<input id="correo" v-model="form.correo" type="email" required class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+			<div class="form-field">
+				<label for="correo" class="form-label">Correo</label>
+				<input id="correo" v-model="form.correo" type="email" required class="form-control" />
 			</div>
-		</div>
 
-		<!-- Avatar -->
-		<div class="flex flex-col items-start gap-2">
-			<label for="avatarFile" class="text-sm font-medium text-gray-700 dark:text-gray-300">Foto de perfil</label>
-			<div class="flex items-center gap-4">
-				<img v-if="avatarPreview" :src="avatarPreview" alt="Avatar" class="h-16 w-16 rounded-full border object-cover" />
-				<span v-else class="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 text-gray-400 dark:bg-neutral-700 dark:text-gray-500">
-					<Icon name="fa6-solid:user" class="text-2xl" />
-				</span>
-				<input id="avatarFile" type="file" accept="image/*" class="text-sm" @change="handleAvatarUpload" />
+			<!-- Avatar -->
+			<div class="form-field sm:col-span-2">
+				<label for="avatarFile" class="form-label">Foto de perfil</label>
+				<div class="flex flex-wrap items-center gap-5">
+					<img v-if="avatarPreview" :src="avatarPreview" alt="Tu foto de perfil" class="h-24 w-24 rounded-lg bg-black object-cover" />
+					<span v-else class="flex h-24 w-24 items-center justify-center rounded-lg bg-black text-white">
+						<Icon name="fa6-solid:user" aria-hidden="true" class="text-3xl" />
+					</span>
+					<div class="min-w-0 flex-1">
+						<input id="avatarFile" type="file" accept="image/*" class="form-file" @change="handleAvatarUpload" />
+						<p class="form-hint mt-2">Es la foto que aparece en tu ficha del directorio.</p>
+					</div>
+				</div>
+				<p v-if="avatarError" role="alert" class="text-sm font-semibold text-destructive dark:text-destructive-dark">{{ avatarError }}</p>
 			</div>
-			<p v-if="avatarError" class="text-xs text-red-500">{{ avatarError }}</p>
 		</div>
 
 		<!-- Deportista -->
 		<template v-if="tipo === 'Deportista'">
-			<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<div class="flex flex-col gap-1">
-					<label for="nombre" class="text-sm font-medium text-gray-700 dark:text-gray-300">Primer nombre</label>
-					<input id="nombre" v-model="form.nombre" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+			<div class="form-grid">
+				<h3 class="form-group-title">Datos personales</h3>
+				<div class="form-field">
+					<label for="nombre" class="form-label">Primer nombre</label>
+					<input id="nombre" v-model="form.nombre" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="segundoNombre" class="text-sm font-medium text-gray-700 dark:text-gray-300">Segundo nombre</label>
-					<input id="segundoNombre" v-model="form.informacion.segundoNombre" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="segundoNombre" class="form-label">Segundo nombre</label>
+					<input id="segundoNombre" v-model="form.informacion.segundoNombre" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="apellido" class="text-sm font-medium text-gray-700 dark:text-gray-300">Primer apellido</label>
-					<input id="apellido" v-model="form.apellido" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="apellido" class="form-label">Primer apellido</label>
+					<input id="apellido" v-model="form.apellido" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="segundoApellido" class="text-sm font-medium text-gray-700 dark:text-gray-300">Segundo apellido</label>
-					<input id="segundoApellido" v-model="form.informacion.segundoApellido" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="segundoApellido" class="form-label">Segundo apellido</label>
+					<input id="segundoApellido" v-model="form.informacion.segundoApellido" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="fechaNacimiento" class="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de nacimiento</label>
-					<input id="fechaNacimiento" v-model="form.informacion.fechaNacimiento" type="date" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="fechaNacimiento" class="form-label">Fecha de nacimiento</label>
+					<input id="fechaNacimiento" v-model="form.informacion.fechaNacimiento" type="date" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="genero" class="text-sm font-medium text-gray-700 dark:text-gray-300">Género</label>
-					<select id="genero" v-model="form.informacion.genero" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="genero" class="form-label">Género</label>
+					<select id="genero" v-model="form.informacion.genero" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="g in GENEROS" :key="g" :value="g">{{ g }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="nacionalidad" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nacionalidad</label>
-					<select id="nacionalidad" v-model="form.informacion.nacionalidad" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="nacionalidad" class="form-label">Nacionalidad</label>
+					<select id="nacionalidad" v-model="form.informacion.nacionalidad" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="p in PAISES" :key="p" :value="p">{{ p }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="ciudadResidencia" class="text-sm font-medium text-gray-700 dark:text-gray-300">Ciudad de residencia</label>
-					<input id="ciudadResidencia" v-model="form.informacion.ciudadResidencia" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="ciudadResidencia" class="form-label">Ciudad de residencia</label>
+					<input id="ciudadResidencia" v-model="form.informacion.ciudadResidencia" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="telefono" class="text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
-					<input id="telefono" v-model="form.informacion.telefono" type="tel" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="telefono" class="form-label">Teléfono</label>
+					<input id="telefono" v-model="form.informacion.telefono" type="tel" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="bio" class="text-sm font-medium text-gray-700 dark:text-gray-300">Biografía corta</label>
-					<textarea id="bio" v-model="form.informacion.bio" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="bio" class="form-label">Biografía corta</label>
+					<textarea id="bio" v-model="form.informacion.bio" rows="3" class="form-control"></textarea>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="deporteId" class="text-sm font-medium text-gray-700 dark:text-gray-300">Deporte</label>
-					<select id="deporteId" v-model="form.deporte.deporteId" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<h3 class="form-group-title">Tu deporte</h3>
+				<div class="form-field">
+					<label for="deporteId" class="form-label">Deporte</label>
+					<select id="deporteId" v-model="form.deporte.deporteId" class="form-control">
 						<option :value="null">Selecciona…</option>
 						<option v-for="d in deportesFocales" :key="d.id" :value="d.id">{{ d.nombre }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="nivel" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nivel deportivo</label>
-					<select id="nivel" v-model="form.deporte.nivel" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="nivel" class="form-label">Nivel deportivo</label>
+					<select id="nivel" v-model="form.deporte.nivel" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="n in NIVELES" :key="n" :value="n">{{ n }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="altura" class="text-sm font-medium text-gray-700 dark:text-gray-300">Altura (m)</label>
-					<input id="altura" v-model="form.informacion.altura" type="number" step="0.01" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="altura" class="form-label">Altura (m)</label>
+					<input id="altura" v-model="form.informacion.altura" type="number" step="0.01" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="peso" class="text-sm font-medium text-gray-700 dark:text-gray-300">Peso (kg)</label>
-					<input id="peso" v-model="form.informacion.peso" type="number" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="peso" class="form-label">Peso (kg)</label>
+					<input id="peso" v-model="form.informacion.peso" type="number" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="experiencia" class="text-sm font-medium text-gray-700 dark:text-gray-300">Años de experiencia en el deporte</label>
-					<input id="experiencia" v-model="form.deporte.experiencia" type="number" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="experiencia" class="form-label">Años de experiencia en el deporte</label>
+					<input id="experiencia" v-model="form.deporte.experiencia" type="number" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="redSocialUrl" class="text-sm font-medium text-gray-700 dark:text-gray-300">Link de redes sociales</label>
-					<input id="redSocialUrl" v-model="form.redSocialUrl" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="redSocialUrl" class="form-label">Link de redes sociales</label>
+					<input id="redSocialUrl" v-model="form.redSocialUrl" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="objetivosActuales" class="text-sm font-medium text-gray-700 dark:text-gray-300">Objetivos actuales</label>
-					<textarea id="objetivosActuales" v-model="form.informacion.objetivosActuales" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="objetivosActuales" class="form-label">Objetivos actuales</label>
+					<textarea id="objetivosActuales" v-model="form.informacion.objetivosActuales" rows="3" class="form-control"></textarea>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="marcasPersonales" class="text-sm font-medium text-gray-700 dark:text-gray-300">Marcas personales</label>
-					<input id="marcasPersonales" v-model="form.informacion.marcasPersonales" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="marcasPersonales" class="form-label">Marcas personales</label>
+					<input id="marcasPersonales" v-model="form.informacion.marcasPersonales" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="lesiones" class="text-sm font-medium text-gray-700 dark:text-gray-300">Lesiones</label>
-					<input id="lesiones" v-model="form.informacion.lesiones" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="lesiones" class="form-label">Lesiones</label>
+					<input id="lesiones" v-model="form.informacion.lesiones" type="text" class="form-control" />
 				</div>
 			</div>
 
 			<!-- Campos específicos de Fútbol (FR-50) -->
-			<div v-if="deporteSeleccionadoNombre === 'Fútbol'" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<div class="flex flex-col gap-1">
-					<label for="posicionPrincipal" class="text-sm font-medium text-gray-700 dark:text-gray-300">Posición principal</label>
-					<select id="posicionPrincipal" v-model="form.deporte.camposEspecificos.posicionPrincipal" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+			<div v-if="deporteSeleccionadoNombre === 'Fútbol'" class="form-grid">
+				<h3 class="form-group-title">Fútbol</h3>
+				<div class="form-field">
+					<label for="posicionPrincipal" class="form-label">Posición principal</label>
+					<select id="posicionPrincipal" v-model="form.deporte.camposEspecificos.posicionPrincipal" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="p in FUTBOL_POSICIONES" :key="p" :value="p">{{ p }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="posicionSecundaria" class="text-sm font-medium text-gray-700 dark:text-gray-300">Posición secundaria (opcional)</label>
-					<select id="posicionSecundaria" v-model="form.deporte.camposEspecificos.posicionSecundaria" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="posicionSecundaria" class="form-label">Posición secundaria (opcional)</label>
+					<select id="posicionSecundaria" v-model="form.deporte.camposEspecificos.posicionSecundaria" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="p in FUTBOL_POSICIONES" :key="p" :value="p">{{ p }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="pieDominante" class="text-sm font-medium text-gray-700 dark:text-gray-300">Pie dominante</label>
-					<select id="pieDominante" v-model="form.deporte.camposEspecificos.pieDominante" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="pieDominante" class="form-label">Pie dominante</label>
+					<select id="pieDominante" v-model="form.deporte.camposEspecificos.pieDominante" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="p in FUTBOL_PIE_DOMINANTE" :key="p" :value="p">{{ p }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="clubActual" class="text-sm font-medium text-gray-700 dark:text-gray-300">Club actual</label>
-					<input id="clubActual" v-model="form.deporte.camposEspecificos.clubActual" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="clubActual" class="form-label">Club actual</label>
+					<input id="clubActual" v-model="form.deporte.camposEspecificos.clubActual" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="nivelCompetencia" class="text-sm font-medium text-gray-700 dark:text-gray-300">Categoría/nivel de competencia</label>
-					<select id="nivelCompetencia" v-model="form.deporte.camposEspecificos.nivelCompetencia" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="nivelCompetencia" class="form-label">Categoría/nivel de competencia</label>
+					<select id="nivelCompetencia" v-model="form.deporte.camposEspecificos.nivelCompetencia" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="n in FUTBOL_NIVEL_COMPETENCIA" :key="n" :value="n">{{ n }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="saltoVertical" class="text-sm font-medium text-gray-700 dark:text-gray-300">Salto vertical (cm)</label>
-					<input id="saltoVertical" v-model="form.deporte.camposEspecificos.saltoVertical" type="number" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="saltoVertical" class="form-label">Salto vertical (cm)</label>
+					<input id="saltoVertical" v-model="form.deporte.camposEspecificos.saltoVertical" type="number" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label class="text-sm font-medium text-gray-700 dark:text-gray-300">Atributos destacados</label>
+				<div class="form-field sm:col-span-2">
+					<label class="form-label">Atributos destacados</label>
 					<FilterChips
 						:options="FUTBOL_ATRIBUTOS.map((a) => ({ value: a, label: a }))"
 						v-model="form.deporte.camposEspecificos.atributosDestacados"
 						multiple />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="otrasCualidades" class="text-sm font-medium text-gray-700 dark:text-gray-300">Otras cualidades (opcional)</label>
-					<input id="otrasCualidades" v-model="form.deporte.camposEspecificos.otrasCualidades" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field sm:col-span-2">
+					<label for="otrasCualidades" class="form-label">Otras cualidades (opcional)</label>
+					<input id="otrasCualidades" v-model="form.deporte.camposEspecificos.otrasCualidades" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="trayectoriaClubes" class="text-sm font-medium text-gray-700 dark:text-gray-300">Trayectoria de clubes</label>
-					<textarea id="trayectoriaClubes" v-model="form.deporte.camposEspecificos.trayectoriaClubes" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="trayectoriaClubes" class="form-label">Trayectoria de clubes</label>
+					<textarea id="trayectoriaClubes" v-model="form.deporte.camposEspecificos.trayectoriaClubes" rows="3" class="form-control"></textarea>
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="logrosTitulos" class="text-sm font-medium text-gray-700 dark:text-gray-300">Logros y títulos</label>
-					<textarea id="logrosTitulos" v-model="form.deporte.camposEspecificos.logrosTitulos" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="logrosTitulos" class="form-label">Logros y títulos</label>
+					<textarea id="logrosTitulos" v-model="form.deporte.camposEspecificos.logrosTitulos" rows="3" class="form-control"></textarea>
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="reconocimientosIndividuales" class="text-sm font-medium text-gray-700 dark:text-gray-300">Reconocimientos individuales</label>
-					<textarea id="reconocimientosIndividuales" v-model="form.deporte.camposEspecificos.reconocimientosIndividuales" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="reconocimientosIndividuales" class="form-label">Reconocimientos individuales</label>
+					<textarea id="reconocimientosIndividuales" v-model="form.deporte.camposEspecificos.reconocimientosIndividuales" rows="3" class="form-control"></textarea>
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="estadisticasUltimaTemporada" class="text-sm font-medium text-gray-700 dark:text-gray-300">Estadísticas de la última temporada</label>
-					<textarea id="estadisticasUltimaTemporada" v-model="form.deporte.camposEspecificos.estadisticasUltimaTemporada" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="estadisticasUltimaTemporada" class="form-label">Estadísticas de la última temporada</label>
+					<textarea id="estadisticasUltimaTemporada" v-model="form.deporte.camposEspecificos.estadisticasUltimaTemporada" rows="3" class="form-control"></textarea>
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="convocatoriasSelecciones" class="text-sm font-medium text-gray-700 dark:text-gray-300">Convocatorias/selecciones</label>
-					<textarea id="convocatoriasSelecciones" v-model="form.deporte.camposEspecificos.convocatoriasSelecciones" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="convocatoriasSelecciones" class="form-label">Convocatorias/selecciones</label>
+					<textarea id="convocatoriasSelecciones" v-model="form.deporte.camposEspecificos.convocatoriasSelecciones" rows="3" class="form-control"></textarea>
 				</div>
 			</div>
 
 			<!-- Campos específicos de Boxeo (FR-50) -->
-			<div v-else-if="deporteSeleccionadoNombre === 'Boxeo'" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<div class="flex flex-col gap-1">
-					<label for="categoriaPeso" class="text-sm font-medium text-gray-700 dark:text-gray-300">Categoría de peso</label>
-					<select id="categoriaPeso" v-model="form.deporte.camposEspecificos.categoriaPeso" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+			<div v-else-if="deporteSeleccionadoNombre === 'Boxeo'" class="form-grid">
+				<h3 class="form-group-title">Boxeo</h3>
+				<div class="form-field">
+					<label for="categoriaPeso" class="form-label">Categoría de peso</label>
+					<select id="categoriaPeso" v-model="form.deporte.camposEspecificos.categoriaPeso" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="c in BOXEO_CATEGORIAS_PESO" :key="c" :value="c">{{ c }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="guardia" class="text-sm font-medium text-gray-700 dark:text-gray-300">Guardia</label>
-					<select id="guardia" v-model="form.deporte.camposEspecificos.guardia" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="guardia" class="form-label">Guardia</label>
+					<select id="guardia" v-model="form.deporte.camposEspecificos.guardia" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="g in BOXEO_GUARDIA" :key="g" :value="g">{{ g }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="gimnasioClubEntrenador" class="text-sm font-medium text-gray-700 dark:text-gray-300">Gimnasio/club y entrenador</label>
-					<input id="gimnasioClubEntrenador" v-model="form.deporte.camposEspecificos.gimnasioClubEntrenador" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="gimnasioClubEntrenador" class="form-label">Gimnasio/club y entrenador</label>
+					<input id="gimnasioClubEntrenador" v-model="form.deporte.camposEspecificos.gimnasioClubEntrenador" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="estiloPelea" class="text-sm font-medium text-gray-700 dark:text-gray-300">Estilo de pelea</label>
-					<select id="estiloPelea" v-model="form.deporte.camposEspecificos.estiloPelea" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="estiloPelea" class="form-label">Estilo de pelea</label>
+					<select id="estiloPelea" v-model="form.deporte.camposEspecificos.estiloPelea" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="e in BOXEO_ESTILO" :key="e" :value="e">{{ e }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="modalidad" class="text-sm font-medium text-gray-700 dark:text-gray-300">Modalidad</label>
-					<select id="modalidad" v-model="form.deporte.camposEspecificos.modalidad" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="modalidad" class="form-label">Modalidad</label>
+					<select id="modalidad" v-model="form.deporte.camposEspecificos.modalidad" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="m in BOXEO_MODALIDAD" :key="m" :value="m">{{ m }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="record" class="text-sm font-medium text-gray-700 dark:text-gray-300">Récord</label>
-					<input id="record" v-model="form.deporte.camposEspecificos.record" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="record" class="form-label">Récord</label>
+					<input id="record" v-model="form.deporte.camposEspecificos.record" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="federacionLiga" class="text-sm font-medium text-gray-700 dark:text-gray-300">Federación/liga u organismo sancionador</label>
-					<input id="federacionLiga" v-model="form.deporte.camposEspecificos.federacionLiga" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field sm:col-span-2">
+					<label for="federacionLiga" class="form-label">Federación/liga u organismo sancionador</label>
+					<input id="federacionLiga" v-model="form.deporte.camposEspecificos.federacionLiga" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="convocatoriasLogrosRankings" class="text-sm font-medium text-gray-700 dark:text-gray-300">Convocatorias/logros/rankings</label>
-					<textarea id="convocatoriasLogrosRankings" v-model="form.deporte.camposEspecificos.convocatoriasLogrosRankings" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="convocatoriasLogrosRankings" class="form-label">Convocatorias/logros/rankings</label>
+					<textarea id="convocatoriasLogrosRankings" v-model="form.deporte.camposEspecificos.convocatoriasLogrosRankings" rows="3" class="form-control"></textarea>
 				</div>
 			</div>
 
 			<!-- Deporte "Otros": permite indicar cuál deporte practica (FR-50) -->
-			<div v-else-if="deporteSeleccionadoNombre === 'Otros'" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="nombreDeporte" class="text-sm font-medium text-gray-700 dark:text-gray-300">¿Qué deporte practicas? <span class="text-gray-400 dark:text-gray-500">(opcional)</span></label>
-					<input id="nombreDeporte" v-model="form.deporte.camposEspecificos.nombreDeporte" type="text" placeholder="Ej: Ajedrez, Tenis, Atletismo…" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+			<div v-else-if="deporteSeleccionadoNombre === 'Otros'" class="form-grid">
+				<div class="form-field sm:col-span-2">
+					<label for="nombreDeporte" class="form-label">¿Qué deporte practicas? <span class="font-normal text-on-surface-variant dark:text-on-surface-variant-dark">(opcional)</span></label>
+					<input id="nombreDeporte" v-model="form.deporte.camposEspecificos.nombreDeporte" type="text" placeholder="Ej: Ajedrez, Tenis, Atletismo…" class="form-control" />
 				</div>
 			</div>
 		</template>
 
 		<!-- Marca -->
 		<template v-else-if="tipo === 'Marca'">
-			<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<div class="flex flex-col gap-1">
-					<label for="nombreComercial" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombre de la empresa</label>
-					<input id="nombreComercial" v-model="form.nombre" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+			<div class="form-grid">
+				<h3 class="form-group-title">La empresa</h3>
+				<div class="form-field">
+					<label for="nombreComercial" class="form-label">Nombre de la empresa</label>
+					<input id="nombreComercial" v-model="form.nombre" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="nit" class="text-sm font-medium text-gray-700 dark:text-gray-300">NIT</label>
-					<input id="nit" v-model="form.informacion.nit" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="nit" class="form-label">NIT</label>
+					<input id="nit" v-model="form.informacion.nit" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="telefonoMarca" class="text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono de contacto</label>
-					<input id="telefonoMarca" v-model="form.informacion.telefono" type="tel" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="telefonoMarca" class="form-label">Teléfono de contacto</label>
+					<input id="telefonoMarca" v-model="form.informacion.telefono" type="tel" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="direccionContacto" class="text-sm font-medium text-gray-700 dark:text-gray-300">Dirección</label>
-					<input id="direccionContacto" v-model="form.informacion.direccionContacto" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="direccionContacto" class="form-label">Dirección</label>
+					<input id="direccionContacto" v-model="form.informacion.direccionContacto" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="nombreContacto" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del contacto</label>
-					<input id="nombreContacto" v-model="form.informacion.nombreContacto" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<h3 class="form-group-title">Persona de contacto</h3>
+				<div class="form-field">
+					<label for="nombreContacto" class="form-label">Nombre del contacto</label>
+					<input id="nombreContacto" v-model="form.informacion.nombreContacto" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="cargoContacto" class="text-sm font-medium text-gray-700 dark:text-gray-300">Cargo del contacto</label>
-					<input id="cargoContacto" v-model="form.informacion.cargoContacto" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="cargoContacto" class="form-label">Cargo del contacto</label>
+					<input id="cargoContacto" v-model="form.informacion.cargoContacto" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="redSocialUrlMarca" class="text-sm font-medium text-gray-700 dark:text-gray-300">URL de red social</label>
-					<input id="redSocialUrlMarca" v-model="form.redSocialUrl" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<h3 class="form-group-title">En internet</h3>
+				<div class="form-field">
+					<label for="redSocialUrlMarca" class="form-label">URL de red social</label>
+					<input id="redSocialUrlMarca" v-model="form.redSocialUrl" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="sitioWebMarca" class="text-sm font-medium text-gray-700 dark:text-gray-300">URL del aplicativo web</label>
-					<input id="sitioWebMarca" v-model="form.informacion.sitioWeb" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="sitioWebMarca" class="form-label">URL del aplicativo web</label>
+					<input id="sitioWebMarca" v-model="form.informacion.sitioWeb" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="bioMarca" class="text-sm font-medium text-gray-700 dark:text-gray-300">Descripción de la empresa</label>
-					<textarea id="bioMarca" v-model="form.informacion.bio" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="bioMarca" class="form-label">Descripción de la empresa</label>
+					<textarea id="bioMarca" v-model="form.informacion.bio" rows="3" class="form-control"></textarea>
 				</div>
 			</div>
 		</template>
 
 		<!-- Nutricionista -->
 		<template v-else-if="tipo === 'Nutricionista'">
-			<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<div class="flex flex-col gap-1">
-					<label for="nombresNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombres</label>
-					<input id="nombresNutri" v-model="form.nombre" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+			<div class="form-grid">
+				<h3 class="form-group-title">Datos personales</h3>
+				<div class="form-field">
+					<label for="nombresNutri" class="form-label">Nombres</label>
+					<input id="nombresNutri" v-model="form.nombre" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="apellidosNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">Apellidos</label>
-					<input id="apellidosNutri" v-model="form.apellido" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="apellidosNutri" class="form-label">Apellidos</label>
+					<input id="apellidosNutri" v-model="form.apellido" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="fechaNacimientoNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de nacimiento</label>
-					<input id="fechaNacimientoNutri" v-model="form.informacion.fechaNacimiento" type="date" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="fechaNacimientoNutri" class="form-label">Fecha de nacimiento</label>
+					<input id="fechaNacimientoNutri" v-model="form.informacion.fechaNacimiento" type="date" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="generoNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">Género</label>
-					<select id="generoNutri" v-model="form.informacion.genero" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="generoNutri" class="form-label">Género</label>
+					<select id="generoNutri" v-model="form.informacion.genero" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="g in GENEROS" :key="g" :value="g">{{ g }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="telefonoNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
-					<input id="telefonoNutri" v-model="form.informacion.telefono" type="tel" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="telefonoNutri" class="form-label">Teléfono</label>
+					<input id="telefonoNutri" v-model="form.informacion.telefono" type="tel" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="paisNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">País</label>
-					<select id="paisNutri" v-model="form.informacion.pais" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="paisNutri" class="form-label">País</label>
+					<select id="paisNutri" v-model="form.informacion.pais" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="p in PAISES" :key="p" :value="p">{{ p }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="ciudadNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">Ciudad de residencia</label>
-					<input id="ciudadNutri" v-model="form.informacion.ciudadResidencia" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="ciudadNutri" class="form-label">Ciudad de residencia</label>
+					<input id="ciudadNutri" v-model="form.informacion.ciudadResidencia" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="bioNutri" class="text-sm font-medium text-gray-700 dark:text-gray-300">Descripción corta</label>
-					<textarea id="bioNutri" v-model="form.informacion.bio" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="bioNutri" class="form-label">Descripción corta</label>
+					<textarea id="bioNutri" v-model="form.informacion.bio" rows="3" class="form-control"></textarea>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="profesion" class="text-sm font-medium text-gray-700 dark:text-gray-300">Título profesional</label>
-					<input id="profesion" v-model="form.informacion.profesion" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<h3 class="form-group-title">Formación y experiencia</h3>
+				<div class="form-field">
+					<label for="profesion" class="form-label">Título profesional</label>
+					<input id="profesion" v-model="form.informacion.profesion" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="universidad" class="text-sm font-medium text-gray-700 dark:text-gray-300">Universidad donde estudió</label>
-					<input id="universidad" v-model="form.informacion.universidad" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="universidad" class="form-label">Universidad donde estudió</label>
+					<input id="universidad" v-model="form.informacion.universidad" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="anoGraduacion" class="text-sm font-medium text-gray-700 dark:text-gray-300">Año de graduación</label>
-					<input id="anoGraduacion" v-model="form.informacion.anoGraduacion" type="number" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="anoGraduacion" class="form-label">Año de graduación</label>
+					<input id="anoGraduacion" v-model="form.informacion.anoGraduacion" type="number" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="especialidad" class="text-sm font-medium text-gray-700 dark:text-gray-300">Especialidad</label>
-					<input id="especialidad" v-model="form.informacion.especialidad" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="especialidad" class="form-label">Especialidad</label>
+					<input id="especialidad" v-model="form.informacion.especialidad" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="anosExperiencia" class="text-sm font-medium text-gray-700 dark:text-gray-300">Años de experiencia</label>
-					<input id="anosExperiencia" v-model="form.informacion.anosExperiencia" type="number" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="anosExperiencia" class="form-label">Años de experiencia</label>
+					<input id="anosExperiencia" v-model="form.informacion.anosExperiencia" type="number" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="modalidadAtencion" class="text-sm font-medium text-gray-700 dark:text-gray-300">Modalidad de atención</label>
-					<select id="modalidadAtencion" v-model="form.informacion.modalidadAtencion" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="modalidadAtencion" class="form-label">Modalidad de atención</label>
+					<select id="modalidadAtencion" v-model="form.informacion.modalidadAtencion" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="m in MODALIDADES" :key="m" :value="m">{{ m }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="certificadosAdicionales" class="text-sm font-medium text-gray-700 dark:text-gray-300">Certificados adicionales</label>
-					<input id="certificadosAdicionales" v-model="form.informacion.certificadosAdicionales" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="certificadosAdicionales" class="form-label">Certificados adicionales</label>
+					<input id="certificadosAdicionales" v-model="form.informacion.certificadosAdicionales" type="text" class="form-control" />
 				</div>
 			</div>
 		</template>
 
 		<!-- Patrocinador -->
 		<template v-else-if="tipo === 'Patrocinador'">
-			<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-				<div class="flex flex-col gap-1">
-					<label for="nombresPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombres</label>
-					<input id="nombresPatro" v-model="form.nombre" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+			<div class="form-grid">
+				<h3 class="form-group-title">Datos personales</h3>
+				<div class="form-field">
+					<label for="nombresPatro" class="form-label">Nombres</label>
+					<input id="nombresPatro" v-model="form.nombre" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="apellidosPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">Apellidos</label>
-					<input id="apellidosPatro" v-model="form.apellido" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="apellidosPatro" class="form-label">Apellidos</label>
+					<input id="apellidosPatro" v-model="form.apellido" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="fechaNacimientoPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de nacimiento</label>
-					<input id="fechaNacimientoPatro" v-model="form.informacion.fechaNacimiento" type="date" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="fechaNacimientoPatro" class="form-label">Fecha de nacimiento</label>
+					<input id="fechaNacimientoPatro" v-model="form.informacion.fechaNacimiento" type="date" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="telefonoPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</label>
-					<input id="telefonoPatro" v-model="form.informacion.telefono" type="tel" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="telefonoPatro" class="form-label">Teléfono</label>
+					<input id="telefonoPatro" v-model="form.informacion.telefono" type="tel" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="paisPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">País</label>
-					<select id="paisPatro" v-model="form.informacion.pais" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white">
+				<div class="form-field">
+					<label for="paisPatro" class="form-label">País</label>
+					<select id="paisPatro" v-model="form.informacion.pais" class="form-control">
 						<option value="">Selecciona…</option>
 						<option v-for="p in PAISES" :key="p" :value="p">{{ p }}</option>
 					</select>
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="ciudadPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">Ciudad</label>
-					<input id="ciudadPatro" v-model="form.informacion.ciudadResidencia" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="ciudadPatro" class="form-label">Ciudad</label>
+					<input id="ciudadPatro" v-model="form.informacion.ciudadResidencia" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1">
-					<label for="sitioWebPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">Sitio web</label>
-					<input id="sitioWebPatro" v-model="form.informacion.sitioWeb" type="text" class="reg-input border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white" />
+				<div class="form-field">
+					<label for="sitioWebPatro" class="form-label">Sitio web</label>
+					<input id="sitioWebPatro" v-model="form.informacion.sitioWeb" type="text" class="form-control" />
 				</div>
-				<div class="flex flex-col gap-1 sm:col-span-2">
-					<label for="bioPatro" class="text-sm font-medium text-gray-700 dark:text-gray-300">Descripción breve</label>
-					<textarea id="bioPatro" v-model="form.informacion.bio" rows="2" class="reg-input resize-none border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+				<div class="form-field sm:col-span-2">
+					<label for="bioPatro" class="form-label">Descripción breve</label>
+					<textarea id="bioPatro" v-model="form.informacion.bio" rows="3" class="form-control"></textarea>
 				</div>
 			</div>
 		</template>
 
-		<div class="flex justify-end gap-4">
-			<button
-				type="submit"
-				:disabled="submitting"
-				class="button-primary inline-flex justify-center px-4 py-2 text-sm font-medium shadow-sm">
-				{{ submitting ? "Guardando..." : "Guardar cambios" }}
+		<div class="flex justify-end border-t border-border-hairline pt-6 dark:border-border-hairline-dark">
+			<button type="submit" :disabled="submitting" class="button-primary form-submit focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
+				<Icon v-if="submitting" name="fa6-solid:spinner" aria-hidden="true" class="animate-spin motion-reduce:animate-none" />
+				{{ submitting ? "Guardando…" : "Guardar cambios" }}
 			</button>
 		</div>
 	</form>

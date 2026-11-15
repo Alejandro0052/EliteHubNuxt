@@ -1,70 +1,52 @@
 <template>
-	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
-	<div class="mx-auto max-w-[120rem] px-4 py-10 sm:px-6 lg:px-8">
-		<h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-white">Mensajes de Contacto</h1>
+	<div class="min-h-screen w-full bg-surface-container dark:bg-surface-container-dark">
+		<div class="max-w-page-shell mx-auto px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+			<h1 class="form-title">Mensajes de contacto</h1>
 
-		<div v-if="loading" class="text-gray-600 dark:text-gray-300">Cargando...</div>
+			<p v-if="loading" class="text-on-surface-variant dark:text-on-surface-variant-dark">Cargando mensajes…</p>
+			<p v-else-if="mensajes.length === 0" class="text-on-surface-variant dark:text-on-surface-variant-dark">Todavía no ha llegado ningún mensaje de contacto.</p>
 
-		<div v-else-if="mensajes.length === 0" class="text-gray-600 dark:text-gray-300">
-			No hay mensajes de contacto todavía.
-		</div>
+			<template v-else>
+				<!-- Tarjetas apiladas por debajo de md -->
+				<ul class="space-y-4 md:hidden">
+					<li v-for="m in mensajes" :key="m.id" class="p-4 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+						<p class="font-display text-3xl leading-none font-extrabold uppercase text-on-surface dark:text-on-surface-dark">{{ m.asunto }}</p>
+						<p class="mt-2 font-semibold text-on-surface dark:text-on-surface-dark">{{ m.nombre }} {{ m.apellido }}</p>
+						<p class="text-sm break-words text-on-surface-variant dark:text-on-surface-variant-dark">
+							{{ m.correo }}<span v-if="m.telefono">, {{ m.telefono }}</span>
+						</p>
+						<p class="mt-3 whitespace-pre-wrap text-on-surface dark:text-on-surface-dark">{{ m.mensaje }}</p>
+						<p class="mt-3 text-sm tabular-nums text-on-surface-variant dark:text-on-surface-variant-dark">{{ formatDate(m.createdAt) }}</p>
+					</li>
+				</ul>
 
-		<div v-else class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-600 dark:bg-neutral-800">
-			<!-- Stacked labeled cards below md -->
-			<div class="divide-y divide-gray-200 dark:divide-gray-600 md:hidden">
-				<div v-for="m in mensajes" :key="m.id" class="space-y-2 p-4">
-					<div>
-						<span class="block text-xs text-gray-500 dark:text-gray-400">Nombre</span>
-						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.nombre }} {{ m.apellido }}</span>
-					</div>
-					<div>
-						<span class="block text-xs text-gray-500 dark:text-gray-400">Correo</span>
-						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.correo }}</span>
-					</div>
-					<div>
-						<span class="block text-xs text-gray-500 dark:text-gray-400">Teléfono</span>
-						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.telefono || "—" }}</span>
-					</div>
-					<div>
-						<span class="block text-xs text-gray-500 dark:text-gray-400">Asunto</span>
-						<span class="text-sm text-gray-900 dark:text-gray-100">{{ m.asunto }}</span>
-					</div>
-					<div>
-						<span class="block text-xs text-gray-500 dark:text-gray-400">Mensaje</span>
-						<span class="text-sm whitespace-pre-wrap text-gray-900 dark:text-gray-100">{{ m.mensaje }}</span>
-					</div>
-					<div>
-						<span class="block text-xs text-gray-500 dark:text-gray-400">Fecha</span>
-						<span class="text-sm text-gray-900 dark:text-gray-100">{{ formatDate(m.createdAt) }}</span>
-					</div>
+				<!-- Tabla desde md -->
+				<div class="hidden overflow-x-auto md:block rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Correo</th>
+								<th>Teléfono</th>
+								<th>Asunto</th>
+								<th>Mensaje</th>
+								<th>Fecha</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="m in mensajes" :key="m.id">
+								<td class="font-semibold">{{ m.nombre }} {{ m.apellido }}</td>
+								<td>{{ m.correo }}</td>
+								<td class="whitespace-nowrap tabular-nums">{{ m.telefono || "Sin teléfono" }}</td>
+								<td>{{ m.asunto }}</td>
+								<td class="max-w-[50ch] whitespace-pre-wrap">{{ m.mensaje }}</td>
+								<td class="text-sm whitespace-nowrap tabular-nums text-on-surface-variant dark:text-on-surface-variant-dark">{{ formatDate(m.createdAt) }}</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
-			</div>
-
-			<!-- True tabular rows at md+ -->
-			<table class="hidden w-full table-auto divide-y divide-gray-200 dark:divide-gray-600 md:table">
-				<thead>
-					<tr class="bg-gray-50 dark:bg-neutral-700">
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Nombre</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Correo</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Teléfono</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Asunto</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Mensaje</th>
-						<th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Fecha</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-					<tr v-for="m in mensajes" :key="m.id">
-						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.nombre }} {{ m.apellido }}</td>
-						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.correo }}</td>
-						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.telefono || "—" }}</td>
-						<td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ m.asunto }}</td>
-						<td class="px-4 py-3 text-sm whitespace-pre-wrap text-gray-900 dark:text-gray-100">{{ m.mensaje }}</td>
-						<td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{{ formatDate(m.createdAt) }}</td>
-					</tr>
-				</tbody>
-			</table>
+			</template>
 		</div>
-	</div>
 	</div>
 </template>
 
@@ -77,7 +59,7 @@ const mensajes = ref<any[]>([]);
 const loading = ref(true);
 
 function formatDate(d: string) {
-	return new Date(d).toLocaleString();
+	return new Date(d).toLocaleString("es", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 }
 
 onMounted(async () => {

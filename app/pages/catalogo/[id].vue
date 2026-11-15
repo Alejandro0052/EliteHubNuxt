@@ -1,14 +1,14 @@
 <template>
-	<div class="w-full min-h-screen bg-surface-container py-12 px-4 dark:bg-surface-container-dark">
-		<button @click="goBack" class="button-secondary px-4 py-2 mb-6 flex items-center gap-2">
+	<div class="w-full min-h-screen bg-surface-container px-4 pt-8 pb-16 sm:px-6 lg:px-8 dark:bg-surface-container-dark">
+		<button type="button" @click="goBack" class="button-secondary px-4 py-2 mb-6 flex items-center gap-2 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark">
 			<Icon name="fa6-solid:arrow-left" />
 			<span>Volver</span>
 		</button>
 
-		<div v-if="loading">Cargando...</div>
-		<div v-else-if="!item">No se encontró este ítem.</div>
+		<div v-if="loading" class="text-on-surface-variant dark:text-on-surface-variant-dark">Cargando...</div>
+		<div v-else-if="!item" class="text-on-surface-variant dark:text-on-surface-variant-dark">No se encontró este ítem.</div>
 
-		<div v-else class="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-800">
+		<div v-else class="mx-auto max-w-5xl">
 			<div class="mb-4 flex items-center gap-3">
 				<NuxtLink
 					v-if="canEdit"
@@ -25,34 +25,37 @@
 				</button>
 			</div>
 
-			<div v-if="item.imagenes?.length" class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-				<img
+			<h1
+				class="font-display text-5xl leading-[0.9] font-extrabold break-words text-on-surface uppercase sm:text-6xl lg:text-7xl dark:text-on-surface-dark">
+				{{ item.nombre }}
+			</h1>
+			<p class="mt-3 mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-b-2 border-on-surface pb-4 dark:border-on-surface-dark">
+				<span class="rounded-sm bg-black px-2 py-0.5 text-[0.8125rem] font-semibold text-white dark:bg-white dark:text-black">
+					{{ item.tipoItem === "SERVICIO" ? "Servicio" : "Producto" }}
+				</span>
+				<span v-if="item.categoria" class="text-on-surface-variant dark:text-on-surface-variant-dark">{{ item.categoria.nombre }}</span>
+				<span class="text-on-surface-variant dark:text-on-surface-variant-dark">
+					Ofrecido por
+					<NuxtLink
+						:to="`/marcas/${item.usuario?.id}`"
+						class="font-semibold text-primary underline-offset-2 hover:underline dark:text-primary-dark">
+						{{ item.usuario?.nombre }} {{ item.usuario?.apellido }}
+					</NuxtLink>
+				</span>
+			</p>
+
+			<div v-if="item.imagenes?.length" class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+				<button
 					v-for="(img, i) in item.imagenes"
 					:key="i"
-					:src="img"
-					class="h-32 w-full cursor-zoom-in rounded-lg object-cover"
-					@click="openLightbox(img)" />
+					type="button"
+					:aria-label="`Ampliar imagen ${i + 1}`"
+					class="aspect-[4/5] overflow-hidden rounded-lg bg-black focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring dark:focus-visible:outline-primary-dark"
+					@click="openLightbox(img)">
+					<img :src="img" alt="" class="h-full w-full cursor-zoom-in object-cover" />
+				</button>
 			</div>
-			<div v-else class="mb-6 flex h-40 items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-neutral-700">
-				<Icon name="fa6-solid:image" class="text-3xl" />
-			</div>
-
-			<h1 class="mb-2 text-3xl font-bold text-gray-900 dark:text-white">{{ item.nombre }}</h1>
-			<div class="mb-4 flex items-center gap-2">
-				<span class="rounded-full bg-black px-3 py-1 text-xs font-medium text-white">
-					{{ item.tipoItem === "SERVICIO" ? "Servicio" : "Físico" }}
-				</span>
-				<span v-if="item.categoria" class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-neutral-700 dark:text-gray-200">
-					{{ item.categoria.nombre }}
-				</span>
-			</div>
-
-			<p class="text-sm text-gray-600 dark:text-gray-300">
-				Ofrecido por
-				<NuxtLink :to="`/marcas/${item.usuario?.id}`" class="font-semibold text-black hover:underline dark:text-white">
-					{{ item.usuario?.nombre }} {{ item.usuario?.apellido }}
-				</NuxtLink>
-			</p>
+			<p v-else class="text-on-surface-variant dark:text-on-surface-variant-dark">Este ítem todavía no tiene imágenes.</p>
 		</div>
 
 		<Teleport to="body">

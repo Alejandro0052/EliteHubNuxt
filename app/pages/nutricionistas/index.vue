@@ -1,48 +1,37 @@
 <template>
-	<div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
-		<!-- Hero Section -->
-		<section class="relative px-4 py-20 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-page-shell">
-				<div class="text-center">
-					<h1 class="mb-6 text-4xl font-bold text-gray-900 dark:text-white md:text-6xl">
-						{{ pageContent.title || "Nutricionistas Deportivos" }}
-					</h1>
-					<p class="mx-auto mb-8 max-w-3xl text-xl text-gray-600 dark:text-gray-300 md:text-2xl">
-						{{
-							pageContent.subtitle ||
-							"Optimiza tu rendimiento con la guía de expertos en nutrición deportiva"
-						}}
-					</p>
-				</div>
-			</div>
-		</section>
+  <div class="w-full min-h-screen bg-surface-container dark:bg-surface-container-dark">
+    <div class="max-w-page-shell mx-auto px-4 pt-12 pb-16 sm:px-6 md:pt-16 lg:px-8">
+      <DirectoryHeader
+        :title="pageContent.title || 'Nutricionistas'"
+        :subtitle="pageContent.subtitle || 'Especialistas en nutrición deportiva, con atención presencial o virtual.'" />
 
-		<!-- Main Content -->
-		<section class="px-4 py-16 sm:px-6 lg:px-8">
-			<div class="mx-auto max-w-page-shell">
-				<!-- Custom Content -->
-				<div v-if="pageContent.content" class="mb-16">
-					<div class="max-w-none" v-html="pageContent.content"></div>
-				</div>
+      <div class="mb-8"></div>
 
-				<!-- Directorio de Nutricionistas -->
-				<InfiniteScrollList :fetch-page="fetchPage">
-					<template #default="{ item }">
-						<UsuarioDirectoryCard :usuario="item" />
-					</template>
-					<template #empty>
-						<p class="text-center text-gray-600 dark:text-gray-400">Todavía no hay nutricionistas registrados.</p>
-					</template>
-				</InfiniteScrollList>
-			</div>
-		</section>
-	</div>
+      <!-- Contenido editable desde el admin -->
+      <div
+        v-if="pageContent.content"
+        class="mb-10 max-w-[75ch] text-on-surface dark:text-on-surface-dark"
+        v-html="pageContent.content"></div>
+
+      <InfiniteScrollList
+        :fetch-page="fetchPage"
+        grid-class="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
+        skeleton-class="aspect-[4/6]">
+        <template #default="{ item }">
+          <UsuarioDirectoryCard :usuario="item" />
+        </template>
+        <template #empty>
+          <p class="text-on-surface-variant dark:text-on-surface-variant-dark">Todavía no hay nutricionistas registrados.</p>
+        </template>
+      </InfiniteScrollList>
+    </div>
+  </div>
 </template>
 
 <script setup>
 	definePageMeta({
-		title: "Nutricionistas Deportivos - EliteHub",
-		description: "Optimiza tu rendimiento con la guía de expertos en nutrición deportiva",
+		title: "Nutricionistas - EliteHub",
+		description: "Especialistas en nutrición deportiva, con atención presencial o virtual.",
 		keepalive: true,
 	});
 

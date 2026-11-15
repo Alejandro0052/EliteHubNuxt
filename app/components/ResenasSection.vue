@@ -1,6 +1,6 @@
 <template>
-	<div class="mx-auto mt-8 max-w-3xl rounded-xl bg-white p-8 shadow-lg dark:bg-neutral-800">
-		<h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Reseñas</h2>
+	<div class="mt-10 p-6 sm:p-8 rounded-lg border border-border-hairline bg-surface dark:border-border-hairline-dark dark:bg-surface-container-dark">
+		<h2 class="mb-4 font-display text-4xl leading-none font-extrabold text-on-surface uppercase dark:text-on-surface-dark">Reseñas</h2>
 
 		<div v-if="loading" class="dark:text-gray-300">Cargando reseñas...</div>
 
@@ -24,7 +24,7 @@
 
 				<form v-else @submit.prevent="handleSubmit" class="space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-600 dark:text-white">
 					<div>
-						<label class="mb-1 block text-sm font-medium">Calificación</label>
+						<label class="form-label mb-1 block">Calificación</label>
 						<div class="flex gap-1" role="group" aria-label="Selecciona una calificación">
 							<button
 								v-for="n in 5"
@@ -40,8 +40,8 @@
 					</div>
 
 					<div>
-						<label class="mb-1 block text-sm font-medium">Comentario (opcional)</label>
-						<textarea v-model="comentario" rows="3" class="w-full rounded border px-3 py-2 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+						<label class="form-label mb-1 block">Comentario (opcional)</label>
+						<textarea v-model="comentario" rows="3" class="form-control w-full"></textarea>
 					</div>
 
 					<div class="flex items-center gap-3">
@@ -139,7 +139,7 @@
 						@submit.prevent="handleEditSubmit(r)"
 						class="mt-3 space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-600 dark:text-white">
 						<div>
-							<label class="mb-1 block text-sm font-medium">Calificación</label>
+							<label class="form-label mb-1 block">Calificación</label>
 							<div class="flex gap-1" role="group" aria-label="Selecciona una calificación">
 								<button
 									v-for="n in 5"
@@ -154,8 +154,8 @@
 							</div>
 						</div>
 						<div>
-							<label class="mb-1 block text-sm font-medium">Comentario (opcional)</label>
-							<textarea v-model="editComentario" rows="3" class="w-full rounded border px-3 py-2 dark:border-gray-600 dark:bg-neutral-700 dark:text-white"></textarea>
+							<label class="form-label mb-1 block">Comentario (opcional)</label>
+							<textarea v-model="editComentario" rows="3" class="form-control w-full"></textarea>
 						</div>
 						<div class="flex items-center gap-3">
 							<button

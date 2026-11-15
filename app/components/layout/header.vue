@@ -1,30 +1,32 @@
 <template>
-	<nav class="border-white bg-black p-6 shadow-xl">
+	<nav aria-label="Principal" class="relative bg-black px-4 py-3 sm:px-6 lg:px-8">
 		<div class="mx-auto flex max-w-[120rem] items-center justify-between">
 			<!-- Botón móvil -->
 			<button
 				type="button"
+				:aria-expanded="isMobileMenuOpen"
 				@click="toggleMobileMenu"
-				class="rounded-lg p-2 text-white hover:bg-gray-800 focus:outline-none md:hidden">
-				<span class="sr-only">Abrir menú</span>
+				class="rounded-lg p-2 text-white hover:bg-neutral-800 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-white md:hidden">
+				<span class="sr-only">{{ isMobileMenuOpen ? "Cerrar menú" : "Abrir menú" }}</span>
 				<Icon :name="isMobileMenuOpen ? 'fa6-solid:xmark' : 'fa6-solid:bars'" class="h-6 w-6" />
 			</button>
 
 			<!-- Logo -->
-			<NuxtLink to="/" class="flex items-center space-x-3 transition duration-300 hover:scale-110">
-				<img src="/logo.jpeg" class="h-12" alt="Elite Hub Logo" />
+			<NuxtLink to="/" class="flex items-center rounded transition duration-300 hover:scale-110 motion-reduce:transition-none motion-reduce:hover:transform-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-white">
+				<img src="/logo.jpeg" class="h-11" alt="Elite Hub, inicio" />
 			</NuxtLink>
 
 			<!-- Menú principal -->
-			<div class="hidden gap-2 md:flex lg:gap-6">
-				<div v-for="link in menuLinks" :key="link.to">
-					<NuxtLink
-						:to="link.to"
-						class="block rounded bg-transparent text-white transition duration-300 hover:scale-110"
-						:class="{ 'font-bold': $route.path === link.to }">
-						{{ link.text }}
-					</NuxtLink>
-				</div>
+			<div class="hidden gap-5 md:flex lg:gap-9">
+				<NuxtLink
+					v-for="link in menuLinks"
+					:key="link.to"
+					:to="link.to"
+					:aria-current="isActive(link.to) ? 'page' : undefined"
+					class="border-b-4 pt-2 pb-1 font-display text-[1.75rem] leading-none font-extrabold tracking-wide uppercase transition duration-200 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:transform-none focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-white"
+					:class="isActive(link.to) ? 'border-primary-dark text-white' : 'border-transparent text-neutral-400 hover:border-neutral-600 hover:text-white'">
+					{{ link.text }}
+				</NuxtLink>
 			</div>
 
 			<!-- Controles de autenticación -->
@@ -42,15 +44,16 @@
 							<template #trigger>
 								<button
 									type="button"
-									class="hover:bg-secondary flex items-center gap-2 rounded-full px-4 py-2 text-white transition duration-300">
+									class="flex items-center gap-2 rounded-full py-1 pr-3 pl-1 font-semibold text-white transition-colors hover:bg-neutral-800 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-white">
 									<!-- imagen de perfil -->
 									<img
 										v-if="user?.avatar"
 										:src="user.avatar"
-										class="h-10 w-10 rounded-full" />
+										alt=""
+										class="h-10 w-10 rounded-full object-cover" />
 									<div
 										v-else
-										class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white">
+										class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-dark font-display text-xl font-extrabold text-black">
 										{{ initials }}
 									</div>
 									<span class="hidden md:inline">{{ fullName }}</span>
@@ -81,7 +84,7 @@
 					<NuxtLink
 						v-else
 						to="/login"
-						class="hover:bg-secondary rounded bg-transparent px-4 py-2 text-white transition duration-300 hover:scale-105">
+						class="rounded-full border border-white px-4 py-2 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-black motion-reduce:transition-none motion-reduce:hover:transform-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-white">
 						Iniciar sesión
 					</NuxtLink>
 				</template>
@@ -91,15 +94,16 @@
 		<!-- Menú móvil -->
 		<div
 			v-if="isMobileMenuOpen"
-			class="absolute right-0 left-0 z-50 mt-2 w-full bg-black p-4 shadow-lg md:hidden">
-			<div class="space-y-2">
+			class="absolute top-full right-0 left-0 z-50 w-full border-t border-neutral-800 bg-black p-4 md:hidden">
+			<div class="space-y-1">
 				<NuxtLink
 					v-for="link in menuLinks"
 					:key="link.to"
 					:to="link.to"
-					class="block rounded px-4 py-2 text-white hover:bg-gray-800"
-					@click="closeMobileMenu"
-					:class="{ 'bg-gray-800': $route.path === link.to }">
+					:aria-current="isActive(link.to) ? 'page' : undefined"
+					class="block border-l-4 px-4 py-2.5 font-display text-3xl leading-none font-extrabold tracking-wide uppercase hover:text-white"
+					:class="isActive(link.to) ? 'border-primary-dark text-white' : 'border-transparent text-neutral-400'"
+					@click="closeMobileMenu">
 					{{ link.text }}
 				</NuxtLink>
 			</div>
@@ -131,6 +135,11 @@ const isMobileMenuOpen = ref(false);
 		{ to: "/marcas", text: "Marcas" },
 		{ to: "/nutricionistas", text: "Nutricionistas" },
 	];
+
+	// Una seccion queda activa tambien en sus paginas internas (p. ej. /deportistas/12).
+	function isActive(to: string) {
+		return to === "/" ? route.path === "/" : route.path === to || route.path.startsWith(to + "/");
+	}
 
 	function toggleMobileMenu() {
 		isMobileMenuOpen.value = !isMobileMenuOpen.value;
